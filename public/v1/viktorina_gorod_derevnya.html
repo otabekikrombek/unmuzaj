@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Викторина «Город и деревня»</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@500;700&family=Rubik:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg1:#2B1055;--bg2:#1D5C63;--ink:#FFFFFF;--muted:#D8D2F0;--card:rgba(255,255,255,.12);--line:rgba(255,255,255,.25);
+ --red:#E2504C;--blue:#2F7BE5;--yellow:#E8A520;--green:#2AA36B;--ok:#2AA36B;--bad:#E2504C;
+ --ru:'Rubik','Segoe UI',Arial,sans-serif;--arf:'Noto Naskh Arabic','Amiri','Times New Roman',serif}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html,body{height:100%}
+body{margin:0;font-family:var(--ru);color:var(--ink);background:linear-gradient(135deg,var(--bg1),var(--bg2)) fixed;font-size:18px;line-height:1.45}
+button{font:inherit;cursor:pointer}:focus-visible{outline:3px solid #FFD54F;outline-offset:2px}
+.ar{font-family:var(--arf);direction:rtl;unicode-bidi:isolate;font-size:1.3em}
+.wrap{max-width:900px;margin:0 auto;padding:20px 16px 40px;min-height:100%;display:flex;flex-direction:column;gap:16px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.logo{font-weight:800;font-size:22px;letter-spacing:.5px}
+.icon{background:var(--card);border:1px solid var(--line);color:#fff;border-radius:999px;padding:6px 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:22px;backdrop-filter:blur(6px)}
+h1{font-size:clamp(30px,6vw,48px);margin:0;font-weight:800;line-height:1.1}
+.sub{color:var(--muted);margin:6px 0 0}
+label{display:block;font-weight:600;margin:12px 0 6px}
+input{width:100%;font:inherit;padding:12px 14px;border-radius:14px;border:0;background:#fff;color:#1E1E2E}
+.go{margin-top:16px;width:100%;border:0;border-radius:16px;padding:16px;font-size:22px;font-weight:800;color:#1E1E2E;background:#FFD54F;box-shadow:0 6px 0 #C9A227}
+.go:active{transform:translateY(3px);box-shadow:0 3px 0 #C9A227}
+.count{font-size:120px;font-weight:800;text-align:center;animation:pop .9s ease}
+@keyframes pop{0%{transform:scale(.3);opacity:0}60%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}
+.hud{display:flex;justify-content:space-between;gap:10px;font-weight:600}
+.bar{height:12px;background:rgba(255,255,255,.2);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:#FFD54F;width:100%;transition:width .2s linear}
+.q{font-size:clamp(20px,3.6vw,28px);font-weight:600;text-align:center;padding:26px 18px;background:#fff;color:#1E1E2E;border-radius:22px}
+.q .ar{color:#2B1055}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.tiles{grid-template-columns:1fr}}
+.tile{border:0;border-radius:18px;padding:16px 16px 16px 58px;min-height:84px;color:#fff;font-weight:700;font-size:20px;text-align:left;position:relative;box-shadow:0 6px 0 rgba(0,0,0,.25);transition:transform .1s,opacity .3s}
+.tile:active{transform:translateY(3px)}
+.tile .sh{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:28px}
+.tile .ar{font-size:1.45em;display:block;text-align:right}
+.t0{background:var(--red)}.t1{background:var(--blue)}.t2{background:var(--yellow)}.t3{background:var(--green)}
+.tile.dim{opacity:.35}.tile.right{outline:5px solid #fff}
+.fb{text-align:center;font-size:24px;font-weight:800;min-height:1.6em}
+.expl{text-align:center;color:var(--muted)}
+.big{font-size:clamp(44px,9vw,72px);font-weight:800;text-align:center;line-height:1}
+.lb{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.lb li{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px}
+.lb li.me{background:#FFD54F;color:#1E1E2E}
+.lb .pl{font-weight:800;font-size:20px;text-align:center}
+.lb .pts{font-weight:800}
+.lb small{display:block;opacity:.8;font-weight:400}
+.podium li:nth-child(1) .pl::before{content:"🥇"}.podium li:nth-child(2) .pl::before{content:"🥈"}.podium li:nth-child(3) .pl::before{content:"🥉"}
+.podium li:nth-child(-n+3) .pl span{display:none}
+canvas#conf{position:fixed;inset:0;pointer-events:none;z-index:9}
+.hide{display:none!important}
+.note{color:var(--muted);font-size:15px;text-align:center}
+@media (prefers-reduced-motion: reduce){.count,.bar i,.tile{animation:none;transition:none}}
+</style>
+</head>
+<body>
+<canvas id="conf" aria-hidden="true"></canvas>
+<div class="wrap">
+ <div class="top"><span class="logo">🏙️ ⇄ 🌾 Город и деревня</span><button class="icon" id="snd" aria-pressed="true">🔊 Звук</button></div>
+
+ <section id="sStart" class="card">
+  <h1>Викторина по тексту</h1>
+  <p class="ar" style="font-size:30px;text-align:right;margin:6px 0 0">الْمَدِينَةُ وَالْقَرْيَةُ</p>
+  <p class="sub">20 вопросов, у каждого свой порядок. Отвечайте быстро: за скорость — больше очков.</p>
+  <label for="nm">Имя и фамилия</label><input id="nm" maxlength="40" autocomplete="name">
+  <label for="gr">Группа</label><input id="gr" maxlength="20" placeholder="например, 2-курс-1">
+  <button class="go" id="start">Начать ▶</button>
+  <p class="note" id="msg"></p>
+ </section>
+
+ <section id="sCount" class="card hide"><div class="count" id="cnt">3</div></section>
+
+ <section id="sQ" class="hide" style="display:flex;flex-direction:column;gap:14px">
+  <div class="hud"><span id="qn"></span><span id="pts">0 очков</span><span id="tm">20</span></div>
+  <div class="bar"><i id="tb"></i></div>
+  <div class="q" id="qt"></div>
+  <div class="tiles" id="tiles"></div>
+  <div class="fb" id="fb"></div>
+  <div class="expl" id="ex"></div>
+ </section>
+
+ <section id="sEnd" class="card hide">
+  <p class="sub" id="eName" style="text-align:center"></p>
+  <div class="big" id="ePts"></div>
+  <p style="text-align:center;font-size:22px;font-weight:700;margin:6px 0" id="eLvl"></p>
+  <p class="note" id="eInfo"></p>
+  <button class="go" id="again">Ещё раз ↻</button>
+ </section>
+
+ <section id="sBoard" class="card hide">
+  <h1 style="font-size:32px">🏆 Таблица результатов</h1>
+  <p class="note" id="bNote">Обновляется автоматически.</p>
+  <ol class="lb podium" id="board"></ol>
+ </section>
+</div>
+<script>
+(function(){"use strict";
+/* ===== НАСТРОЙКИ ===== */
+const SHEET_URL='https://script.google.com/macros/s/AKfycbwDMEfbi19gOwmBIO7Ulbc8XXLIPR_-zBkdwlIAhuQjXjukHVVLkWlsrejdTPv15KZSFA/exec';          // вставьте адрес веб-приложения Google Apps Script (…/exec)
+const QUIZ='gorod-derevnya'; // код викторины — по нему разделяются результаты разных тестов
+const N=20, SEC=20, WINDOW_HOURS=3;
+/* ===================== */
+const POOL=[{"id": 1, "q": "Какой тип склонения у слова شَوَارِعُ?", "o": ["двухпадежное", "трёхпадежное", "на алиф максуру", "не склоняется"], "e": "После алифа два слога — модель мафа‘илу: двухпадежное."}, {"id": 2, "q": "Какой тип у слова مُسْتَشْفًى?", "o": ["на алиф максуру", "двухпадежное", "трёхпадежное", "двойственное"], "e": "Окончание -ан на алиф максуру: падеж не виден."}, {"id": 3, "q": "Перевод: حُقُولٌ خَضْرَاءُ", "o": ["зелёные поля", "зелёный сад", "широкие поля", "высокие деревья"], "e": "حَقْلٌ – حُقُولٌ «поле», خَضْرَاءُ «зелёная»."}, {"id": 4, "q": "Антоним к مُلَوَّثٌ", "o": ["نَقِيٌّ", "مُزْدَحِمٌ", "شَدِيدٌ", "هَادِئٌ"], "e": "مُلَوَّثٌ ≠ نَقِيٌّ: загрязнённый ≠ чистый."}, {"id": 5, "q": "Падеж в عَلَى الضِّفَّتَيْنِ", "o": ["родительный", "именительный", "винительный", "не виден"], "e": "После предлога — родительный; двойственное: -айни."}, {"id": 6, "q": "Что такое الْعَاشِرِ в فِي الطَّابِقِ الْعَاشِرِ?", "o": ["порядковое числительное", "нисба", "причастие", "предлог"], "e": "Порядковое числительное — определение: «на десятом этаже»."}, {"id": 7, "q": "Где в тексте больница?", "o": ["рядом с университетом", "перед кафе", "под землёй", "за домами"], "e": "بِجَانِبِ الْجَامِعَةِ مُسْتَشْفًى حَدِيثٌ."}, {"id": 8, "q": "Главная мысль: السِّرُّ فِي الْإِنْسَانِ، لَا فِي الْمَكَانِ", "o": ["счастье зависит от человека", "город лучше деревни", "деревня лучше города", "секрет в городе"], "e": "Автор нейтрален: дело в человеке, а не в месте."}, {"id": 9, "q": "Что такое بِالرَّغْمِ مِنْ?", "o": ["составной предлог", "именной предлог", "союз", "вопросительное слово"], "e": "«Несмотря на» — составной предлог."}, {"id": 10, "q": "Что плохо в деревне по тексту?", "o": ["мало школ", "сильный шум", "грязный воздух", "много машин"], "e": "وَلَكِنْ فِي الْقَرْيَةِ مَدَارِسُ قَلِيلَةٌ."}, {"id": 11, "q": "Член предложения فِي الْمَدِينَةِ в: فِي الْمَدِينَةِ شَوَارِعُ طَوِيلَةٌ", "o": ["сказуемое впереди", "подлежащее", "определение", "дополнение"], "e": "Подлежащее неопределённое, поэтому сказуемое с предлогом стоит первым."}, {"id": 12, "q": "Почему شَوَارِعُ طَوِيلَةٌ, а не طَوِيلُونَ?", "o": ["мн. ч. неразумных — ж. р. ед. ч.", "улица — женского рода", "это двойственное число", "طَوِيلٌ не склоняется"], "e": "Мн. ч. неразумных согласуется как женский род единственного числа."}, {"id": 13, "q": "Что верно о слове مَزَايَا?", "o": ["двухпадежное и на алиф", "трёхпадежное", "двойственное число", "нисба"], "e": "Мн. ч. модели «фа‘āлā»: без танвина, падеж не виден."}, {"id": 14, "q": "Что такое ثَقَافِيٌّ?", "o": ["нисба (относительное прил.)", "причастие", "порядковое числительное", "существительное"], "e": "Нисба от слова ثَقَافَةٌ — «культурный»."}, {"id": 15, "q": "Падеж مَدَارِسُ в: فِي الْقَرْيَةِ مَدَارِسُ قَلِيلَةٌ", "o": ["именительный", "родительный", "винительный", "не виден"], "e": "Это подлежащее, а не слово после предлога."}, {"id": 16, "q": "Как правильно «в новых школах»?", "o": ["فِي مَدَارِسَ جَدِيدَةٍ", "فِي مَدَارِسٍ جَدِيدَةٍ", "فِي مَدَارِسَ جَدِيدَةَ", "فِي مَدَارِسِ جَدِيدَةٌ"], "e": "Диптот — фатха; определение — своя кясра с танвином."}, {"id": 17, "q": "Падеж слова الْمُسْتَشْفَى в أَمَامَ الْمُسْتَشْفَى", "o": ["родительный, но не виден", "именительный", "винительный", "у него нет падежа"], "e": "После предлога — родительный; у алифа максуры он не виден."}, {"id": 18, "q": "Позиция автора в тексте", "o": ["нейтральная", "за город", "за деревню", "против обоих мест"], "e": "У обоих мест есть مَزَايَا и عُيُوبٌ."}, {"id": 19, "q": "Почему воздух в городе загрязнён?", "o": ["из-за заводов и машин", "из-за шума", "из-за пустыни", "из-за реки"], "e": "نَتِيجَةً لِلْمَصَانِعِ وَالسَّيَّارَاتِ."}, {"id": 20, "q": "Какое слово значит «как»?", "o": ["كَيْفَ", "أَيْنَ", "مَنْ", "مَا"], "e": "كَيْفَ — как; أَيْنَ — где; مَنْ — кто; مَا — что."}, {"id": 21, "q": "Перевод: الْمُوَاصَلَاتُ الْعَامَّةُ", "o": ["общественный транспорт", "быстрые поезда", "широкие улицы", "городские магазины"], "e": "عَامٌّ ≠ خَاصٌّ: общественный ≠ частный."}, {"id": 22, "q": "Антоним к مُزْدَحِمٌ", "o": ["فَارِغٌ", "نَقِيٌّ", "قَلِيلٌ", "صَغِيرٌ"], "e": "مُزْدَحِمٌ ≠ فَارِغٌ: переполненный ≠ пустой."}, {"id": 23, "q": "Какое число у الْبُسْتَانَيْنِ?", "o": ["двойственное", "единственное", "множественное", "мн. ч. неразумных"], "e": "Окончание -айни — двойственное в родительном."}, {"id": 24, "q": "Почему الْحَادِيَ عَشَرَ не меняет окончание?", "o": ["это несклоняемое числительное", "это двухпадежное имя", "это алиф максура", "это нисба"], "e": "«Одиннадцатый» — оба слова на фатху во всех падежах."}, {"id": 25, "q": "Что значит وَلَكِنْ?", "o": ["но", "или", "итак", "тоже"], "e": "لَكِنْ — «но»; إِذَنْ — «итак»; أَيْضًا — «тоже»."}, {"id": 26, "q": "Где живут люди в городе по тексту?", "o": ["на 10–11 этаже", "за рекой", "возле полей", "в кафе"], "e": "فِي الطَّابِقِ الْعَاشِرِ أَوِ الْحَادِيَ عَشَرَ."}, {"id": 27, "q": "Что над рекой в городе?", "o": ["современные мосты", "быстрый поезд", "высокие деревья", "маленькое кафе"], "e": "فَوْقَ النَّهْرِ جُسُورٌ حَدِيثَةٌ."}, {"id": 28, "q": "Какое слово — причастие?", "o": ["مُلَوَّثٌ", "نَقِيٌّ", "طَوِيلٌ", "سَعِيدٌ"], "e": "مُلَوَّثٌ — причастие II породы «загрязнённый»."}, {"id": 29, "q": "Как правильно «из-за заводов»?", "o": ["نَتِيجَةً لِلْمَصَانِعِ", "نَتِيجَةً لِالْمَصَانِعِ", "نَتِيجَةً لِلْمَصَانِعَ", "نَتِيجَةً لِمَصَانِعٍ"], "e": "«Ли» + артикль: алиф выпадает; с артиклем — кясра."}, {"id": 30, "q": "Что такое أَ в أَفِي الْمَدِينَةِ سَعَادَةٌ؟", "o": ["вопросительная частица", "предлог", "союз «или»", "местоимение"], "e": "أَ = هَلْ: «Разве?», вопросительная частица."}];
+const $=s=>document.querySelector(s);
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const AR=/[\u0600-\u06FF]/;
+const wrap=t=>t.replace(/([\u0600-\u06FF][\u0600-\u06FF\u064B-\u0652\u0670\s،؟]*)/g,m=>`<span class="ar" lang="ar">${m.trim()}</span> `);
+const show=id=>['sStart','sCount','sQ','sEnd','sBoard'].forEach(s=>$('#'+s).classList.toggle('hide',s!==id));
+const params=new URLSearchParams(location.search);
+
+/* ---- звук (без файлов, Web Audio) ---- */
+let AC=null,soundOn=true;
+const ctx=()=>{if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}return AC;};
+function tone(f,d,type='sine',v=.15,delay=0){const c=ctx();if(!c||!soundOn)return;const o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.value=f;g.gain.value=v;o.connect(g);g.connect(c.destination);const t=c.currentTime+delay;o.start(t);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.stop(t+d+.02);}
+const sTick=()=>tone(880,.06,'square',.05);
+const sOk=()=>[523,659,784].forEach((f,i)=>tone(f,.18,'triangle',.18,i*.09));
+const sBad=()=>{tone(180,.35,'sawtooth',.12);tone(140,.35,'sawtooth',.1,.05);};
+const sGo=()=>tone(660,.15,'square',.08);
+const sFan=()=>[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.22,'triangle',.18,i*.13));
+$('#snd').addEventListener('click',e=>{soundOn=!soundOn;e.currentTarget.textContent=soundOn?'🔊 Звук':'🔇 Без звука';e.currentTarget.setAttribute('aria-pressed',String(soundOn));});
+
+/* ---- конфетти ---- */
+function confetti(){const cv=$('#conf'),c=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;const cols=['#E2504C','#2F7BE5','#E8A520','#2AA36B','#FFD54F','#fff'];
+ const P=Array.from({length:160},()=>({x:Math.random()*cv.width,y:-20-Math.random()*cv.height*.5,r:4+Math.random()*6,c:cols[Math.floor(Math.random()*cols.length)],vy:2+Math.random()*3,vx:-1.5+Math.random()*3,a:Math.random()*6}));
+ let f=0;(function step(){c.clearRect(0,0,cv.width,cv.height);P.forEach(p=>{p.y+=p.vy;p.x+=p.vx;p.a+=.1;c.fillStyle=p.c;c.save();c.translate(p.x,p.y);c.rotate(p.a);c.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.6);c.restore();});if(++f<240)requestAnimationFrame(step);else c.clearRect(0,0,cv.width,cv.height);})();}
+
+/* ---- игра ---- */
+const LEV=[[18,'Мастер 🏆'],[15,'Отлично 🌟'],[11,'Хорошо 👍'],[7,'Базовый 🙂'],[0,'Начинающий 🌱']];
+const levelOf=c=>LEV.find(l=>c>=l[0])[1];
+let qs=[],qi=0,points=0,correct=0,t0=0,qStart=0,timer=null,locked=false,log=[],me={n:'',g:''};
+try{$('#nm').value=localStorage.getItem('qzName')||'';$('#gr').value=localStorage.getItem('qzGroup')||'';}catch(e){}
+$('#start').addEventListener('click',()=>{me.n=$('#nm').value.trim();me.g=$('#gr').value.trim();if(!me.n){$('#msg').textContent='Введите имя и фамилию.';return;}
+ try{localStorage.setItem('qzName',me.n);localStorage.setItem('qzGroup',me.g);}catch(e){}ctx();
+ qs=shuffle(POOL.slice()).slice(0,N).map(q=>({id:q.id,q:q.q,c:q.o[0],o:shuffle(q.o.slice()),e:q.e}));qi=0;points=0;correct=0;log=[];
+ show('sCount');let n=3;$('#cnt').textContent=n;sGo();const iv=setInterval(()=>{n--;if(n>0){$('#cnt').textContent=n;$('#cnt').style.animation='none';void $('#cnt').offsetWidth;$('#cnt').style.animation='';sGo();}else{clearInterval(iv);t0=Date.now();show('sQ');ask();}},900);});
+const SH=['▲','◆','●','■'];
+function ask(){const q=qs[qi];locked=false;$('#qn').textContent=`Вопрос ${qi+1} / ${N}`;$('#pts').textContent=`${points} очков`;$('#qt').innerHTML=wrap(q.q);$('#fb').textContent='';$('#ex').textContent='';
+ const box=$('#tiles');box.innerHTML='';q.o.forEach((o,i)=>{const b=el('button','tile t'+i,`<span class="sh">${SH[i]}</span>${AR.test(o)?`<span class="ar" lang="ar">${o}</span>`:o}`);b.addEventListener('click',()=>pick(b,o));box.appendChild(b);});
+ qStart=Date.now();let left=SEC;$('#tm').textContent=left;$('#tb').style.width='100%';clearInterval(timer);
+ timer=setInterval(()=>{const el_=(Date.now()-qStart)/1000;left=Math.max(0,SEC-el_);$('#tm').textContent=Math.ceil(left);$('#tb').style.width=(left/SEC*100)+'%';if(left<=5&&Math.ceil(left)!==Math.ceil(left+.2))sTick();if(left<=0)pick(null,null);},200);}
+function pick(b,o){if(locked)return;locked=true;clearInterval(timer);const q=qs[qi];const ms=Date.now()-qStart;const ok=o===q.c;
+ let gain=0;if(ok){correct++;gain=Math.round(500+500*Math.max(0,SEC*1000-ms)/(SEC*1000));points+=gain;sOk();}else sBad();
+ [...$('#tiles').children].forEach(t=>{const txt=t.textContent.replace(/^[▲◆●■]/,'').trim();if(txt===q.c)t.classList.add('right');else t.classList.add('dim');});
+ $('#fb').textContent=ok?`✅ Верно! +${gain}`:(o===null?'⏰ Время вышло':'❌ Неверно');$('#ex').innerHTML=wrap(q.e);$('#pts').textContent=`${points} очков`;
+ log.push({id:q.id,q:q.q,a:o===null?'(нет ответа)':o,c:q.c,ok:ok,s:Math.round(ms/100)/10});
+ setTimeout(()=>{qi++;if(qi<N)ask();else finish();},ok?1600:2600);}
+function finish(){const secs=Math.round((Date.now()-t0)/1000);show('sEnd');$('#eName').textContent=me.n+(me.g?' · '+me.g:'');$('#ePts').textContent=points+' очков';$('#eLvl').textContent=`${levelOf(correct)} · верно ${correct} из ${N}`;
+ $('#eInfo').textContent=`Время: ${Math.floor(secs/60)}:${String(secs%60).padStart(2,'0')}`;sFan();confetti();send({quiz:QUIZ,name:me.n,group:me.g,points,correct,total:N,time:secs,level:levelOf(correct).replace(/\s.+$/,''),details:log});}
+$('#again').addEventListener('click',()=>show('sStart'));
+
+/* ---- Google Таблица ---- */
+async function send(data){if(!SHEET_URL){$('#eInfo').textContent+=' · Общая таблица не подключена: сделайте снимок экрана.';return;}
+ try{await fetch(SHEET_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)});$('#eInfo').textContent+=' · Результат сохранён ✔';}catch(e){$('#eInfo').textContent+=' · Не удалось отправить результат.';}
+ $('#sBoard').classList.remove('hide');loadBoard();setInterval(loadBoard,6000);}
+async function loadBoard(){if(!SHEET_URL)return;try{const g=params.get('g')||me.g||'';
+ const r=await fetch(`${SHEET_URL}?quiz=${encodeURIComponent(QUIZ)}&hours=${WINDOW_HOURS}&group=${encodeURIComponent(g)}&t=${Date.now()}`);const rows=await r.json();
+ const ol=$('#board');ol.innerHTML='';rows.forEach((x,i)=>{const li=el('li',x.n===me.n?'me':'');li.innerHTML=`<span class="pl"><span>${i+1}</span></span><span></span><span class="pts"></span>`;
+  li.children[1].textContent=x.n;const sm=el('small');sm.textContent=`${x.c}/${x.tot} верно · ${x.l} · ${Math.floor(x.t/60)}:${String(x.t%60).padStart(2,'0')}`;li.children[1].appendChild(sm);li.children[2].textContent=x.p;ol.appendChild(li);});
+ $('#bNote').textContent=rows.length?'Лучший результат каждого участника. Обновляется автоматически.':'Пока нет результатов.';}catch(e){$('#bNote').textContent='Таблица сейчас недоступна.';}}
+
+/* режим для проектора: ?board=1 (и ?g=группа) */
+if(params.get('board')){show('sBoard');$('#sBoard').classList.remove('hide');if(!SHEET_URL)$('#bNote').textContent='Укажите SHEET_URL в файле.';loadBoard();setInterval(loadBoard,4000);}
+})();
+</script>
+</body>
+</html>

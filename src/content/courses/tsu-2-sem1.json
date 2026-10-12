@@ -1,0 +1,53 @@
+{
+ "key": "tsu-2-sem1",
+ "title": "Арабский язык, 2 курс ТГУВ — семестр 1",
+ "description": "Курс для студентов 2 курса ТГУВ (начальный уровень, обучение на русском). Открыт для всех.",
+ "audience": "Студенты-востоковеды, начальный уровень",
+ "added": "2026-10-12",
+ "items": [
+  {
+   "kind": "exercise",
+   "key": "opredelenie"
+  },
+  {
+   "kind": "quiz",
+   "key": "matn-01"
+  },
+  {
+   "kind": "quiz",
+   "key": "gorod-derevnya"
+  },
+  {
+   "kind": "exercise",
+   "key": "predlogi"
+  },
+  {
+   "kind": "quiz",
+   "key": "matn-09"
+  },
+  {
+   "kind": "exercise",
+   "key": "dvuhpadezhnye"
+  },
+  {
+   "kind": "quiz",
+   "key": "izafa"
+  },
+  {
+   "kind": "test",
+   "key": "mock-ekzamen"
+  },
+  {
+   "kind": "deck",
+   "key": "w100"
+  },
+  {
+   "kind": "deck",
+   "key": "w100b"
+  },
+  {
+   "kind": "quiz",
+   "key": "matn-10"
+  }
+ ]
+}

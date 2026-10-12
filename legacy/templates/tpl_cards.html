@@ -1,0 +1,216 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>__TITLE__</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#263238;--teal:#1D5C63;--t2:#2A9D8F;--coral:#E76F51}
+*{box-sizing:border-box}body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:#1D5C63;background:linear-gradient(135deg,#1D5C63,#2B1055);color:#fff;min-height:100vh}
+.wrap{max-width:560px;margin:0 auto;padding:16px}
+h1{margin:6px 0 4px;font-size:26px}p.s{margin:0 0 14px;color:#cfe}
+.tabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.tabs button,.btn{border:0;border-radius:12px;padding:10px 14px;font-weight:700;font-size:15px;cursor:pointer;background:rgba(255,255,255,.15);color:#fff}
+.tabs button.on{background:#FFD54F;color:#222}
+select,input[type=password],input[type=text]{width:100%;padding:12px;border-radius:10px;border:0;font-size:16px;margin-bottom:12px;color:#263238;background:#fff}
+.card{background:#fff;color:var(--ink);border-radius:18px;min-height:230px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.25);position:relative}
+.ar{font-family:Amiri,'Times New Roman',serif;font-size:38px;direction:rtl;line-height:1.5}
+.ru{font-size:24px;font-weight:700;color:var(--teal)}.th{font-size:13px;color:#789;margin-top:10px}
+.tag{position:absolute;top:10px;left:12px;font-size:12px;font-weight:700;padding:3px 8px;border-radius:8px}
+.tag.new{background:#FFF3C4;color:#7a5b00}.tag.err{background:#fde0d8;color:#a33b20}.tag.rep{background:#d9f2ee;color:#1D5C63}
+.row{display:flex;gap:8px;margin-top:12px}.row .btn{flex:1}
+.know{background:#2A9D8F}.dont{background:#E76F51}
+.opt{display:block;width:100%;margin:8px 0;padding:14px;border-radius:12px;border:0;font-size:18px;background:#fff;color:#263238;cursor:pointer;text-align:center}
+.opt.arx{font-family:Amiri,serif;font-size:26px;direction:rtl}
+.opt.ok{background:#b9f0c9}.opt.bad{background:#f7c2b6}
+.q{background:#fff;color:#263238;border-radius:16px;padding:18px;text-align:center;margin-bottom:6px}
+.big{font-size:44px;font-weight:800;text-align:center;margin:20px 0}
+.muted{color:#cfe;font-size:14px;text-align:center}
+.panel{background:rgba(255,255,255,.1);border-radius:14px;padding:12px;margin-bottom:12px}
+.bar{display:flex;height:12px;border-radius:6px;overflow:hidden;background:rgba(255,255,255,.15);margin:8px 0}
+.bar i{display:block;height:100%}
+.leg{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:13px;color:#e6f4f2}.leg b{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:middle}
+.who{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;font-size:15px}
+.who .btn{padding:6px 10px;font-size:13px}
+.hard{font-size:14px;margin-top:6px}.hard div{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.12)}
+.hard .a{font-family:Amiri,serif;font-size:20px;direction:rtl}
+.small{font-size:12px;color:#bfdcd8;margin-top:14px;text-align:center}
+.msg{min-height:20px;font-size:14px;color:#FFD54F;margin:4px 0 8px}
+.net{font-size:12px;color:#bfdcd8}.net.off{color:#FFB199}
+.chk{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:#dfeeee;margin-bottom:12px}
+.lb h3{margin:10px 0 6px;font-size:16px}.lb ol{margin:0;padding-left:26px}.lb li{padding:3px 0}.lb li.me{color:#FFD54F;font-weight:700}
+</style></head><body><div class="wrap">
+<h1>__TITLE__</h1><p class="s">Арабский язык · 2 курс</p>
+
+<div id="login">
+ <div class="panel">
+  <p style="margin:0 0 10px">Выберите своё имя и введите ПИН, который дал преподаватель.</p>
+  <select id="who"><option value="">— загрузка списка… —</option></select>
+  <input id="pin" type="password" inputmode="numeric" autocomplete="off" maxlength="6" placeholder="ПИН (4 цифры)">
+  <label class="chk"><input type="checkbox" id="rem" checked> Запомнить меня на этом телефоне. На общем компьютере снимите галочку.</label>
+  <button class="btn know" id="go" style="width:100%">Войти →</button>
+  <div class="msg" id="lmsg"></div>
+ </div>
+</div>
+
+<div id="app" style="display:none">
+ <div class="who"><span>👤 <b id="uname"></b><br><span class="net" id="net"></span></span><span><button class="btn" id="out">Выйти</button></span></div>
+ <div class="panel" id="stats"></div>
+ <div class="tabs"><button id="tc" class="on">Карточки</button><button id="tt">Тест</button><button id="th">Мои трудные</button><button id="tb">Рейтинг</button></div>
+ <div id="cards">
+  <select id="theme"></select>
+  <div class="tabs"><button id="d1" class="on">ар → рус</button><button id="d2">рус → ар</button><button id="d3">вперемешку</button></div>
+  <div class="card" id="card"></div>
+  <div class="row"><button class="btn dont" id="no">Не знаю ✗</button><button class="btn know" id="yes">Знаю ✓</button></div>
+  <p class="muted" id="cnt"></p>
+ </div>
+ <div id="test" style="display:none"></div>
+ <div id="hardv" style="display:none" class="panel"></div>
+ <div id="board" style="display:none" class="panel lb"></div>
+ <p class="small">Новые слова и слова с ошибками попадаются чаще, выученные — реже.<br>Результаты сохраняются в журнале преподавателя.</p>
+</div>
+</div>
+<script>
+const API='__API__';
+const DECK='__DECK__';
+const W=__DATA__;
+/* ---------- хранилище устройства ---------- */
+const PFX=DECK+'p';
+function lsGet(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function lsDel(k){try{localStorage.removeItem(k)}catch(e){}}
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let me=null,P=null,queue=[],pending=null,sess=null,lastAct=Date.now(),syncing=false,tests=[];
+const dev=/Mobi|Android|iPhone/i.test(navigator.userAgent)?'телефон':'компьютер';
+function saveLocal(){if(!me)return;lsSet(PFX+':p:'+me.id,P);lsSet(PFX+':q:'+me.id,{queue,pending,tests})}
+function post(o){return fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(o)}).then(r=>r.json())}
+function setNet(ok,txt){const n=$('net');n.className='net'+(ok?'':' off');n.textContent=txt||(ok?'☁ сохранено в журнале':'⚠ нет связи — сохранится позже')}
+/* ---------- вход ---------- */
+async function loadStudents(){let L=null;
+ try{const r=await fetch(API+'?action=students&t='+Date.now());L=await r.json();if(Array.isArray(L))lsSet('cards:students',L)}catch(e){}
+ if(!Array.isArray(L))L=lsGet('cards:students',[]);
+ const s=$('who');s.innerHTML='';const o0=document.createElement('option');o0.value='';o0.textContent=L.length?'— выберите своё имя —':'— нет связи с журналом —';s.appendChild(o0);
+ L.forEach(x=>{const o=document.createElement('option');o.value=x.id;o.textContent=x.n;s.appendChild(o)});
+ const a=lsGet('cards:auth',null);if(a){s.value=a.id;if(a.pin)$('pin').value=a.pin}
+ if(!L.length)$('lmsg').textContent='Список не загрузился. Проверьте интернет и обновите страницу.'}
+async function login(){const id=$('who').value,pin=$('pin').value.trim(),m=$('lmsg');
+ if(!id){m.textContent='Выберите своё имя.';return}if(!/^\d{4,6}$/.test(pin)){m.textContent='ПИН — это 4 цифры.';return}
+ m.textContent='Проверяю…';$('go').disabled=true;
+ const name=$('who').options[$('who').selectedIndex].textContent;
+ let r=null;try{r=await post({action:'login',id,pin,deck:DECK})}catch(e){r=null}
+ $('go').disabled=false;
+ if(r&&!r.ok){m.textContent=r.err==='locked'?'Слишком много неверных попыток. Подождите 10 минут.':'Неверный ПИН. Если забыли — спросите преподавателя.';return}
+ const saved=lsGet('cards:auth',null);
+ if(!r){ // нет интернета: пускаем только того, кто уже входил на этом устройстве с этим ПИН
+  if(!(saved&&saved.id===id&&saved.pin===pin)){m.textContent='Нет связи с журналом. Первый вход возможен только с интернетом.';return}
+ }
+ me={id,name:r?r.name:name,pin};
+ lsSet('cards:auth',$('rem').checked?me:{id});
+ const local=lsGet(PFX+':p:'+id,null),server=r&&r.progress;
+ P=(server&&(!local||(server.t||0)>=(local.t||0)))?server:(local||{t:0,w:{}});
+ const q=lsGet(PFX+':q:'+id,{queue:[],pending:null,tests:[]});queue=q.queue||[];pending=q.pending||null;tests=q.tests||[];
+ newSession();$('uname').textContent=me.name;$('login').style.display='none';$('app').style.display='';m.textContent='';
+ setNet(!!r,r?'☁ вход выполнен':'⚠ нет связи — занимайтесь, всё сохранится позже');tab('tc');if(r)sync()}
+$('go').onclick=login;$('pin').onkeydown=e=>{if(e.key==='Enter')login()};
+$('out').onclick=async()=>{await sync();const a=lsGet('cards:auth',null);if(a&&a.pin&&!$('rem').checked)lsSet('cards:auth',{id:a.id});
+ me=null;P=null;sess=null;$('app').style.display='none';$('login').style.display='';$('pin').value=(lsGet('cards:auth',{}).pin)||''};
+/* ---------- сеанс и синхронизация ---------- */
+function newSession(){sess={sid:me.id+'-'+Date.now().toString(36),start:Date.now(),active:0,cards:0,ok:0,bad:0,tests:0,dev}}
+function touch(){const now=Date.now();if(sess&&now-lastAct>30*60000){sync();newSession()}lastAct=now}
+setInterval(()=>{if(sess&&document.visibilityState==='visible'&&Date.now()-lastAct<60000)sess.active+=5},5000);
+let sentActive=-1;setInterval(()=>{if(me&&sess&&(queue.length||pending||sess.active!==sentActive)){sentActive=sess.active;sync()}},60000);
+async function sync(beacon){if(!me)return;if(syncing&&!beacon)return;
+ if(!pending&&(queue.length||tests.length)){pending={bid:me.id+'-'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),ev:queue.splice(0),tests:tests.splice(0)};saveLocal()}
+ const body=JSON.stringify({action:'sync',deck:DECK,id:me.id,pin:me.pin,progress:P,bid:pending?pending.bid:'',events:pending?pending.ev:[],tests:pending?pending.tests:[],session:sess});
+ if(beacon){try{navigator.sendBeacon(API,new Blob([body],{type:'text/plain;charset=utf-8'}))}catch(e){}return}
+ syncing=true;
+ try{const r=await (await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body})).json();
+  if(r.ok){pending=null;saveLocal();setNet(true);if(queue.length||tests.length)setTimeout(sync,300)}else if(r.err==='pin'||r.err==='locked'){setNet(false,'⚠ ПИН изменён — войдите заново')}else setNet(false)}
+ catch(e){setNet(false)}
+ syncing=false}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')sync(true)});
+window.addEventListener('pagehide',()=>sync(true));
+/* ---------- уровни ----------
+ box 0 — новое; 1 — не знает / ошибся; 2 — вспоминает; 3–4 — знает; 5 — выучено */
+function rec(w){return P.w[w.a]||(P.w[w.a]={n:0,ok:0,bad:0,box:0,last:-99})}
+function lvl(w){const r=P.w[w.a];if(!r||!r.n)return 'new';if(r.box<=2)return 'learn';if(r.box<=4)return 'good';return 'done'}
+function weight(w){const r=rec(w);if(!r.n)return 0;
+ let x=Math.pow(6-r.box,2)*(1+0.5*Math.min(r.bad,6));   // ошибался → чаще; выучено → реже
+ const ago=P.t-r.last;if(ago<2)x*=0.02;else if(ago<4)x*=0.3; // не повторять сразу
+ return x}
+function pickW(arr,f){let s=0;const ws=arr.map(a=>{const v=f(a);s+=v;return v});if(s<=0)return arr[Math.floor(Math.random()*arr.length)];
+ let r=Math.random()*s;for(let k=0;k<arr.length;k++){r-=ws[k];if(r<=0)return arr[k]}return arr[arr.length-1]}
+function answer(w,good,mode,d){const r=rec(w);P.t++;
+ if(good){r.ok++;r.box=(r.n===0)?3:Math.min(5,r.box+1)}else{r.bad++;r.box=1}
+ r.n++;r.last=P.t;touch();
+ queue.push([Date.now(),mode,d,w.a,w.r,w.t,good?1:0,r.box]);
+ if(mode==='c')sess.cards++;if(good)sess.ok++;else sess.bad++;
+ saveLocal();if(queue.length>=15)sync()}
+/* ---------- статистика ---------- */
+function stats(){const c={new:0,learn:0,good:0,done:0};W.forEach(w=>c[lvl(w)]++);const N=W.length;
+ const col={new:'#90A4AE',learn:'#E76F51',good:'#FFD54F',done:'#2A9D8F'},nm={new:'новые',learn:'учу (ошибки)',good:'знаю',done:'выучено'};
+ $('stats').innerHTML=`<div style="font-size:14px">Пройдено слов: <b>${N-c.new}</b> из ${N}</div><div class="bar">${['done','good','learn','new'].map(k=>`<i style="width:${c[k]/N*100}%;background:${col[k]}"></i>`).join('')}</div>`+
+ `<div class="leg">${['new','learn','good','done'].map(k=>`<span><b style="background:${col[k]}"></b>${nm[k]}: ${c[k]}</span>`).join('')}</div>`}
+/* ---------- карточки ---------- */
+const themes=['Все слова','Только трудные (с ошибками)',...new Set(W.map(w=>w.t))];
+const sel=$('theme');themes.forEach(t=>{const o=document.createElement('option');o.textContent=t;sel.appendChild(o)});
+let dir=1,cur=null,flip=false,cd=1,prevA=null,marked=false;
+function pool(){const t=sel.value;
+ if(t==='Все слова')return W;
+ if(t==='Только трудные (с ошибками)')return W.filter(w=>{const r=P.w[w.a];return r&&r.bad>0&&r.box<4});
+ return W.filter(w=>w.t===t)}
+function nextCard(){const all=pool();const A=all.filter(w=>w.a!==prevA||all.length===1);marked=false;if(!A.length){cur=null;return}
+ const fresh=A.filter(w=>!rec(w).n);
+ const weak=A.filter(w=>{const r=rec(w);return r.n&&r.box<=1&&P.t-r.last>=3});
+ // сначала новые слова; каждое ~3-е место — словам с ошибками
+ if(fresh.length&&!(weak.length&&Math.random()<0.34))cur=fresh[Math.floor(Math.random()*fresh.length)];
+ else cur=pickW(A,weight);
+ cd=dir===3?(Math.random()<0.5?1:2):dir;flip=false}
+function build(){prevA=null;nextCard();show()}
+function show(){stats();const c=$('card');const A=pool();
+ $('cnt').textContent=A.length?`В этой группе: ${A.length} слов · новых: ${A.filter(w=>!rec(w).n).length}`:'';
+ if(!cur){c.innerHTML='<div class="ru">'+(sel.value.startsWith('Только')?'Трудных слов пока нет 🎉':'Здесь пусто')+'</div>';return}
+ const w=cur,r=rec(w);
+ const tag=!r.n?'<span class="tag new">новое слово</span>':r.box<=1?`<span class="tag err">ошибка ×${r.bad}</span>`:'<span class="tag rep">повторение</span>';
+ const A1=`<div class="ar">${w.a}</div>`,R1=`<div class="ru">${w.r}</div>`;
+ const front=cd===1?A1:R1,back=cd===1?R1:A1;
+ c.innerHTML=tag+(flip?front+'<hr style="width:60%;border:0;border-top:1px solid #dde">'+back:front+'<div class="th">нажмите, чтобы увидеть ответ</div>')+`<div class="th">${w.t}</div>`}
+$('card').onclick=()=>{flip=!flip;touch();show()};
+function go(){prevA=cur.a;nextCard();show()}
+$('yes').onclick=()=>{if(!cur)return;if(marked){go();return}answer(cur,true,'c',cd);go()};
+// «Не знаю»: ошибка записывается, ответ показывается; следующее нажатие — дальше
+$('no').onclick=()=>{if(!cur)return;if(marked){go();return}answer(cur,false,'c',cd);
+ if(!flip){flip=true;marked=true;show();$('cnt').textContent='Запомните ответ и нажмите любую кнопку, чтобы продолжить';return}go()};
+sel.onchange=build;
+['d1','d2','d3'].forEach((id,k)=>$(id).onclick=()=>{dir=k+1;['d1','d2','d3'].forEach(x=>$(x).classList.toggle('on',x===id));cd=dir===3?(Math.random()<0.5?1:2):dir;flip=false;show()});
+/* ---------- тест ---------- */
+function shuffle(a){for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a}
+let Q=[],qi=0,score=0,t0=0;
+function startTest(){const left=W.slice(),pick=[];const N=Math.min(20,W.length);
+ const tw=w=>{const r=rec(w);return r.n?Math.pow(6-r.box,2)*(1+0.5*Math.min(r.bad,6)):12};
+ while(pick.length<N){const w=pickW(left,tw);pick.push(w);left.splice(left.indexOf(w),1)}
+ Q=pick.map((w,k)=>{const dq=k%2;const same=W.filter(x=>x!==w&&x.t===w.t),other=W.filter(x=>x!==w&&x.t!==w.t);
+  const ds=shuffle(same).slice(0,2).concat(shuffle(other)).slice(0,3);return {w,dq,opts:shuffle([w,...ds])}});qi=0;score=0;t0=Date.now();showQ()}
+function showQ(){const T=$('test');stats();
+ if(qi>=Q.length){
+  tests.push({ts:Date.now(),correct:score,total:Q.length,time:Math.round((Date.now()-t0)/1000)});sess.tests++;saveLocal();sync();
+  T.innerHTML=`<div class="big">${score} / ${Q.length}</div><p class="muted">${score>=18?'Отлично!':score>=14?'Хорошо':score>=10?'Удовлетворительно':'Нужно повторить'} · слова с ошибками будут попадаться чаще</p><button class="btn" style="width:100%" id="again">Ещё раз ↻</button>`;$('again').onclick=startTest;return}
+ const q=Q[qi];T.innerHTML=`<p class="muted">Вопрос ${qi+1} из ${Q.length} · баллы: ${score}</p><div class="q">${q.dq?'<div class="ru">'+q.w.r+'</div>':'<div class="ar">'+q.w.a+'</div>'}</div>`+
+  q.opts.map((o,k)=>`<button class="opt ${q.dq?'arx':''}" data-k="${k}">${q.dq?o.a:o.r}</button>`).join('');
+ T.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{const o=q.opts[+b.dataset.k];const right=o===q.w;if(right)score++;answer(q.w,right,'t',q.dq?2:1);
+  T.querySelectorAll('.opt').forEach(x=>{x.onclick=null;if(q.opts[+x.dataset.k]===q.w)x.classList.add('ok')});if(!right)b.classList.add('bad');
+  setTimeout(()=>{qi++;showQ()},right?600:1700)})}
+/* ---------- трудные ---------- */
+function hard(){const L=W.filter(w=>{const r=P.w[w.a];return r&&r.bad>0}).sort((a,b)=>P.w[b.a].bad-P.w[a.a].bad||P.w[a.a].box-P.w[b.a].box);
+ $('hardv').innerHTML=L.length?`<b>Слова, в которых вы ошибались</b><div class="hard">${L.map(w=>`<div><span>${w.r} · ошибок: ${P.w[w.a].bad}${P.w[w.a].box>=4?' ✓':''}</span><span class="a">${w.a}</span></div>`).join('')}</div>`:'Ошибок пока нет.'}
+/* ---------- рейтинг группы ---------- */
+async function board(){const B=$('board');B.innerHTML='Загрузка…';await sync();
+ try{const r=await (await fetch(API+'?action=board&deck='+DECK+'&t='+Date.now())).json();
+  const part=(t,L,u)=>`<h3>${t}</h3>`+(L&&L.length?`<ol>${L.map(x=>`<li class="${x.n===me.name?'me':''}">${esc(x.n)} — ${x.v} ${u}</li>`).join('')}</ol>`:'<p class="muted" style="text-align:left">Пока пусто.</p>');
+  B.innerHTML=part('⏱ Больше всех занимались',r.time,'мин.')+part('📚 Знают больше всего слов',r.known,'сл.')+part('🎯 Самые точные (от 50 ответов)',r.acc,'%')+
+   '<p class="small">Рейтинг обновляется раз в 2 минуты. Время считается только активное: когда вы отвечаете на карточки.</p>'}
+ catch(e){B.innerHTML='Нет связи с журналом.'}}
+function tab(id){['tc','tt','th','tb'].forEach(x=>$(x).classList.toggle('on',x===id));
+ $('cards').style.display=id==='tc'?'':'none';$('test').style.display=id==='tt'?'':'none';$('hardv').style.display=id==='th'?'':'none';$('board').style.display=id==='tb'?'':'none';
+ if(id==='tt')startTest();if(id==='th')hard();if(id==='tc')build();if(id==='tb')board()}
+$('tc').onclick=()=>tab('tc');$('tt').onclick=()=>tab('tt');$('th').onclick=()=>tab('th');$('tb').onclick=()=>tab('tb');
+loadStudents();
+</script></body></html>

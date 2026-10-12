@@ -1,0 +1,15 @@
+{
+ "key": "opredelenie",
+ "title": "Определение и именное предложение",
+ "description": "Пары, найди ошибку, огласовки, обратный перевод.",
+ "level": "A1",
+ "topics": [
+  "грамматика",
+  "определение"
+ ],
+ "added": "2026-09-15",
+ "legacy": "v1/dop_uprazhneniya.html",
+ "courses": [
+  "tsu-2-sem1"
+ ]
+}

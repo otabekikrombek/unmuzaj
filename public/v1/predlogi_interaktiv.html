@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Предлоги · интерактив</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;600;700&family=PT+Sans:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F1F6F4;--card:#FFFFFF;--ink:#1E2B2F;--muted:#51656A;--teal:#1D5C63;--sea:#2A9D8F;--coral:#D8573A;--sand:#E9C46A;--line:#CFE3DF;--soft:#E3F0ED;--ok:#2A7F62;--bad:#C0392B;--okbg:#E2F3EC;--badbg:#FBE7E4;
+ --box:#C98F55;--boxtop:#E0AE78;--boxside:#A87342;--ball:#D8573A;--floor:#D8E6E2;--sky:#EAF4F2;
+ --ru:'PT Sans','Segoe UI',Arial,sans-serif;--arf:'Noto Naskh Arabic','Amiri','Times New Roman',serif}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--paper:#12201F;--card:#1A2B2A;--ink:#E7F0EE;--muted:#A5BAB6;--teal:#7CC7C9;--sea:#56C2B2;--coral:#F08A6E;--line:#2D4543;--soft:#20363A;--ok:#63C79A;--bad:#F08074;--okbg:#1D3A30;--badbg:#3D2522;--floor:#23393A;--sky:#1A2E2E}}
+:root[data-theme="dark"]{--paper:#12201F;--card:#1A2B2A;--ink:#E7F0EE;--muted:#A5BAB6;--teal:#7CC7C9;--sea:#56C2B2;--coral:#F08A6E;--line:#2D4543;--soft:#20363A;--ok:#63C79A;--bad:#F08074;--okbg:#1D3A30;--badbg:#3D2522;--floor:#23393A;--sky:#1A2E2E}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--ru);font-size:17px;line-height:1.55}
+.ar{font-family:var(--arf);direction:rtl;unicode-bidi:isolate;font-size:1.45em;line-height:1.9}
+button{font:inherit;cursor:pointer}:focus-visible{outline:3px solid var(--sand);outline-offset:2px}
+.hero{background:var(--teal);color:#fff}.hero-in{max-width:1040px;margin:0 auto;padding:34px 20px 28px;display:grid;gap:8px}
+.hero h1{font-family:'Amiri',var(--arf);font-weight:700;font-size:clamp(42px,8vw,78px);line-height:1.3;margin:0;direction:rtl;text-align:right}
+.hero p{margin:0;max-width:64ch;color:#D9EEEC}.hero .t{font-size:24px;font-weight:700;color:#fff}
+.band{height:10px;background:var(--sand)}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border-bottom:1px solid var(--line)}
+.tabs{max-width:1040px;margin:0 auto;display:flex;gap:4px;overflow-x:auto;padding:8px 12px}
+.tabs button{white-space:nowrap;border:0;background:transparent;color:var(--muted);padding:8px 14px;border-radius:999px}
+.tabs button[aria-selected="true"]{background:var(--teal);color:#fff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tabs button[aria-selected="true"],:root:not([data-theme="light"]) .btn:not(.ghost){color:#0E1B1A}}
+:root[data-theme="dark"] .tabs button[aria-selected="true"],:root[data-theme="dark"] .btn:not(.ghost){color:#0E1B1A}
+main{max-width:1040px;margin:0 auto;padding:24px 16px 64px}section{display:none}section.on{display:block}
+h2{font-size:30px;line-height:1.2;margin:6px 0;color:var(--teal)}h3{font-size:20px;margin:18px 0 8px}
+.lead{color:var(--muted);max-width:72ch;margin:0 0 16px}.muted{color:var(--muted)}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0}
+.btn{border:0;background:var(--teal);color:#fff;padding:9px 16px;border-radius:10px;font-weight:700}
+.btn.ghost{background:transparent;color:var(--teal);border:1.5px solid var(--teal)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.stage{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.stage svg{display:block;width:100%;height:auto}
+#ball{transition:transform .6s cubic-bezier(.3,1.4,.5,1)}
+#box2{transition:opacity .4s}
+.caption{padding:12px 18px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+.caption .ar{font-size:30px}
+.preps{display:flex;flex-wrap:wrap;gap:8px;direction:rtl;margin-top:14px}
+.pchip{border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:0 14px;font-family:var(--arf);font-size:24px;line-height:1.8}
+.pchip[aria-pressed="true"]{border-color:var(--teal);background:var(--soft);box-shadow:0 0 0 3px var(--sand)}
+.pchip.ok{border-color:var(--ok);background:var(--okbg)}.pchip.bad{border-color:var(--bad);background:var(--badbg)}
+.seg{display:inline-flex;border:1.5px solid var(--line);border-radius:999px;overflow:hidden}
+.seg button{border:0;background:var(--card);color:var(--ink);padding:7px 16px}
+.seg button[aria-pressed="true"]{background:var(--teal);color:#fff;font-weight:700}
+.builder{display:grid;gap:14px}
+@media(min-width:820px){.builder{grid-template-columns:1fr 1fr}}
+.out{text-align:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.out .big{font-family:var(--arf);font-size:clamp(38px,7vw,58px);direction:rtl;line-height:1.7}
+.out .big .p{color:var(--teal)}.out .big .n{color:var(--coral)}
+.expl{margin-top:8px;color:var(--muted)}
+.gcard{border-radius:14px;background:var(--card);border:1px solid var(--line);margin:12px 0;overflow:hidden}
+.gcard summary{cursor:pointer;padding:12px 16px;font-weight:700;color:var(--teal);font-size:19px}
+.glist{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;padding:0 14px 14px}
+.gi{border:1px solid var(--line);border-radius:12px;padding:6px 12px;background:var(--paper)}
+.gi .ar{display:block;text-align:right;font-size:26px;line-height:1.6}
+.gi small{color:var(--muted)}
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+.qhead{display:flex;justify-content:space-between;color:var(--muted);font-size:15px}
+.bar{height:8px;background:var(--soft);border-radius:99px;overflow:hidden;margin:8px 0 16px}.bar i{display:block;height:100%;background:var(--sea);width:0;transition:width .3s}
+.qtext{font-size:20px;font-weight:700;margin:0 0 14px}.opts{display:grid;gap:10px}
+.opt{border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:8px 16px;text-align:right}
+.opt.rus{text-align:left;padding:12px 16px}.opt .ar{font-size:1.6em}
+.opt.ok{border-color:var(--ok);background:var(--okbg)}.opt.bad{border-color:var(--bad);background:var(--badbg)}
+.result{text-align:center;display:grid;gap:6px;justify-items:center}.level{font-size:42px;font-weight:700;color:var(--teal);line-height:1.1}
+.levels{display:grid;gap:6px}.levels div{display:flex;justify-content:space-between;padding:6px 12px;border-radius:8px;background:var(--soft)}
+input[type=text]{width:100%;font:inherit;padding:8px 10px;margin:8px 0 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)}
+@media (prefers-reduced-motion: reduce){#ball,#box2,.bar i{transition:none}}
+</style>
+</head>
+<body>
+<header class="hero"><div class="hero-in">
+ <h1 lang="ar">حُرُوفُ الْجَرِّ</h1>
+ <p class="t">Предлоги</p>
+ <p>Интерактивное пособие · 2 курс · начальная группа. Двигайте мяч вокруг ящика, собирайте сочетания «предлог + имя» и проверьте себя в тесте.</p>
+</div><div class="band" aria-hidden="true"></div></header>
+<nav><div class="tabs" role="tablist">
+ <button role="tab" data-t="scene" aria-selected="true">Где мяч?</button>
+ <button role="tab" data-t="build" aria-selected="false">Предлог + имя</button>
+ <button role="tab" data-t="dict" aria-selected="false">Три группы</button>
+ <button role="tab" data-t="quiz" aria-selected="false">Тест</button>
+</div></nav>
+<main>
+<section id="scene" class="on">
+ <h2>Где мяч?</h2>
+ <p class="lead">Режим «Смотреть»: нажмите на предлог — мяч переместится. Режим «Угадать»: мяч встаёт сам, а вы выбираете предлог. Мяч — <span class="ar" lang="ar" style="font-size:1.2em">الْكُرَةُ</span>, ящик — <span class="ar" lang="ar" style="font-size:1.2em">الصُّنْدُوقُ</span>. Пунктирный круг — мяч спрятан за ящиком.</p>
+ <div class="row"><div class="seg"><button id="mWatch" aria-pressed="true">Смотреть</button><button id="mGuess" aria-pressed="false">Угадать</button></div><span class="muted" id="gScore"></span><button class="btn ghost" id="gNext" hidden>Следующий</button></div>
+ <div class="stage" style="margin-top:12px">
+  <svg viewBox="0 0 600 330" role="img" aria-label="Мяч и ящик">
+   <rect width="600" height="330" fill="var(--sky)"/>
+   <rect y="276" width="600" height="54" fill="var(--floor)"/>
+   <g id="box2" opacity="0">
+    <rect x="410" y="148" width="110" height="82" fill="var(--box)" stroke="#7A5230" stroke-width="2"/>
+    <polygon points="410,148 438,124 548,124 520,148" fill="var(--boxtop)" stroke="#7A5230" stroke-width="2"/>
+    <polygon points="520,148 548,124 548,206 520,230" fill="var(--boxside)" stroke="#7A5230" stroke-width="2"/>
+    <rect x="416" y="230" width="8" height="46" fill="#7A5230"/><rect x="508" y="230" width="8" height="46" fill="#7A5230"/>
+   </g>
+   <g id="behindLayer"></g>
+   <g id="ballBack"></g>
+   <g id="box1">
+    <rect x="160" y="148" width="130" height="82" fill="var(--box)" stroke="#7A5230" stroke-width="2"/>
+    <polygon points="160,148 190,122 320,122 290,148" fill="var(--boxtop)" stroke="#7A5230" stroke-width="2"/>
+    <polygon points="178,146 198,130 306,130 286,146" fill="#5E3E22" opacity=".55"/>
+    <polygon points="290,148 320,122 320,206 290,230" fill="var(--boxside)" stroke="#7A5230" stroke-width="2"/>
+    <rect x="166" y="230" width="9" height="46" fill="#7A5230"/><rect x="276" y="230" width="9" height="46" fill="#7A5230"/>
+   </g>
+   <g id="ballFront"></g>
+   <circle id="ghost" cx="228" cy="190" r="22" fill="none" stroke="var(--ball)" stroke-width="3" stroke-dasharray="6 5" opacity="0"/>
+   <line id="gap" x1="240" y1="75" x2="240" y2="118" stroke="var(--muted)" stroke-width="2" stroke-dasharray="4 4" opacity="0"/>
+  </svg>
+  <div class="caption"><span class="ar" lang="ar" id="capAr">الْكُرَةُ عَلَى الصُّنْدُوقِ.</span><span id="capRu">Мяч — на ящике.</span></div>
+ </div>
+ <div class="preps" id="preps"></div>
+</section>
+
+<section id="build">
+ <h2>Предлог + имя</h2>
+ <p class="lead">Выберите предлог и имя. Вы увидите правильную форму родительного падежа и объяснение: почему такое окончание и как пишется предлог.</p>
+ <div class="row"><span class="muted">Состояние:</span><div class="seg"><button id="bInd" aria-pressed="false">неопределённое</button><button id="bDef" aria-pressed="true">с артиклем</button></div></div>
+ <div class="builder" style="margin-top:12px">
+  <div><h3>Предлог</h3><div class="preps" id="bPreps" style="margin-top:0"></div></div>
+  <div><h3>Имя</h3><div class="preps" id="bNouns" style="margin-top:0"></div></div>
+ </div>
+ <div class="out" style="margin-top:14px"><div class="big" id="bOut"></div><div id="bRu" style="font-size:20px"></div><div class="expl" id="bExpl"></div></div>
+</section>
+
+<section id="dict">
+ <h2>Три группы предлогов</h2>
+ <p class="lead">Нажмите на группу, чтобы раскрыть список.</p>
+ <div id="groups"></div>
+</section>
+
+<section id="quiz">
+ <h2>Тест</h2>
+ <p class="lead">15 вопросов. В конце — ваш уровень. Сделайте снимок экрана и отправьте преподавателю.</p>
+ <div id="qStart" class="qcard"><label for="qName"><b>Имя и фамилия</b></label><input id="qName" type="text" maxlength="40">
+  <div class="row"><button class="btn" id="qGo">Начать</button><span class="muted" id="qMsg"></span></div><h3>Уровни</h3><div class="levels" id="levels"></div></div>
+ <div id="qRun" class="qcard" hidden><div class="qhead"><span id="qNum"></span><span id="qTime">0:00</span></div><div class="bar"><i id="qBar"></i></div>
+  <p class="qtext" id="qText"></p><div class="opts" id="qOpts"></div><p class="muted" id="qExpl" style="margin-top:12px;min-height:1.5em"></p><button class="btn" id="qNext" hidden>Дальше</button></div>
+ <div id="qEnd" class="qcard" hidden><div class="result"><span class="muted" id="rName"></span><div class="level" id="rLevel"></div><div id="rScore" style="font-size:20px"></div><span class="muted" id="rDate"></span><button class="btn" id="qAgain">Пройти ещё раз</button></div></div>
+</section>
+</main>
+<script>
+(function(){"use strict";
+const $=s=>document.querySelector(s);const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const ar=t=>`<span class="ar" lang="ar">${t}</span>`;const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-selected',String(x===b)));document.querySelectorAll('main section').forEach(s=>s.classList.toggle('on',s.id===b.dataset.t));}));
+
+/* ---------- scene ---------- */
+const NS='http://www.w3.org/2000/svg';
+const POS={
+ 'فِي':{x:240,y:138,layer:'back',r:22,ar:'الْكُرَةُ فِي الصُّنْدُوقِ.',ru:'Мяч — в ящике.'},
+ 'دَاخِلَ':{x:240,y:138,layer:'back',r:22,ar:'الْكُرَةُ دَاخِلَ الصُّنْدُوقِ.',ru:'Мяч — внутри ящика.'},
+ 'عَلَى':{x:240,y:100,layer:'front',r:22,ar:'الْكُرَةُ عَلَى الصُّنْدُوقِ.',ru:'Мяч — на ящике.'},
+ 'فَوْقَ':{x:240,y:50,layer:'front',r:22,gap:true,ar:'الْكُرَةُ فَوْقَ الصُّنْدُوقِ.',ru:'Мяч — над ящиком.'},
+ 'تَحْتَ':{x:225,y:254,layer:'back',r:20,ar:'الْكُرَةُ تَحْتَ الصُّنْدُوقِ.',ru:'Мяч — под ящиком.'},
+ 'أَمَامَ':{x:215,y:296,layer:'front',r:26,ar:'الْكُرَةُ أَمَامَ الصُّنْدُوقِ.',ru:'Мяч — перед ящиком.'},
+ 'وَرَاءَ':{x:228,y:190,layer:'behind',r:22,ghost:true,ar:'الْكُرَةُ وَرَاءَ الصُّنْدُوقِ.',ru:'Мяч — за ящиком.'},
+ 'بِجَانِبِ':{x:365,y:254,layer:'front',r:22,ar:'الْكُرَةُ بِجَانِبِ الصُّنْدُوقِ.',ru:'Мяч — рядом с ящиком.'},
+ 'بَيْنَ':{x:358,y:254,layer:'front',r:22,two:true,ar:'الْكُرَةُ بَيْنَ الصُّنْدُوقَيْنِ.',ru:'Мяч — между двумя ящиками.'},
+ 'خَارِجَ':{x:80,y:254,layer:'front',r:22,ar:'الْكُرَةُ خَارِجَ الصُّنْدُوقِ.',ru:'Мяч — вне ящика.'}};
+const KEYS=Object.keys(POS);
+let ball=null,mode='watch',target=null,gOk=0,gAll=0;
+function makeBall(){const g=document.createElementNS(NS,'g');g.id='ball';const c=document.createElementNS(NS,'circle');c.setAttribute('r','22');c.setAttribute('fill','var(--ball)');c.setAttribute('stroke','#8E2F1B');c.setAttribute('stroke-width','2');
+ const s=document.createElementNS(NS,'path');s.setAttribute('d','M-16,-6 Q0,6 16,-6');s.setAttribute('stroke','#FFE3D6');s.setAttribute('stroke-width','3');s.setAttribute('fill','none');g.append(c,s);return g;}
+ball=makeBall();$('#ballFront').appendChild(ball);
+function place(k){const p=POS[k];const layer=p.layer==='back'?'#ballBack':p.layer==='behind'?'#behindLayer':'#ballFront';$(layer).appendChild(ball);
+ ball.style.transform=`translate(${p.x}px,${p.y}px) scale(${p.r/22})`;$('#gap').setAttribute('opacity',p.gap?'1':'0');$('#ghost').setAttribute('opacity',p.ghost?'1':'0');$('#box2').setAttribute('opacity',p.two?'1':'0');}
+function caption(k,hide){const p=POS[k];$('#capAr').textContent=hide?'الْكُرَةُ … الصُّنْدُوقِ.':p.ar;$('#capRu').textContent=hide?'Где мяч?':p.ru;}
+const pb=$('#preps');
+KEYS.forEach(k=>{const b=el('button','pchip',k);b.dataset.k=k;b.addEventListener('click',()=>onPrep(b,k));pb.appendChild(b);});
+function onPrep(b,k){if(mode==='watch'){pb.querySelectorAll('.pchip').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));place(k);caption(k);return;}
+ if(!target||b.classList.contains('ok'))return;gAll++;const ok=k===target||(['فِي','دَاخِلَ'].includes(k)&&['فِي','دَاخِلَ'].includes(target));
+ if(ok){gOk++;b.classList.add('ok');caption(target);$('#gNext').hidden=false;target=null;}else{b.classList.add('bad');}
+ $('#gScore').textContent=`Угадано: ${gOk} · попыток: ${gAll}`;}
+function newGuess(){pb.querySelectorAll('.pchip').forEach(x=>{x.classList.remove('ok','bad');x.setAttribute('aria-pressed','false');});target=KEYS[Math.floor(Math.random()*KEYS.length)];place(target);caption(target,true);$('#gNext').hidden=true;}
+$('#mWatch').addEventListener('click',()=>{mode='watch';$('#mWatch').setAttribute('aria-pressed','true');$('#mGuess').setAttribute('aria-pressed','false');$('#gNext').hidden=true;$('#gScore').textContent='';pb.querySelectorAll('.pchip').forEach(x=>x.classList.remove('ok','bad'));place('عَلَى');caption('عَلَى');});
+$('#mGuess').addEventListener('click',()=>{mode='guess';gOk=0;gAll=0;$('#mGuess').setAttribute('aria-pressed','true');$('#mWatch').setAttribute('aria-pressed','false');$('#gScore').textContent='Угадано: 0 · попыток: 0';newGuess();});
+$('#gNext').addEventListener('click',newGuess);
+place('عَلَى');
+
+/* ---------- builder ---------- */
+const PREPS=[['فِي','в'],['إِلَى','к, в'],['مِنْ','из, от'],['عَلَى','на'],['عَنْ','о'],['بِـ','с помощью'],['لِـ','для, у'],['كَـ','как'],['مَعَ','с'],['أَمَامَ','перед'],['تَحْتَ','под'],['بَعْدَ','после']];
+const NOUNS=[
+ {w:'كِتَابٌ',ru:'книга',ind:'كِتَابٍ',def:'الْكِتَابِ',t:'Трёхпадежное: родительный — кясра (-и / -ин).'},
+ {w:'مَدْرَسَةٌ',ru:'школа',ind:'مَدْرَسَةٍ',def:'الْمَدْرَسَةِ',t:'Трёхпадежное: кясра.'},
+ {w:'شَمْسٌ',ru:'солнце',ind:'شَمْسٍ',def:'الشَّمْسِ',t:'Солнечная буква: лям артикля не читается.'},
+ {w:'لُغَةٌ',ru:'язык',ind:'لُغَةٍ',def:'اللُّغَةِ',t:'Слово на лям: после «ли» пишется только одна лям артикля.'},
+ {w:'مَدَارِسُ',ru:'школы',ind:'مَدَارِسَ',def:'الْمَدَارِسِ',t:'Двухпадежное: без артикля — фатха; с артиклем — кясра.'},
+ {w:'صَحْرَاءُ',ru:'пустыня',ind:'صَحْرَاءَ',def:'الصَّحْرَاءِ',t:'Двухпадежное: без артикля — фатха.'},
+ {w:'مُسْتَشْفًى',ru:'больница',ind:'مُسْتَشْفًى',def:'الْمُسْتَشْفَى',t:'Алиф максура: форма не меняется.'},
+ {w:'طَالِبَانِ',ru:'два студента',ind:'طَالِبَيْنِ',def:'الطَّالِبَيْنِ',t:'Двойственное: -айни.'},
+ {w:'مُعَلِّمُونَ',ru:'учителя',ind:'مُعَلِّمِينَ',def:'الْمُعَلِّمِينَ',t:'Внешнее мн. ч. м. р.: -ӣна.'},
+ {w:'طَالِبَاتٌ',ru:'студентки',ind:'طَالِبَاتٍ',def:'الطَّالِبَاتِ',t:'Внешнее мн. ч. ж. р.: -āти(н).'},
+ {w:'فَاطِمَةُ',ru:'Фатима',ind:'فَاطِمَةَ',def:null,t:'Женское имя — двухпадежное: фатха вместо кясры. Артикля не принимает.'},
+ {w:'دِمَشْقُ',ru:'Дамаск',ind:'دِمَشْقَ',def:null,t:'Название города — двухпадежное: фатха.'}];
+let bp=0,bn=0,bdef=true;
+const bP=$('#bPreps'),bN=$('#bNouns');
+PREPS.forEach(([p,r],i)=>{const b=el('button','pchip',p);b.title=r;b.setAttribute('aria-pressed',String(i===0));b.addEventListener('click',()=>{bp=i;bP.querySelectorAll('.pchip').forEach((x,j)=>x.setAttribute('aria-pressed',String(j===i)));build();});bP.appendChild(b);});
+NOUNS.forEach((n,i)=>{const b=el('button','pchip',n.w);b.title=n.ru;b.setAttribute('aria-pressed',String(i===0));b.addEventListener('click',()=>{bn=i;bN.querySelectorAll('.pchip').forEach((x,j)=>x.setAttribute('aria-pressed',String(j===i)));build();});bN.appendChild(b);});
+const setB=d=>{bdef=d;$('#bDef').setAttribute('aria-pressed',String(d));$('#bInd').setAttribute('aria-pressed',String(!d));build();};
+$('#bDef').addEventListener('click',()=>setB(true));$('#bInd').addEventListener('click',()=>setB(false));
+function build(){const [p,pr]=PREPS[bp];const n=NOUNS[bn];let def=bdef&&n.def;const form=def?n.def:n.ind;let notes=[n.t];let html,prep=p.replace('ـ','');
+ if(bdef&&!n.def)notes.unshift('Имя собственное определённо само по себе — показана форма без артикля.');
+ if(['بِ','كَ'].includes(prep)){html=`<span class="p">${prep}</span><span class="n">${form}</span>`;notes.push('Предлоги «би» и «ка» пишутся слитно со словом.');}
+ else if(prep==='لِ'){if(def){if(form.startsWith('الل')){html=`<span class="p">لِ</span><span class="n">${form.slice(2)}</span>`;notes.push('«Ли» + слово на лям: алиф и одна лям артикля не пишутся.');}else{html=`<span class="p">لِ</span><span class="n">${form.slice(1)}</span>`;notes.push('«Ли» + артикль: алиф артикля не пишется.');}}else{html=`<span class="p">لِ</span><span class="n">${form}</span>`;notes.push('«Ли» пишется слитно со словом.');}}
+ else if(prep==='مِنْ'&&def){html=`<span class="p">مِنَ</span> <span class="n">${form}</span>`;notes.push('Перед артиклем «мин» получает фатху: мина-ль-…');}
+ else if(prep==='عَنْ'&&def){html=`<span class="p">عَنِ</span> <span class="n">${form}</span>`;notes.push('Перед артиклем «‘ан» получает кясру: ‘ани-ль-…');}
+ else{html=`<span class="p">${p}</span> <span class="n">${form}</span>`;if(['أَمَامَ','تَحْتَ','بَعْدَ'].includes(p))notes.push('Именной предлог: сам стоит в винительном (фатха), имя после него — в родительном.');}
+ $('#bOut').innerHTML=html;$('#bRu').textContent=`${pr} + ${n.ru}`;$('#bExpl').innerHTML=notes.join(' ');}
+build();
+
+/* ---------- groups ---------- */
+const G=[['I. Собственно предлоги',[['فِي','в, внутри'],['إِلَى','к, в; до'],['مِنْ','от, из, с'],['عَلَى','на'],['عَنْ','о, об'],['بِـ','посредством; в'],['لَدَى','у, при'],['مَعَ','с, вместе с'],['لِـ','для; у'],['كَـ','как'],['حَتَّى','до'],['مُنْذُ · مُذْ','с (о времени)']]],
+ ['II. Именные (наречные) предлоги',[['دَاخِلَ','внутри'],['خَارِجَ','вне'],['عَبْرَ','через'],['خِلَالَ','в течение'],['بَيْنَ','между'],['قُرْبَ','около'],['أَمَامَ','перед'],['إِزَاءَ','напротив'],['وَرَاءَ','за'],['فَوْقَ','над'],['تَحْتَ','под'],['خَلْفَ','позади'],['عِنْدَ','у'],['حَوْلَ','вокруг; о'],['حَوَالَيْ','около, примерно'],['قَبْلَ','до'],['بَعْدَ','после'],['أَثْنَاءَ','во время'],['ضِدَّ','против'],['تُجَاهَ','напротив'],['تِلْوَ','вслед за'],['إِبَّانَ','во время']]],
+ ['III. Составные предлоги',[['لِأَجْلِ','ради'],['فِي سَبِيلِ','во имя'],['خِلَافًا لِـ','вопреки'],['خَوْفًا مِنْ','из страха перед'],['فَضْلًا عَنْ','помимо'],['عَلَى مَقْرُبَةٍ مِنْ','вблизи от'],['بِالْقُرْبِ مِنْ','вблизи от'],['بِجَانِبِ','рядом с'],['بِالرَّغْمِ مِنْ','несмотря на'],['بِصَرْفِ النَّظَرِ عَنْ','независимо от'],['بِالنَّظَرِ إِلَى','ввиду'],['نَظَرًا إِلَى','ввиду'],['عِوَضًا عَنْ','вместо'],['نَتِيجَةً لِـ','в результате'],['بِوَاسِطَةِ','посредством'],['بِجِوَارِ','рядом с'],['فِي غُضُونِ','в течение']]]];
+G.forEach(([t,list],i)=>{const d=el('details','gcard');if(i===0)d.open=true;d.innerHTML=`<summary>${t}</summary><div class="glist">${list.map(([a,b])=>`<div class="gi">${ar(a)}<small>${b}</small></div>`).join('')}</div>`;$('#groups').appendChild(d);});
+
+/* ---------- quiz ---------- */
+const Q=[
+ ['«в школе»',['فِي الْمَدْرَسَةِ','فِي الْمَدْرَسَةُ','فِي الْمَدْرَسَةَ','فِي مَدْرَسَةُ'],'После предлога — родительный.'],
+ ['«из Дамаска»',['مِنْ دِمَشْقَ','مِنْ دِمَشْقٍ','مِنْ دِمَشْقِ','مِنْ دِمَشْقُ'],'Имя города — двухпадежное: фатха.'],
+ ['«из дома» (с артиклем)',['مِنَ الْبَيْتِ','مِنْ الْبَيْتِ','مِنِ الْبَيْتِ','مِنُ الْبَيْتِ'],'Перед артиклем «мин» → «мина».'],
+ ['«об уроке»',['عَنِ الدَّرْسِ','عَنَ الدَّرْسِ','عَنْ الدَّرْسُ','عَنِ الدَّرْسَ'],'Перед артиклем «‘ан» → «‘ани».'],
+ ['«для студента»',['لِلطَّالِبِ','لِالطَّالِبِ','لِ الطَّالِبِ','لِلطَّالِبُ'],'«Ли» + артикль: алиф не пишется.'],
+ ['«для языка»',['لِلُّغَةِ','لِاللُّغَةِ','لِللُّغَةِ','لِلُغَةِ'],'Слово на лям: одна лям артикля.'],
+ ['«ручкой»',['بِالْقَلَمِ','بِ الْقَلَمِ','بِلْقَلَمِ','بِالْقَلَمُ'],'«Би» пишется слитно.'],
+ ['«в больницу»',['إِلَى الْمُسْتَشْفَى','إِلَى الْمُسْتَشْفِي','إِلَى الْمُسْتَشْفًى','إِلَى الْمُسْتَشْفَا'],'Алиф максура не меняется; с артиклем — без танвина.'],
+ ['«между двумя домами»',['بَيْنَ الْبَيْتَيْنِ','بَيْنَ الْبَيْتَانِ','بَيْنَ الْبُيُوتِ','بَيْنَ الْبَيْتِ'],'Двойственное в родительном: -айни.'],
+ ['«с учителями»',['مَعَ الْمُعَلِّمِينَ','مَعَ الْمُعَلِّمُونَ','مَعَ الْمُعَلِّمَيْنِ','مَعَ الْمُعَلِّمِ'],'Внешнее мн. ч. м. р.: -ӣна.'],
+ ['«в школах» (неопр.)',['فِي مَدَارِسَ','فِي مَدَارِسٍ','فِي مَدَارِسِ','فِي مَدَارِسُ'],'Двухпадежное без артикля: фатха.'],
+ ['«позади Фатимы»',['خَلْفَ فَاطِمَةَ','خَلْفِ فَاطِمَةَ','خَلْفَ فَاطِمَةِ','خَلْفَ فَاطِمَةٍ'],'Именной предлог с фатхой; женское имя — фатха.'],
+ ['Какой предлог значит «над», не касаясь?',['فَوْقَ','عَلَى','تَحْتَ','عِنْدَ'],'«Фауқа» — над; «‘аля» — на поверхности.'],
+ ['«В комнате (есть) студент.»',['فِي الْغُرْفَةِ طَالِبٌ','طَالِبٌ فِي الْغُرْفَةِ','الطَّالِبُ فِي غُرْفَةٍ','فِي غُرْفَةٍ الطَّالِبُ'],'Неопределённое подлежащее — сказуемое с предлогом вперёд.'],
+ ['«У учителя есть книга.»',['لِلْمُعَلِّمِ كِتَابٌ','فِي الْمُعَلِّمِ كِتَابٌ','الْمُعَلِّمُ كِتَابٌ','كِتَابٌ لِلْمُعَلِّمُ'],'Обладание — «ли» или ‘инда; «фи» к людям в значении «у» не употребляется.'],
+ ['«золотое кольцо» (кольцо из золота)',['خَاتَمٌ مِنْ ذَهَبٍ','خَاتَمٌ عَنْ ذَهَبٍ','خَاتَمٌ إِلَى ذَهَبٍ','خَاتَمٌ مِنْ ذَهَبٌ'],'«Мин» — материал.'],
+ ['Противоположность к قَبْلَ',['بَعْدَ','أَمَامَ','فَوْقَ','بَيْنَ'],'«До» ≠ «после».'],
+ ['«как солнце»',['كَالشَّمْسِ','كَ الشَّمْسِ','كَالشَّمْسُ','كَلشَّمْسِ'],'«Ка» пишется слитно.']];
+const N=15,LEV=[[15,'Мастер','15'],[12,'Отлично','12–14'],[9,'Хорошо','9–11'],[6,'Базовый','6–8'],[0,'Начинающий','0–5']];
+const levelOf=s=>LEV.find(l=>s>=l[0])[1];$('#levels').innerHTML=LEV.map(l=>`<div><b>${l[1]}</b><span>${l[2]} правильных</span></div>`).join('');
+const wrap=t=>t.replace(/([\u0600-\u06FF][\u0600-\u06FF\u064B-\u0652\s]*)/g,m=>`<span class="ar" lang="ar" style="font-size:1.25em">${m.trim()}</span> `);
+const fmt=s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+let qs=[],qi=0,score=0,t0=0,timer=null,done=false,name='';try{const n=localStorage.getItem('prepName');if(n)$('#qName').value=n;}catch(e){}
+function start(){name=$('#qName').value.trim();if(!name){$('#qMsg').textContent='Введите имя.';return;}try{localStorage.setItem('prepName',name);}catch(e){}
+ qs=shuffle(Q.slice()).slice(0,N).map(q=>({t:q[0],o:shuffle(q[1].slice()),c:q[1][0],e:q[2]}));qi=0;score=0;t0=Date.now();$('#qStart').hidden=true;$('#qEnd').hidden=true;$('#qRun').hidden=false;
+ clearInterval(timer);timer=setInterval(()=>$('#qTime').textContent=fmt(Math.floor((Date.now()-t0)/1000)),500);show();}
+function show(){const q=qs[qi];done=false;$('#qNum').textContent=`Вопрос ${qi+1} из ${N} · верно: ${score}`;$('#qBar').style.width=`${qi/N*100}%`;$('#qText').innerHTML=wrap(q.t);$('#qExpl').textContent='';$('#qNext').hidden=true;
+ const box=$('#qOpts');box.innerHTML='';q.o.forEach(o=>{const isAr=/[\u0600-\u06FF]/.test(o);const b=el('button','opt'+(isAr?'':' rus'),isAr?ar(o):o);b.addEventListener('click',()=>pick(b,o));box.appendChild(b);});}
+function pick(b,o){if(done)return;done=true;const q=qs[qi];const ok=o===q.c;if(ok)score++;[...$('#qOpts').children].forEach(x=>{if(x.textContent.trim()===q.c)x.classList.add('ok');});if(!ok)b.classList.add('bad');
+ $('#qExpl').innerHTML=(ok?'Верно. ':'Неверно. ')+wrap(q.e);$('#qNext').hidden=false;$('#qNext').textContent=qi===N-1?'Завершить':'Дальше';$('#qNext').focus();}
+$('#qNext').addEventListener('click',()=>{qi++;if(qi>=N){clearInterval(timer);const s=Math.floor((Date.now()-t0)/1000);$('#qRun').hidden=true;$('#qEnd').hidden=false;$('#rName').textContent=name;$('#rLevel').textContent=levelOf(score);$('#rScore').textContent=`${score} из ${N} · время ${fmt(s)}`;$('#rDate').textContent=new Date().toLocaleString('ru-RU',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'});}else show();});
+$('#qGo').addEventListener('click',start);$('#qName').addEventListener('keydown',e=>{if(e.key==='Enter')start();});$('#qAgain').addEventListener('click',()=>{$('#qEnd').hidden=true;$('#qStart').hidden=false;});
+})();
+</script>
+</body>
+</html>

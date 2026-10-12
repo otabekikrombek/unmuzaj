@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Урок 9 · Природа и экология</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@500;700&family=Rubik:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg1:#16324F;--bg2:#1D5C63;--ink:#FFFFFF;--muted:#D3E4EA;--card:rgba(255,255,255,.12);--line:rgba(255,255,255,.25);
+ --red:#E2504C;--blue:#2F7BE5;--yellow:#E8A520;--green:#2AA36B;--ok:#2AA36B;--bad:#E2504C;--gold:#FFD54F;
+ --L:#8E7CF0;--R:#36B3C9;--G:#F08A4B;--V:#6CC46A;
+ --ru:'Rubik','Segoe UI',Arial,sans-serif;--arf:'Noto Naskh Arabic','Amiri','Times New Roman',serif}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html,body{min-height:100%}
+body{margin:0;font-family:var(--ru);color:var(--ink);background:linear-gradient(135deg,var(--bg1),var(--bg2)) fixed;font-size:18px;line-height:1.45}
+button{font:inherit;cursor:pointer}:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.ar{font-family:var(--arf);direction:rtl;unicode-bidi:isolate;font-size:1.3em}
+.wrap{max-width:920px;margin:0 auto;padding:20px 16px 40px;display:flex;flex-direction:column;gap:16px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.logo{font-weight:800;font-size:22px}
+.icon{background:var(--card);border:1px solid var(--line);color:#fff;border-radius:999px;padding:6px 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:22px}
+h1{font-size:clamp(28px,6vw,46px);margin:0;font-weight:800;line-height:1.1}
+.sub{color:var(--muted);margin:6px 0 0}
+label{display:block;font-weight:600;margin:12px 0 6px}
+input{width:100%;font:inherit;padding:12px 14px;border-radius:14px;border:0;background:#fff;color:#1E1E2E}
+.go{margin-top:16px;width:100%;border:0;border-radius:16px;padding:16px;font-size:22px;font-weight:800;color:#1E1E2E;background:var(--gold);box-shadow:0 6px 0 #C9A227}
+.go:active{transform:translateY(3px);box-shadow:0 3px 0 #C9A227}
+.btn2:disabled{opacity:.6;cursor:default}
+.btn2{border:1px solid var(--line);background:var(--card);color:#fff;border-radius:14px;padding:10px 16px;font-weight:600}
+.parts{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+@media(max-width:560px){.parts{grid-template-columns:1fr 1fr}}
+.part{border-radius:14px;padding:10px 12px;font-weight:600;color:#10202A}
+.pL{background:var(--L)}.pR{background:var(--R)}.pG{background:var(--G)}.pV{background:var(--V)}
+.part small{display:block;font-weight:400}
+.chip{display:inline-block;border-radius:999px;padding:2px 12px;font-weight:700;color:#10202A}
+.count{font-size:120px;font-weight:800;text-align:center;animation:pop .9s ease}
+@keyframes pop{0%{transform:scale(.3);opacity:0}60%{transform:scale(1.15);opacity:1}100%{transform:scale(1)}}
+.hud{display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:600;flex-wrap:wrap}
+.bar{height:12px;background:rgba(255,255,255,.2);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--gold);width:100%;transition:width .2s linear}
+.q{font-size:clamp(20px,3.4vw,27px);font-weight:600;text-align:center;padding:24px 18px;background:#fff;color:#1E1E2E;border-radius:22px}
+.q .ar{color:#16324F}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.tiles{grid-template-columns:1fr}}
+.tile{border:0;border-radius:18px;padding:14px 16px 14px 56px;min-height:80px;color:#fff;font-weight:700;font-size:19px;text-align:left;position:relative;box-shadow:0 6px 0 rgba(0,0,0,.25);transition:opacity .3s}
+.tile:active{transform:translateY(3px)}
+.tile .sh{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:26px}
+.tile .ar{font-size:1.45em;display:block;text-align:right}
+.t0{background:var(--red)}.t1{background:var(--blue)}.t2{background:var(--yellow)}.t3{background:var(--green)}
+.tile.dim{opacity:.35}.tile.right{outline:5px solid #fff}
+.fb{text-align:center;font-size:24px;font-weight:800;min-height:1.5em}
+.expl{text-align:center;color:var(--muted)}
+.big{font-size:clamp(44px,9vw,72px);font-weight:800;text-align:center;line-height:1}
+.secs{display:grid;gap:8px;margin:14px 0}
+.srow{display:grid;grid-template-columns:175px 1fr 60px;gap:10px;align-items:center}
+.srow>span:first-child{font-family:var(--arf);font-size:19px}
+.sbar{height:14px;border-radius:99px;background:rgba(255,255,255,.18);overflow:hidden}.sbar i{display:block;height:100%}
+.lb{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.lb li{display:grid;grid-template-columns:44px 1fr auto;gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px;cursor:pointer}
+.lb li:hover{background:rgba(255,255,255,.2)}
+.lb li.me{background:var(--gold);color:#1E1E2E}
+.lb .pl{font-weight:800;font-size:20px;text-align:center}
+.lb .pts{font-weight:800;text-align:right}
+.lb small{display:block;opacity:.85;font-weight:400}
+.podium li:nth-child(1) .pl::before{content:"🥇"}.podium li:nth-child(2) .pl::before{content:"🥈"}.podium li:nth-child(3) .pl::before{content:"🥉"}
+.podium li:nth-child(-n+3) .pl span{display:none}
+.modal{position:fixed;inset:0;background:rgba(5,15,25,.75);z-index:20;display:flex;align-items:flex-start;justify-content:center;padding:20px 12px;overflow:auto}
+.mbox{background:#fff;color:#1E2B2F;border-radius:20px;max-width:860px;width:100%;padding:22px;position:relative}
+.mclose{position:absolute;right:14px;top:12px;border:0;background:#E9EEF0;border-radius:999px;width:40px;height:40px;font-size:20px}
+.mbox h2{margin:0 40px 6px 0;font-size:26px}
+.mbox .sbar{background:#E3EEF0}
+.q .ar{font-size:1.35em;display:inline-block}
+.mbox .ar{color:#16324F}
+.rv{border-radius:14px;padding:12px 14px;margin:10px 0;border:2px solid}
+.rv.ok{border-color:#2AA36B;background:#E9F7EF}.rv.bad{border-color:#E2504C;background:#FDECEA}
+.rvh{display:flex;justify-content:space-between;gap:10px;font-size:15px;color:#51656A;margin-bottom:4px}
+.rvq{font-weight:700;margin-bottom:6px}
+.rve{color:#51656A;margin-top:6px;font-style:italic}
+.txt p{margin:6px 0;text-align:right;line-height:2}
+.txt .lab{color:#D8573A;font-weight:700;font-size:15px;text-align:left}
+canvas#conf{position:fixed;inset:0;pointer-events:none;z-index:30}
+.hide{display:none!important}
+.note{color:var(--muted);font-size:15px;text-align:center}
+@media (prefers-reduced-motion: reduce){.count,.bar i{animation:none;transition:none}}
+</style>
+</head>
+<body>
+<canvas id="conf" aria-hidden="true"></canvas>
+<div class="wrap">
+ <div class="top"><span class="logo">📖 Урок 9</span><button class="icon" id="snd">🔊 Звук</button></div>
+
+ <section id="sStart" class="card">
+  <h1>Урок 9: Природа и экология</h1>
+  <p class="ar" style="font-size:28px;text-align:right;margin:8px 0 0" id="hTitle"></p>
+  <p class="sub">20 вопросов на арабском по тексту урока: понимание, слова, грамматика, исправление ошибок. У каждого свой набор вопросов.</p>
+  <div class="parts">
+   <div class="part pR">📖 فَهْمُ النَّصِّ<small>понимание · 8</small></div>
+   <div class="part pV">🔤 الْمُفْرَدَاتُ<small>слова · 4</small></div>
+   <div class="part pG">🧩 الْقَوَاعِدُ<small>грамматика · 5</small></div>
+   <div class="part pL">🛠️ تَصْحِيحُ الْأَخْطَاءِ<small>ошибки · 3</small></div>
+  </div>
+  <label for="nm">Имя и фамилия</label><input id="nm" maxlength="40" autocomplete="name">
+  <label for="gr">Группа</label><input id="gr" maxlength="20" placeholder="например, 2-курс-1">
+  <button class="go" id="start">Начать ▶</button>
+  <p class="note" id="msg"></p>
+ </section>
+
+ <section id="sCount" class="card hide"><div class="count" id="cnt">3</div></section>
+
+ <section id="sIntro" class="card hide">
+  <span class="chip" id="inChip"></span>
+  <h1 id="inTitle" style="margin-top:10px"></h1>
+  <p class="sub" id="inText"></p>
+  <div id="inExtra" style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap"></div>
+  <button class="go" id="inGo">К вопросам ▶</button>
+ </section>
+
+ <section id="sQ" class="hide" style="display:flex;flex-direction:column;gap:14px">
+  <div class="hud"><span class="chip" id="qChip"></span><span id="qn"></span><span id="pts">0 очков</span><button class="btn2 hide" id="txtBtn">📄 Текст</button><span id="tm">20</span></div>
+  <div class="bar"><i id="tb"></i></div>
+  <div class="q" id="qt"></div>
+  <div class="tiles" id="tiles"></div>
+  <div class="fb" id="fb"></div>
+  <div class="expl" id="ex"></div>
+ </section>
+
+ <section id="sEnd" class="card hide">
+  <p class="sub" id="eName" style="text-align:center"></p>
+  <div class="big" id="ePts"></div>
+  <p style="text-align:center;font-size:22px;font-weight:700;margin:6px 0" id="eLvl"></p>
+  <div class="secs" id="eSecs"></div>
+  <p class="note" id="eInfo"></p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center"><button class="btn2" id="myAns">📋 Мои ответы</button><button class="btn2" id="again">↻ Ещё раз</button></div>
+ </section>
+
+ <section id="sBoard" class="card hide">
+  <h1 style="font-size:32px">🏆 Таблица результатов</h1>
+  <p class="note" id="bNote">Нажмите на имя, чтобы увидеть ответы студента.</p>
+  <ol class="lb podium" id="board"></ol>
+ </section>
+</div>
+
+<div id="modal" class="modal hide" role="dialog" aria-modal="true"><div class="mbox"><button class="mclose" id="mclose" aria-label="Закрыть">✕</button><div id="mbody"></div></div></div>
+
+<script>
+(function(){"use strict";
+/* ===== НАСТРОЙКИ ===== */
+const SHEET_URL='https://script.google.com/macros/s/AKfycbwDMEfbi19gOwmBIO7Ulbc8XXLIPR_-zBkdwlIAhuQjXjukHVVLkWlsrejdTPv15KZSFA/exec';
+const QUIZ='matn-09';
+const PLAN=[['F',8],['V',4],['G',5],['E',3]];
+const SEC={F:{n:'فَهْمُ النَّصِّ',i:'📖',c:'var(--R)',t:30},V:{n:'الْمُفْرَدَاتُ',i:'🔤',c:'var(--V)',t:20},G:{n:'الْقَوَاعِدُ',i:'🧩',c:'var(--G)',t:25},E:{n:'تَصْحِيحُ الْأَخْطَاءِ',i:'🛠️',c:'var(--L)',t:30}};
+const WINDOW_HOURS=6;
+/* ===================== */
+const POOL=[{"id": 1, "s": "F", "q": "مَا عُنْوَانُ النَّصِّ؟", "o": ["الْبِيئَةُ: مَسْؤُولِيَّةُ مَنْ؟", "الْهَاتِفُ الذَّكِيُّ", "الْمَدِينَةُ وَالْقَرْيَةُ", "بَحْرُ آرَالَ"], "e": "Заголовок текста."}, {"id": 2, "s": "F", "q": "الْبِيئَةُ فِي النَّصِّ:", "o": ["بَيْتٌ كَبِيرٌ لِلْإِنْسَانِ وَالْحَيَوَانِ وَالنَّبَاتِ", "مَدِينَةٌ كَبِيرَةٌ", "نَهْرٌ كَبِيرٌ", "صَحْرَاءُ وَاسِعَةٌ"], "e": "Предложение (٢): الْبِيئَةُ بَيْتٌ كَبِيرٌ لِلْإِنْسَانِ وَالْحَيَوَانِ وَالنَّبَاتِ."}, {"id": 3, "s": "F", "q": "طَبِيعَةُ أُوزْبَكِسْتَانَ:", "o": ["جَمِيلَةٌ وَغَنِيَّةٌ", "قَبِيحَةٌ وَفَقِيرَةٌ", "جَمِيلَةٌ وَفَقِيرَةٌ", "صَغِيرَةٌ وَمُلَوَّثَةٌ"], "e": "Предложение (٤): طَبِيعَةُ أُوزْبَكِسْتَانَ جَمِيلَةٌ وَغَنِيَّةٌ."}, {"id": 4, "s": "F", "q": "سَيْحُونُ وَجَيْحُونُ:", "o": ["نَهْرَانِ", "جَبَلَانِ", "مَدِينَتَانِ", "بَحْرَانِ"], "e": "Предложение (٦): سَيْحُونُ وَجَيْحُونُ نَهْرَانِ كَبِيرَانِ."}, {"id": 5, "s": "F", "q": "النَّهْرَانِ مَصْدَرَا … لِلْحُقُولِ وَالْقُرَى.", "o": ["الْمَاءِ", "الْهَوَاءِ", "الدُّخَانِ", "التَّلَوُّثِ"], "e": "Предложение (٧): النَّهْرَانِ مَصْدَرَا الْمَاءِ لِلْحُقُولِ وَالْقُرَى."}, {"id": 6, "s": "F", "q": "فِي فَرْغَانَةَ:", "o": ["حَدَائِقُ خَضْرَاءُ وَبَسَاتِينُ", "مَصَانِعُ كَثِيرَةٌ", "صَحْرَاءُ مَالِحَةٌ", "بَحْرٌ كَبِيرٌ"], "e": "Предложение (٨): وَفِي فَرْغَانَةَ حَدَائِقُ خَضْرَاءُ وَبَسَاتِينُ كَثِيرَةٌ."}, {"id": 7, "s": "F", "q": "طَشْقَنْدُ مَدِينَةٌ …", "o": ["خَضْرَاءُ", "صَفْرَاءُ", "بَيْضَاءُ", "سَوْدَاءُ"], "e": "Предложение (٩): أَمَّا طَشْقَنْدُ فَهِيَ مَدِينَةٌ خَضْرَاءُ ذَاتُ مُتَنَزَّهَاتٍ وَأَشْجَارٍ."}, {"id": 8, "s": "F", "q": "هَوَاءُ الْجِبَالِ:", "o": ["نَقِيٌّ", "مُلَوَّثٌ", "أَسْوَدُ", "مَالِحٌ"], "e": "Предложение (١٠): هَوَاءُ الْجِبَالِ نَقِيٌّ، وَالسَّمَاءُ هُنَاكَ صَافِيَةٌ."}, {"id": 9, "s": "F", "q": "دُخَانُ الْمَصَانِعِ:", "o": ["أَسْوَدُ", "أَبْيَضُ", "أَخْضَرُ", "أَصْفَرُ"], "e": "Предложение (١٣): دُخَانُ الْمَصَانِعِ أَسْوَدُ، وَمُسْتَوَى التَّلَوُّثِ مُرْتَفِعٌ."}, {"id": 10, "s": "F", "q": "عَلَى ضِفَافِ الْأَنْهَارِ:", "o": ["أَكْيَاسٌ وَزُجَاجَاتٌ", "أَشْجَارٌ وَبَسَاتِينُ", "سَيَّارَاتٌ", "مَصَانِعُ"], "e": "Предложение (١٤): وَعَلَى ضِفَافِ الْأَنْهَارِ أَكْيَاسٌ بِلَاسْتِيكِيَّةٌ وَزُجَاجَاتٌ فَارِغَةٌ."}, {"id": 11, "s": "F", "q": "الْمِثَالُ الْمُحْزِنُ فِي النَّصِّ:", "o": ["بَحْرُ آرَالَ", "نَهْرُ سَيْحُونَ", "مَدِينَةُ طَشْقَنْدَ", "فَرْغَانَةُ"], "e": "Предложение (١٥): وَهُنَالِكَ مِثَالٌ مُحْزِنٌ: بَحْرُ آرَالَ."}, {"id": 12, "s": "F", "q": "فِي مَكَانِ الْبَحْرِ الْيَوْمَ:", "o": ["صَحْرَاءُ مَالِحَةٌ", "حَدَائِقُ خَضْرَاءُ", "مَصَانِعُ كَثِيرَةٌ", "مِيَاهٌ عَذْبَةٌ"], "e": "Предложение (١٦): فِي مَكَانِ الْبَحْرِ الْيَوْمَ صَحْرَاءُ مَالِحَةٌ."}, {"id": 13, "s": "F", "q": "أَخُو لَيْلَى:", "o": ["طَبِيبٌ", "مُهَنْدِسٌ", "طَالِبٌ", "مُعَلِّمٌ"], "e": "Предложение (١٨): أَخُو لَيْلَى طَبِيبٌ فِي مُسْتَشْفَى نُوكُوسَ."}, {"id": 14, "s": "F", "q": "سَبَبُ الْأَمْرَاضِ فِي رَأْيِ أَخِي لَيْلَى:", "o": ["الْمَاءُ وَالْهَوَاءُ", "السَّيَّارَاتُ", "الْهَوَاتِفُ", "الْبَسَاتِينُ"], "e": "Предложение (١٩): رَأْيُ أَخِي لَيْلَى وَاضِحٌ: الْأَمْرَاضُ هُنَاكَ كَثِيرَةٌ، وَالسَّبَبُ فِي الْمَاءِ وَالْهَوَاءِ."}, {"id": 15, "s": "F", "q": "الْفِكْرَةُ الرَّئِيسِيَّةُ فِي النَّصِّ:", "o": ["الْبِيئَةُ مَسْؤُولِيَّةُ الْجَمِيعِ", "الْبِيئَةُ مَسْؤُولِيَّةُ الدَّوْلَةِ فَقَطْ", "طَبِيعَةُ أُوزْبَكِسْتَانَ فَقِيرَةٌ", "الْمَصَانِعُ مُفِيدَةٌ فَقَطْ"], "e": "Предложение (٢٢): هِيَ مَسْؤُولِيَّةُ الدَّوْلَةِ وَالْمَصَانِعِ، وَمَسْؤُولِيَّةُ كُلِّ إِنْسَانٍ أَيْضًا."}, {"id": 16, "s": "F", "q": "صَحِيحٌ أَمْ خَطَأٌ؟ طَبِيعَةُ أُوزْبَكِسْتَانَ فَقِيرَةٌ.", "o": ["خَطَأٌ", "صَحِيحٌ"], "e": "Неверно: богатая. Предложение (٤): طَبِيعَةُ أُوزْبَكِسْتَانَ جَمِيلَةٌ وَغَنِيَّةٌ."}, {"id": 17, "s": "F", "q": "صَحِيحٌ أَمْ خَطَأٌ؟ سَيْحُونُ وَجَيْحُونُ نَهْرَانِ كَبِيرَانِ.", "o": ["صَحِيحٌ", "خَطَأٌ"], "e": "Предложение (٦): سَيْحُونُ وَجَيْحُونُ نَهْرَانِ كَبِيرَانِ."}, {"id": 18, "s": "F", "q": "صَحِيحٌ أَمْ خَطَأٌ؟ طَشْقَنْدُ مَدِينَةٌ ذَاتُ مُتَنَزَّهَاتٍ وَأَشْجَارٍ.", "o": ["صَحِيحٌ", "خَطَأٌ"], "e": "Предложение (٩): أَمَّا طَشْقَنْدُ فَهِيَ مَدِينَةٌ خَضْرَاءُ ذَاتُ مُتَنَزَّهَاتٍ وَأَشْجَارٍ."}, {"id": 19, "s": "F", "q": "صَحِيحٌ أَمْ خَطَأٌ؟ هَوَاءُ الْجِبَالِ مُلَوَّثٌ.", "o": ["خَطَأٌ", "صَحِيحٌ"], "e": "Неверно: чистый. Предложение (١٠): هَوَاءُ الْجِبَالِ نَقِيٌّ، وَالسَّمَاءُ هُنَاكَ صَافِيَةٌ."}, {"id": 20, "s": "F", "q": "صَحِيحٌ أَمْ خَطَأٌ؟ مُسْتَوَى التَّلَوُّثِ فِي الْمُدُنِ الْكَبِيرَةِ مُنْخَفِضٌ.", "o": ["خَطَأٌ", "صَحِيحٌ"], "e": "Неверно: высокий. Предложение (١٣): دُخَانُ الْمَصَانِعِ أَسْوَدُ، وَمُسْتَوَى التَّلَوُّثِ مُرْتَفِعٌ."}, {"id": 21, "s": "F", "q": "صَحِيحٌ أَمْ خَطَأٌ؟ فِي مَكَانِ بَحْرِ آرَالَ الْيَوْمَ صَحْرَاءُ مَالِحَةٌ.", "o": ["صَحِيحٌ", "خَطَأٌ"], "e": "Предложение (١٦): فِي مَكَانِ الْبَحْرِ الْيَوْمَ صَحْرَاءُ مَالِحَةٌ."}, {"id": 22, "s": "F", "q": "صَحِيحٌ أَمْ خَطَأٌ؟ مَاءُ الشُّرْبِ فِي قُرَى الْمِنْطَقَةِ كَثِيرٌ.", "o": ["خَطَأٌ", "صَحِيحٌ"], "e": "Неверно: мало. Предложение (١٧): وَمَاءُ الشُّرْبِ فِي قُرَى الْمِنْطَقَةِ قَلِيلٌ."}, {"id": 23, "s": "F", "q": "صَحِيحٌ أَمْ خَطَأٌ؟ الْبِيئَةُ مَسْؤُولِيَّةُ الدَّوْلَةِ فَقَطْ.", "o": ["خَطَأٌ", "صَحِيحٌ"], "e": "Неверно: и каждого человека. Предложение (٢٢): هِيَ مَسْؤُولِيَّةُ الدَّوْلَةِ وَالْمَصَانِعِ، وَمَسْؤُولِيَّةُ كُلِّ إِنْسَانٍ أَيْضًا."}, {"id": 24, "s": "V", "q": "مَا جَمْعُ «جَبَلٌ»؟", "o": ["جِبَالٌ", "صَنَادِيقُ", "مَصَانِعُ", "حَدَائِقُ"], "e": "جَبَلٌ – جِبَالٌ"}, {"id": 25, "s": "V", "q": "مَا جَمْعُ «نَهْرٌ»؟", "o": ["أَنْهَارٌ", "جِبَالٌ", "مَبَانٍ", "حَدَائِقُ"], "e": "نَهْرٌ – أَنْهَارٌ"}, {"id": 26, "s": "V", "q": "مَا جَمْعُ «قَرْيَةٌ»؟", "o": ["قُرًى", "أَمْرَاضٌ", "حَدَائِقُ", "جِبَالٌ"], "e": "قَرْيَةٌ – قُرًى"}, {"id": 27, "s": "V", "q": "مَا جَمْعُ «حَدِيقَةٌ»؟", "o": ["حَدَائِقُ", "أَنْهَارٌ", "أَكْيَاسٌ", "بَسَاتِينُ"], "e": "حَدِيقَةٌ – حَدَائِقُ"}, {"id": 28, "s": "V", "q": "مَا جَمْعُ «بُسْتَانٌ»؟", "o": ["بَسَاتِينُ", "حَدَائِقُ", "قُرًى", "مَبَانٍ"], "e": "بُسْتَانٌ – بَسَاتِينُ"}, {"id": 29, "s": "V", "q": "مَا جَمْعُ «مَصْنَعٌ»؟", "o": ["مَصَانِعُ", "أَنْهَارٌ", "أَكْيَاسٌ", "صَنَادِيقُ"], "e": "مَصْنَعٌ – مَصَانِعُ"}, {"id": 30, "s": "V", "q": "مَا جَمْعُ «كِيسٌ»؟", "o": ["أَكْيَاسٌ", "حَدَائِقُ", "أَمْرَاضٌ", "بَسَاتِينُ"], "e": "كِيسٌ – أَكْيَاسٌ"}, {"id": 31, "s": "V", "q": "مَا جَمْعُ «مَرَضٌ»؟", "o": ["أَمْرَاضٌ", "حَدَائِقُ", "مَبَانٍ", "أَنْهَارٌ"], "e": "مَرَضٌ – أَمْرَاضٌ"}, {"id": 32, "s": "V", "q": "مَا جَمْعُ «مَبْنًى»؟", "o": ["مَبَانٍ", "أَمْرَاضٌ", "أَنْهَارٌ", "جِبَالٌ"], "e": "مَبْنًى – مَبَانٍ"}, {"id": 33, "s": "V", "q": "مَا جَمْعُ «صُنْدُوقٌ»؟", "o": ["صَنَادِيقُ", "بَسَاتِينُ", "قُرًى", "حَدَائِقُ"], "e": "صُنْدُوقٌ – صَنَادِيقُ"}, {"id": 34, "s": "V", "q": "مَا ضِدُّ «قَبِيحَةٌ» فِي النَّصِّ؟", "o": ["جَمِيلَةٌ", "وَاسِعَةٌ", "غَنِيَّةٌ", "قَلِيلٌ"], "e": "قَبِيحَةٌ ≠ جَمِيلَةٌ"}, {"id": 35, "s": "V", "q": "مَا ضِدُّ «فَقِيرَةٌ» فِي النَّصِّ؟", "o": ["غَنِيَّةٌ", "فَارِغَةٌ", "مُرْتَفِعٌ", "جَمِيلَةٌ"], "e": "فَقِيرَةٌ ≠ غَنِيَّةٌ"}, {"id": 36, "s": "V", "q": "مَا ضِدُّ «ضَيِّقَةٌ» فِي النَّصِّ؟", "o": ["وَاسِعَةٌ", "نَقِيٌّ", "جَمِيلَةٌ", "أَسْوَدُ"], "e": "ضَيِّقَةٌ ≠ وَاسِعَةٌ"}, {"id": 37, "s": "V", "q": "مَا ضِدُّ «مُلَوَّثٌ» فِي النَّصِّ؟", "o": ["نَقِيٌّ", "قَلِيلٌ", "غَنِيَّةٌ", "فَارِغَةٌ"], "e": "مُلَوَّثٌ ≠ نَقِيٌّ"}, {"id": 38, "s": "V", "q": "مَا ضِدُّ «أَبْيَضُ» فِي النَّصِّ؟", "o": ["أَسْوَدُ", "وَاسِعَةٌ", "جَمِيلَةٌ", "مُرْتَفِعٌ"], "e": "أَبْيَضُ ≠ أَسْوَدُ"}, {"id": 39, "s": "V", "q": "مَا ضِدُّ «مُنْخَفِضٌ» فِي النَّصِّ؟", "o": ["مُرْتَفِعٌ", "فَارِغَةٌ", "نَقِيٌّ", "وَاسِعَةٌ"], "e": "مُنْخَفِضٌ ≠ مُرْتَفِعٌ"}, {"id": 40, "s": "V", "q": "مَا ضِدُّ «مَمْلُوءَةٌ» فِي النَّصِّ؟", "o": ["فَارِغَةٌ", "غَنِيَّةٌ", "جَمِيلَةٌ", "أَسْوَدُ"], "e": "مَمْلُوءَةٌ ≠ فَارِغَةٌ"}, {"id": 41, "s": "V", "q": "مَا ضِدُّ «كَثِيرٌ» فِي النَّصِّ؟", "o": ["قَلِيلٌ", "فَارِغَةٌ", "مُرْتَفِعٌ", "غَنِيَّةٌ"], "e": "كَثِيرٌ ≠ قَلِيلٌ"}, {"id": 42, "s": "V", "q": "الْبِيئَةُ بَيْتٌ …………… لِلْإِنْسَانِ وَالْحَيَوَانِ وَالنَّبَاتِ.", "o": ["كَبِيرٌ", "صَحْرَاءُ", "مَصْدَرَا", "مُسْتَشْفَى"], "e": "Слово из текста: كَبِيرٌ"}, {"id": 43, "s": "V", "q": "هُنَاكَ جِبَالٌ عَالِيَةٌ وَ…………… وَاسِعَةٌ.", "o": ["صَحْرَاءُ", "الْمَصَانِعِ", "مَالِحَةٌ", "كَبِيرٌ"], "e": "Слово из текста: صَحْرَاءُ"}, {"id": 44, "s": "V", "q": "النَّهْرَانِ …………… الْمَاءِ لِلْحُقُولِ وَالْقُرَى.", "o": ["مَصْدَرَا", "كَبِيرٌ", "مَالِحَةٌ", "مُهِمَّةٌ"], "e": "Слово из текста: مَصْدَرَا"}, {"id": 45, "s": "V", "q": "هَوَاءُ الْجِبَالِ …………….", "o": ["نَقِيٌّ", "مُسْتَشْفَى", "صَحْرَاءُ", "مَالِحَةٌ"], "e": "Слово из текста: نَقِيٌّ"}, {"id": 46, "s": "V", "q": "دُخَانُ …………… أَسْوَدُ.", "o": ["الْمَصَانِعِ", "مَصْدَرَا", "صَحْرَاءُ", "مُهِمَّةٌ"], "e": "Слово из текста: الْمَصَانِعِ"}, {"id": 47, "s": "V", "q": "فِي مَكَانِ الْبَحْرِ الْيَوْمَ صَحْرَاءُ …………….", "o": ["مَالِحَةٌ", "كَبِيرٌ", "مَصْدَرَا", "نَقِيٌّ"], "e": "Слово из текста: مَالِحَةٌ"}, {"id": 48, "s": "V", "q": "أَخُو لَيْلَى طَبِيبٌ فِي …………… نُوكُوسَ.", "o": ["مُسْتَشْفَى", "الْمَصَانِعِ", "نَقِيٌّ", "مَالِحَةٌ"], "e": "Слово из текста: مُسْتَشْفَى"}, {"id": 49, "s": "V", "q": "هَذِهِ خُطُوَاتٌ صَغِيرَةٌ وَ…………….", "o": ["مُهِمَّةٌ", "مَالِحَةٌ", "نَقِيٌّ", "صَحْرَاءُ"], "e": "Слово из текста: مُهِمَّةٌ"}, {"id": 50, "s": "G", "q": "… لَيْلَى طَبِيبٌ.", "o": ["أَخُو", "أَخِي", "أَخَا"], "e": "пять имён, им. п.: -ӯ"}, {"id": 51, "s": "G", "q": "رَأْيُ … لَيْلَى وَاضِحٌ.", "o": ["أَخِي", "أَخُو", "أَخَا"], "e": "пять имён, род. п.: -ӣ"}, {"id": 52, "s": "G", "q": "طَشْقَنْدُ مَدِينَةٌ … حَدَائِقَ.", "o": ["ذَاتُ", "ذُو", "ذَوَاتُ"], "e": "«зӯ» согласуется с «мадина» — ж. р., им. п."}, {"id": 53, "s": "G", "q": "النَّهْرَانِ … الْمَاءِ.", "o": ["مَصْدَرَا", "مَصْدَرَانِ", "مَصْدَرَيْ"], "e": "дв. ч. в изафе, им. п.: нун отпадает"}, {"id": 54, "s": "G", "q": "فِي … الْمَدِينَةِ", "o": ["مُسْتَشْفَى", "مُسْتَشْفًى", "الْمُسْتَشْفَى"], "e": "1-й член изафы: без танвина и без артикля"}, {"id": 55, "s": "G", "q": "هَذَا … جَدِيدٌ.", "o": ["مَبْنًى", "مَبْنَى", "الْمَبْنَى"], "e": "неопределённое имя на алиф максура — танвин «-ан»"}, {"id": 56, "s": "G", "q": "دُخَانُ الْمَصَانِعِ ….", "o": ["أَسْوَدُ", "أَسْوَدٌ", "سَوْدَاءُ"], "e": "«духан» — м. р.; цвет (афъалу) — диптот"}, {"id": 57, "s": "G", "q": "فِي فَرْغَانَةَ حَدَائِقُ ….", "o": ["خَضْرَاءُ", "أَخْضَرُ", "أَخْضَرَانِ"], "e": "мн. ч. неразумных → ж. р. ед. ч."}, {"id": 58, "s": "G", "q": "مِنْ …", "o": ["فَرْغَانَةَ", "فَرْغَانَةٍ", "فَرْغَانَةِ"], "e": "диптот, род. п.: фатха"}, {"id": 59, "s": "G", "q": "الْبِيئَةُ مَسْؤُولِيَّةُ … إِنْسَانٍ.", "o": ["كُلِّ", "كُلُّ", "كُلَّ"], "e": "средний член цепочки — род. п."}, {"id": 60, "s": "G", "q": "الْمُثَنَّى: هَذَا نَهْرٌ كَبِيرٌ.", "o": ["هَذَانِ نَهْرَانِ كَبِيرَانِ.", "هَذِهِ أَنْهَارٌ كَبِيرَةٌ.", "هَذَا نَهْرٌ كَبِيرٌ."], "e": "Двойственное число: هَذَانِ نَهْرَانِ كَبِيرَانِ."}, {"id": 61, "s": "G", "q": "الْجَمْعُ: هَذَا نَهْرٌ كَبِيرٌ.", "o": ["هَذِهِ أَنْهَارٌ كَبِيرَةٌ.", "هَذَانِ نَهْرَانِ كَبِيرَانِ.", "هَذَا نَهْرٌ كَبِيرٌ."], "e": "Множественное число: هَذِهِ أَنْهَارٌ كَبِيرَةٌ."}, {"id": 62, "s": "G", "q": "الْمُثَنَّى: هَذَا مُسْتَشْفًى جَدِيدٌ.", "o": ["هَذَانِ مُسْتَشْفَيَانِ جَدِيدَانِ.", "هَذِهِ مُسْتَشْفَيَاتٌ جَدِيدَةٌ.", "هَذَا مُسْتَشْفًى جَدِيدٌ."], "e": "Двойственное число: هَذَانِ مُسْتَشْفَيَانِ جَدِيدَانِ."}, {"id": 63, "s": "G", "q": "الْجَمْعُ: هَذَا مُسْتَشْفًى جَدِيدٌ.", "o": ["هَذِهِ مُسْتَشْفَيَاتٌ جَدِيدَةٌ.", "هَذَانِ مُسْتَشْفَيَانِ جَدِيدَانِ.", "هَذَا مُسْتَشْفًى جَدِيدٌ."], "e": "Множественное число: هَذِهِ مُسْتَشْفَيَاتٌ جَدِيدَةٌ."}, {"id": 64, "s": "G", "q": "الْمُثَنَّى: الْقَرْيَةُ جَمِيلَةٌ.", "o": ["الْقَرْيَتَانِ جَمِيلَتَانِ.", "الْقُرَى جَمِيلَةٌ.", "الْقَرْيَةُ جَمِيلَةٌ."], "e": "Двойственное число: الْقَرْيَتَانِ جَمِيلَتَانِ."}, {"id": 65, "s": "G", "q": "الْجَمْعُ: الْقَرْيَةُ جَمِيلَةٌ.", "o": ["الْقُرَى جَمِيلَةٌ.", "الْقَرْيَتَانِ جَمِيلَتَانِ.", "الْقَرْيَةُ جَمِيلَةٌ."], "e": "Множественное число: الْقُرَى جَمِيلَةٌ."}, {"id": 66, "s": "G", "q": "الْمُثَنَّى: أَخُو لَيْلَى طَبِيبٌ.", "o": ["أَخَوَا لَيْلَى طَبِيبَانِ.", "إِخْوَةُ لَيْلَى أَطِبَّاءُ.", "أَخُو لَيْلَى طَبِيبٌ."], "e": "Двойственное число: أَخَوَا لَيْلَى طَبِيبَانِ."}, {"id": 67, "s": "G", "q": "الْجَمْعُ: أَخُو لَيْلَى طَبِيبٌ.", "o": ["إِخْوَةُ لَيْلَى أَطِبَّاءُ.", "أَخَوَا لَيْلَى طَبِيبَانِ.", "أَخُو لَيْلَى طَبِيبٌ."], "e": "Множественное число: إِخْوَةُ لَيْلَى أَطِبَّاءُ."}, {"id": 68, "s": "G", "q": "الْمُثَنَّى: الْمَبْنَى نَظِيفٌ.", "o": ["الْمَبْنَيَانِ نَظِيفَانِ.", "الْمَبَانِي نَظِيفَةٌ.", "الْمَبْنَى نَظِيفٌ."], "e": "Двойственное число: الْمَبْنَيَانِ نَظِيفَانِ."}, {"id": 69, "s": "G", "q": "الْجَمْعُ: الْمَبْنَى نَظِيفٌ.", "o": ["الْمَبَانِي نَظِيفَةٌ.", "الْمَبْنَيَانِ نَظِيفَانِ.", "الْمَبْنَى نَظِيفٌ."], "e": "Множественное число: الْمَبَانِي نَظِيفَةٌ."}, {"id": 70, "s": "E", "q": "اِخْتَرِ الْجُمْلَةَ الصَّحِيحَةَ:", "o": ["طَبِيعَةُ أُوزْبَكِسْتَانَ جَمِيلَةٌ.", "طَبِيعَةُ أُوزْبَكِسْتَانٍ جَمِيلَةٌ.", "هُوَ طَبِيبٌ فِي الْمُسْتَشْفَى الْمَدِينَةِ.", "رَأْيُ أَخُو لَيْلَى وَاضِحٌ."], "e": "Ошибка: طَبِيعَةُ أُوزْبَكِسْتَانٍ جَمِيلَةٌ. → طَبِيعَةُ أُوزْبَكِسْتَانَ جَمِيلَةٌ. · диптот: без танвина, в род. п. — фатха"}, {"id": 71, "s": "E", "q": "اِخْتَرِ الْجُمْلَةَ الصَّحِيحَةَ:", "o": ["النَّهْرَانِ مَصْدَرَا الْمَاءِ.", "النَّهْرَانِ مَصْدَرَانِ الْمَاءِ.", "رَأْيُ أَخُو لَيْلَى وَاضِحٌ.", "هَذَا كَارِثَةٌ بِيئِيَّةٌ."], "e": "Ошибка: النَّهْرَانِ مَصْدَرَانِ الْمَاءِ. → النَّهْرَانِ مَصْدَرَا الْمَاءِ. · дв. ч. в изафе теряет нун"}, {"id": 72, "s": "E", "q": "اِخْتَرِ الْجُمْلَةَ الصَّحِيحَةَ:", "o": ["فِي فَرْغَانَةَ حَدَائِقُ خَضْرَاءُ.", "فِي فَرْغَانَةَ حَدَائِقُ أَخْضَرُ.", "طَشْقَنْدُ مَدِينَةٌ ذُو حَدَائِقَ.", "النَّهْرَانِ مَصْدَرَانِ الْمَاءِ."], "e": "Ошибка: فِي فَرْغَانَةَ حَدَائِقُ أَخْضَرُ. → فِي فَرْغَانَةَ حَدَائِقُ خَضْرَاءُ. · мн. ч. неразумных → ж. р. ед. ч."}, {"id": 73, "s": "E", "q": "اِخْتَرِ الْجُمْلَةَ الصَّحِيحَةَ:", "o": ["دُخَانُ الْمَصَانِعِ أَسْوَدُ.", "دُخَانُ الْمَصَانِعِ أَسْوَدٌ.", "طَبِيعَةُ أُوزْبَكِسْتَانٍ جَمِيلَةٌ.", "رَأْيُ أَخُو لَيْلَى وَاضِحٌ."], "e": "Ошибка: دُخَانُ الْمَصَانِعِ أَسْوَدٌ. → دُخَانُ الْمَصَانِعِ أَسْوَدُ. · цвет (афъалу) — диптот, без танвина"}, {"id": 74, "s": "E", "q": "اِخْتَرِ الْجُمْلَةَ الصَّحِيحَةَ:", "o": ["مُسْتَوَى التَّلَوُّثِ مُرْتَفِعٌ.", "مُسْتَوَى التَّلَوُّثِ مُرْتَفِعَةٌ.", "فِي فَرْغَانَةَ حَدَائِقُ أَخْضَرُ.", "الْأَرْضُ بَيْتٌ الْوَاحِدُ لِلْجَمِيعِ."], "e": "Ошибка: مُسْتَوَى التَّلَوُّثِ مُرْتَفِعَةٌ. → مُسْتَوَى التَّلَوُّثِ مُرْتَفِعٌ. · «мустава» — м. р.: алиф максура здесь не признак ж. р."}, {"id": 75, "s": "E", "q": "اِخْتَرِ الْجُمْلَةَ الصَّحِيحَةَ:", "o": ["أَخُو لَيْلَى طَبِيبٌ.", "أَخُو لَيْلًى طَبِيبٌ.", "دُخَانُ الْمَصَانِعِ أَسْوَدٌ.", "النَّهْرَانِ مَصْدَرَانِ الْمَاءِ."], "e": "Ошибка: أَخُو لَيْلًى طَبِيبٌ. → أَخُو لَيْلَى طَبِيبٌ. · имя «Лейла» (алиф максура) — без танвина"}, {"id": 76, "s": "E", "q": "اِخْتَرِ الْجُمْلَةَ الصَّحِيحَةَ:", "o": ["رَأْيُ أَخِي لَيْلَى وَاضِحٌ.", "رَأْيُ أَخُو لَيْلَى وَاضِحٌ.", "طَشْقَنْدُ مَدِينَةٌ ذُو حَدَائِقَ.", "النَّهْرَانِ مَصْدَرَانِ الْمَاءِ."], "e": "Ошибка: رَأْيُ أَخُو لَيْلَى وَاضِحٌ. → رَأْيُ أَخِي لَيْلَى وَاضِحٌ. · пять имён во 2-м члене — род. п.: -ӣ"}, {"id": 77, "s": "E", "q": "اِخْتَرِ الْجُمْلَةَ الصَّحِيحَةَ:", "o": ["هُوَ طَبِيبٌ فِي مُسْتَشْفَى الْمَدِينَةِ.", "هُوَ طَبِيبٌ فِي الْمُسْتَشْفَى الْمَدِينَةِ.", "الْأَرْضُ بَيْتٌ الْوَاحِدُ لِلْجَمِيعِ.", "طَشْقَنْدُ مَدِينَةٌ ذُو حَدَائِقَ."], "e": "Ошибка: هُوَ طَبِيبٌ فِي الْمُسْتَشْفَى الْمَدِينَةِ. → هُوَ طَبِيبٌ فِي مُسْتَشْفَى الْمَدِينَةِ. · 1-й член изафы без артикля"}, {"id": 78, "s": "E", "q": "اِخْتَرِ الْجُمْلَةَ الصَّحِيحَةَ:", "o": ["طَشْقَنْدُ مَدِينَةٌ ذَاتُ حَدَائِقَ.", "طَشْقَنْدُ مَدِينَةٌ ذُو حَدَائِقَ.", "مُسْتَوَى التَّلَوُّثِ مُرْتَفِعَةٌ.", "الْأَرْضُ بَيْتٌ الْوَاحِدُ لِلْجَمِيعِ."], "e": "Ошибка: طَشْقَنْدُ مَدِينَةٌ ذُو حَدَائِقَ. → طَشْقَنْدُ مَدِينَةٌ ذَاتُ حَدَائِقَ. · «зӯ» согласуется в роде"}, {"id": 79, "s": "E", "q": "اِخْتَرِ الْجُمْلَةَ الصَّحِيحَةَ:", "o": ["هَذِهِ كَارِثَةٌ بِيئِيَّةٌ.", "هَذَا كَارِثَةٌ بِيئِيَّةٌ.", "أَخُو لَيْلًى طَبِيبٌ.", "فِي فَرْغَانَةَ حَدَائِقُ أَخْضَرُ."], "e": "Ошибка: هَذَا كَارِثَةٌ بِيئِيَّةٌ. → هَذِهِ كَارِثَةٌ بِيئِيَّةٌ. · «кāриса» — ж. р."}, {"id": 80, "s": "E", "q": "اِخْتَرِ الْجُمْلَةَ الصَّحِيحَةَ:", "o": ["فِي الْمَدِينَةِ مَصَانِعُ كَثِيرَةٌ.", "فِي الْمَدِينَةِ مَصَانِعٌ كَثِيرَةٌ.", "طَشْقَنْدُ مَدِينَةٌ ذُو حَدَائِقَ.", "فِي فَرْغَانَةَ حَدَائِقُ أَخْضَرُ."], "e": "Ошибка: فِي الْمَدِينَةِ مَصَانِعٌ كَثِيرَةٌ. → فِي الْمَدِينَةِ مَصَانِعُ كَثِيرَةٌ. · модель мафā‘илу — диптот, без танвина"}, {"id": 81, "s": "E", "q": "اِخْتَرِ الْجُمْلَةَ الصَّحِيحَةَ:", "o": ["الْأَرْضُ بَيْتٌ وَاحِدٌ لِلْجَمِيعِ.", "الْأَرْضُ بَيْتٌ الْوَاحِدُ لِلْجَمِيعِ.", "أَخُو لَيْلًى طَبِيبٌ.", "دُخَانُ الْمَصَانِعِ أَسْوَدٌ."], "e": "Ошибка: الْأَرْضُ بَيْتٌ الْوَاحِدُ لِلْجَمِيعِ. → الْأَرْضُ بَيْتٌ وَاحِدٌ لِلْجَمِيعِ. · определение повторяет состояние"}];
+const TITLE="الْبِيئَةُ: مَسْؤُولِيَّةُ مَنْ؟";
+const PARA=[["الْمُقَدِّمَةُ", ["مَا الْبِيئَةُ؟", "الْبِيئَةُ بَيْتٌ كَبِيرٌ لِلْإِنْسَانِ وَالْحَيَوَانِ وَالنَّبَاتِ.", "فِي هَذَا الْبَيْتِ هَوَاءٌ وَمَاءٌ وَأَرْضٌ."]], ["الْعَرْضُ (١): طَبِيعَةُ أُوزْبَكِسْتَانَ", ["طَبِيعَةُ أُوزْبَكِسْتَانَ جَمِيلَةٌ وَغَنِيَّةٌ.", "هُنَاكَ جِبَالٌ عَالِيَةٌ وَصَحْرَاءُ وَاسِعَةٌ وَأَنْهَارٌ كَبِيرَةٌ.", "سَيْحُونُ وَجَيْحُونُ نَهْرَانِ كَبِيرَانِ.", "النَّهْرَانِ مَصْدَرَا الْمَاءِ لِلْحُقُولِ وَالْقُرَى.", "وَفِي فَرْغَانَةَ حَدَائِقُ خَضْرَاءُ وَبَسَاتِينُ كَثِيرَةٌ.", "أَمَّا طَشْقَنْدُ فَهِيَ مَدِينَةٌ خَضْرَاءُ ذَاتُ مُتَنَزَّهَاتٍ وَأَشْجَارٍ.", "هَوَاءُ الْجِبَالِ نَقِيٌّ، وَالسَّمَاءُ هُنَاكَ صَافِيَةٌ."]], ["الْعَرْضُ (٢): مَشَاكِلُ الْبِيئَةِ", ["وَلَكِنْ لِلْبِيئَةِ مَشَاكِلُ كَبِيرَةٌ أَيْضًا.", "فِي الْمُدُنِ الْكَبِيرَةِ سَيَّارَاتٌ وَمَصَانِعُ كَثِيرَةٌ.", "دُخَانُ الْمَصَانِعِ أَسْوَدُ، وَمُسْتَوَى التَّلَوُّثِ مُرْتَفِعٌ.", "وَعَلَى ضِفَافِ الْأَنْهَارِ أَكْيَاسٌ بِلَاسْتِيكِيَّةٌ وَزُجَاجَاتٌ فَارِغَةٌ.", "وَهُنَالِكَ مِثَالٌ مُحْزِنٌ: بَحْرُ آرَالَ.", "فِي مَكَانِ الْبَحْرِ الْيَوْمَ صَحْرَاءُ مَالِحَةٌ.", "وَمَاءُ الشُّرْبِ فِي قُرَى الْمِنْطَقَةِ قَلِيلٌ.", "أَخُو لَيْلَى طَبِيبٌ فِي مُسْتَشْفَى نُوكُوسَ.", "رَأْيُ أَخِي لَيْلَى وَاضِحٌ: الْأَمْرَاضُ هُنَاكَ كَثِيرَةٌ، وَالسَّبَبُ فِي الْمَاءِ وَالْهَوَاءِ.", "هَذِهِ كَارِثَةٌ بِيئِيَّةٌ كَبِيرَةٌ."]], ["الْخَاتِمَةُ", ["إِذَنْ، الْبِيئَةُ مَسْؤُولِيَّةُ مَنْ؟", "هِيَ مَسْؤُولِيَّةُ الدَّوْلَةِ وَالْمَصَانِعِ، وَمَسْؤُولِيَّةُ كُلِّ إِنْسَانٍ أَيْضًا.", "وَفِي مَبْنَى الْجَامِعَةِ صَنَادِيقُ لِلْوَرَقِ وَالْبِلَاسْتِيكِ.", "شَجَرَةٌ فِي حَدِيقَةِ الْجَامِعَةِ، وَكِيسٌ مِنْ قُمَاشٍ بَدَلًا مِنْ كِيسٍ بِلَاسْتِيكِيٍّ، وَدَرَّاجَةٌ بَدَلًا مِنْ سَيَّارَةٍ: هَذِهِ خُطُوَاتٌ صَغِيرَةٌ وَمُهِمَّةٌ.", "الْأَرْضُ بَيْتٌ وَاحِدٌ لِلْجَمِيعِ.", "وَأَنْتَ؟ هَلْ أَنْتَ صَدِيقُ الطَّبِيعَةِ؟"]]];
+const LIS=[];
+
+const $=s=>document.querySelector(s);
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const AR=/[؀-ۿ]/;
+const isAllAr=t=>AR.test(t)&&!/[A-Za-zА-Яа-яЁё]/.test(t);
+const wrap=t=>{t=String(t==null?'':t);if(isAllAr(t))return `<span class="ar" lang="ar" dir="rtl">${esc(t)}</span>`;return esc(t).replace(/([«(]?[؀-ۿ][؀-ۿً-ْٰ\s،؟:«»()….!]*)/g,m=>`<span class="ar" lang="ar" dir="rtl">${m.trim()}</span> `);};
+const show=id=>['sStart','sCount','sIntro','sQ','sEnd','sBoard'].forEach(s=>$('#'+s).classList.toggle('hide',s!==id));
+const fmt=s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+const params=new URLSearchParams(location.search);
+const byId={};POOL.forEach(p=>byId[p.id]=p);
+$('#hTitle').textContent=TITLE;
+
+/* ---- модальное окно ---- */
+const openModal=html=>{$('#mbody').innerHTML=html;$('#modal').classList.remove('hide');$('#mclose').focus();};
+const closeModal=()=>$('#modal').classList.add('hide');
+$('#mclose').addEventListener('click',closeModal);
+$('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+const textHTML=()=>`<h2>📄 Текст</h2><div class="txt"><p class="ar" style="font-size:30px;text-align:center;font-weight:700">${esc(TITLE)}</p>${PARA.map(([lab,ss])=>`<p class="lab">${esc(lab)}</p><p class="ar" lang="ar" style="font-size:26px">${esc(ss.join(' '))}</p>`).join('')}</div>`;
+$('#txtBtn').addEventListener('click',()=>openModal(textHTML()));
+
+/* ---- звук ---- */
+let AC=null,soundOn=true;
+const ctx=()=>{if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}return AC;};
+function tone(f,d,type='sine',v=.15,delay=0){const c=ctx();if(!c||!soundOn)return;const o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.value=f;o.connect(g);g.connect(c.destination);const t=c.currentTime+delay;o.start(t);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.stop(t+d+.02);}
+const sTick=()=>tone(880,.06,'square',.05),sOk=()=>[523,659,784].forEach((f,i)=>tone(f,.18,'triangle',.18,i*.09)),sBad=()=>{tone(180,.35,'sawtooth',.12);tone(140,.35,'sawtooth',.1,.05);},sGo=()=>tone(660,.15,'square',.08),sFan=()=>[523,659,784,1047,784,1047].forEach((f,i)=>tone(f,.22,'triangle',.18,i*.13));
+$('#snd').addEventListener('click',e=>{soundOn=!soundOn;e.currentTarget.textContent=soundOn?'🔊 Звук':'🔇 Без звука';});
+
+/* ---- озвучка диалога ---- */
+/* аудиофайл с диалогом лежит рядом с этим файлом на GitHub */
+const AUDIO_FILES=['istima_mock1.mp3','istima_mock1.m4a'];let AUDIO=null;
+const synth=('speechSynthesis' in window)?window.speechSynthesis:null;
+function playDialog(btn){if(!synth){btn.textContent='Озвучка недоступна — слушайте преподавателя';return;}
+ synth.cancel();const vs=synth.getVoices().filter(v=>/^ar/i.test(v.lang));
+ LIS.forEach(([who,t])=>{const u=new SpeechSynthesisUtterance(t);u.lang='ar-SA';u.rate=.8;u.pitch=who==='أ'?1.15:.8;const v=vs[who==='أ'?0:Math.min(1,vs.length-1)];if(v)u.voice=v;synth.speak(u);});
+ if(!vs.length)btn.textContent='Нет арабского голоса — слушайте преподавателя';}
+
+/* ---- конфетти ---- */
+function confetti(){const cv=$('#conf'),c=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;const cols=['#E2504C','#2F7BE5','#E8A520','#2AA36B','#FFD54F','#fff'];
+ const P=Array.from({length:160},()=>({x:Math.random()*cv.width,y:-20-Math.random()*cv.height*.5,r:4+Math.random()*6,c:cols[Math.floor(Math.random()*cols.length)],vy:2+Math.random()*3,vx:-1.5+Math.random()*3,a:Math.random()*6}));
+ let f=0;(function step(){c.clearRect(0,0,cv.width,cv.height);P.forEach(p=>{p.y+=p.vy;p.x+=p.vx;p.a+=.1;c.fillStyle=p.c;c.save();c.translate(p.x,p.y);c.rotate(p.a);c.fillRect(-p.r/2,-p.r/2,p.r,p.r*1.6);c.restore();});if(++f<240)requestAnimationFrame(step);else c.clearRect(0,0,cv.width,cv.height);})();}
+
+/* ---- разбор ответов ---- */
+function secSummary(rows){const s={};rows.forEach(x=>{const p=byId[x.id];const k=p?p.s:'G';s[k]=s[k]||{ok:0,all:0};s[k].all++;if(x.ok)s[k].ok++;});return s;}
+function secBars(sum){return PLAN.map(([k])=>{const v=sum[k]||{ok:0,all:0};const pc=v.all?Math.round(v.ok/v.all*100):0;return `<div class="srow"><span>${SEC[k].i} <span lang="ar" dir="rtl">${SEC[k].n}</span></span><span class="sbar"><i style="width:${pc}%;background:${SEC[k].c}"></i></span><b>${v.ok}/${v.all}</b></div>`;}).join('');}
+function reviewHTML(title,meta,rows){const sum=secSummary(rows);
+ const order={F:0,V:1,G:2,E:3};rows=rows.slice().sort((a,b)=>(order[(byId[a.id]||{}).s]??9)-(order[(byId[b.id]||{}).s]??9));
+ return `<h2>${esc(title)}</h2><p style="color:#51656A;margin:0 0 8px">${esc(meta)}</p><div class="secs" style="color:#1E2B2F">${secBars(sum).replace(/rgba\(255,255,255,.18\)/g,'#E3EEF0')}</div>`+
+ rows.map((x,i)=>{const p=byId[x.id]||{};const sec=SEC[p.s]||{n:'',i:''};
+  return `<div class="rv ${x.ok?'ok':'bad'}"><div class="rvh"><span>${sec.i} <span class="ar" lang="ar">${sec.n}</span> · вопрос ${i+1}</span><span>${x.ok?'✅ верно':'❌ неверно'}${x.s!=null&&x.s!==''?' · '+x.s+' с':''}</span></div>
+  <div class="rvq">${wrap(p.q||x.q)}</div>
+  <div>Ответ студента: <b>${wrap(x.a)}</b></div>${x.ok?'':`<div>Правильный ответ: <b>${wrap(x.c)}</b></div>`}
+  <div class="rve">Почему: ${wrap(p.e||'')}</div></div>`;}).join('');}
+
+/* ---- игра ---- */
+const LEV=[[19,'Мастер 🏆'],[16,'Отлично 🌟'],[12,'Хорошо 👍'],[8,'Базовый 🙂'],[0,'Начинающий 🌱']];
+const N=PLAN.reduce((a,b)=>a+b[1],0);
+const levelOf=c=>LEV.find(l=>c>=l[0])[1];
+let qs=[],qi=0,points=0,correct=0,t0=0,qStart=0,timer=null,locked=false,log=[],me={n:'',g:''},plays=0;
+try{$('#nm').value=localStorage.getItem('qzName')||'';$('#gr').value=localStorage.getItem('qzGroup')||'';}catch(e){}
+$('#start').addEventListener('click',()=>{me.n=$('#nm').value.trim();me.g=$('#gr').value.trim();if(!me.n){$('#msg').textContent='Введите имя и фамилию.';return;}
+ try{localStorage.setItem('qzName',me.n);localStorage.setItem('qzGroup',me.g);}catch(e){}ctx();
+ qs=[];PLAN.forEach(([k,n])=>{shuffle(POOL.filter(p=>p.s===k)).slice(0,n).forEach(p=>qs.push({id:p.id,s:p.s,q:p.q,c:p.o[0],o:shuffle(p.o.slice()),e:p.e}));});
+ qi=0;points=0;correct=0;log=[];plays=0;
+ show('sCount');let n=3;$('#cnt').textContent=n;sGo();const iv=setInterval(()=>{n--;if(n>0){$('#cnt').textContent=n;sGo();}else{clearInterval(iv);t0=Date.now();next();}},900);});
+function next(){if(qi>=qs.length)return finish();if(qi===0||qs[qi].s!==qs[qi-1].s)intro(qs[qi].s);else ask();}
+function intro(k){const S=SEC[k];show('sIntro');$('#inChip').textContent=`${S.i} Часть ${PLAN.findIndex(p=>p[0]===k)+1} из 4`;$('#inChip').style.background=S.c;$('#inTitle').innerHTML=`<span class="ar" lang="ar" style="font-size:1.1em">${S.n}</span>`;const x=$('#inExtra');x.innerHTML='';
+ const INS={F:['اِقْرَأِ النَّصَّ، ثُمَّ أَجِبْ عَنِ الْأَسْئِلَةِ.','Текст открывается кнопкой «📄 Текст» в любой момент, но время идёт.'],V:['اِخْتَرِ الْإِجَابَةَ الصَّحِيحَةَ.','Слова из текста: множественное число, противоположности, пропуски.'],G:['اِخْتَرِ الْإِجَابَةَ الصَّحِيحَةَ.','Грамматика из предложений текста.'],E:['اِخْتَرِ الْجُمْلَةَ الصَّحِيحَةَ.','Работа над ошибками: только одна из четырёх строк написана без ошибки.']};
+ $('#inText').innerHTML=`<span class="ar" lang="ar" style="font-size:1.5em;color:#fff;display:block">${esc(INS[k][0])}</span><small>${esc(INS[k][1])}</small>`;
+ {const b=el('button','btn2','📄 Открыть текст');b.addEventListener('click',()=>openModal(textHTML()));x.appendChild(b);}
+ $('#inGo').onclick=()=>{if(synth)synth.cancel();if(AUDIO){AUDIO.pause();}ask();};}
+const SH=['▲','◆','●','■'];
+function ask(){show('sQ');const q=qs[qi];const S=SEC[q.s];locked=false;$('#qChip').textContent=`${S.i} ${S.n}`;$('#qChip').style.background=S.c;$('#txtBtn').classList.remove('hide');
+ $('#qn').textContent=`${qi+1} / ${N}`;$('#pts').textContent=`${points} очков`;$('#qt').innerHTML=wrap(q.q);$('#fb').textContent='';$('#ex').textContent='';
+ const box=$('#tiles');box.innerHTML='';q.o.forEach((o,i)=>{const b=el('button','tile t'+i,`<span class="sh">${SH[i]}</span>${AR.test(o)?`<span class="ar" lang="ar">${esc(o)}</span>`:esc(o)}`);b.dataset.v=o;b.addEventListener('click',()=>pick(b,o));box.appendChild(b);});
+ qStart=Date.now();const SEC_T=S.t;$('#tm').textContent=SEC_T;$('#tb').style.width='100%';clearInterval(timer);let last=SEC_T;
+ timer=setInterval(()=>{const left=Math.max(0,SEC_T-(Date.now()-qStart)/1000);const c=Math.ceil(left);$('#tm').textContent=c;$('#tb').style.width=(left/SEC_T*100)+'%';if(c<=5&&c!==last)sTick();last=c;if(left<=0)pick(null,null);},200);}
+function pick(b,o){if(locked)return;locked=true;clearInterval(timer);const q=qs[qi];const ms=Date.now()-qStart;const ok=o===q.c;const T=SEC[q.s].t;
+ let gain=0;if(ok){correct++;gain=Math.round(500+500*Math.max(0,T*1000-ms)/(T*1000));points+=gain;sOk();}else sBad();
+ [...$('#tiles').children].forEach(t=>t.classList.add(t.dataset.v===q.c?'right':'dim'));
+ $('#fb').textContent=ok?`✅ Верно! +${gain}`:(o===null?'⏰ Время вышло':'❌ Неверно');$('#ex').innerHTML=wrap(q.e);$('#pts').textContent=`${points} очков`;
+ log.push({id:q.id,q:q.q,a:o===null?'(нет ответа)':o,c:q.c,ok:ok,s:Math.round(ms/100)/10});
+ setTimeout(()=>{qi++;next();},ok?1600:2800);}
+function finish(){const secs=Math.round((Date.now()-t0)/1000);show('sEnd');$('#eName').textContent=me.n+(me.g?' · '+me.g:'');$('#ePts').textContent=points+' очков';
+ $('#eLvl').textContent=`${levelOf(correct)} · верно ${correct} из ${N} (${Math.round(correct/N*100)}%)`;$('#eSecs').innerHTML=secBars(secSummary(log));
+ $('#eInfo').textContent=`Время: ${fmt(secs)}`;sFan();confetti();
+ send({quiz:QUIZ,name:me.n,group:me.g,points,correct,total:N,time:secs,level:levelOf(correct).replace(/\s.+$/,''),details:log});}
+$('#myAns').addEventListener('click',()=>openModal(reviewHTML(me.n,`${correct} из ${N} · ${levelOf(correct)}`,log)));
+$('#again').addEventListener('click',()=>show('sStart'));
+
+/* ---- Google Таблица ---- */
+async function send(data){if(!SHEET_URL){$('#eInfo').textContent+=' · Общая таблица не подключена: сделайте снимок экрана.';return;}
+ try{await fetch(SHEET_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)});$('#eInfo').textContent+=' · Результат сохранён ✔';}catch(e){$('#eInfo').textContent+=' · Не удалось отправить результат.';}
+ $('#sBoard').classList.remove('hide');loadBoard();setInterval(loadBoard,8000);}
+let boardRows=[];
+async function loadBoard(){if(!SHEET_URL){$('#bNote').textContent='Укажите SHEET_URL в файле.';return;}try{const g=params.get('g')||me.g||'';
+ const r=await fetch(`${SHEET_URL}?quiz=${encodeURIComponent(QUIZ)}&hours=${WINDOW_HOURS}&group=${encodeURIComponent(g)}&t=${Date.now()}`);boardRows=await r.json();
+ const ol=$('#board');ol.innerHTML='';boardRows.forEach((x,i)=>{const li=el('li',x.n===me.n?'me':'');li.tabIndex=0;li.innerHTML=`<span class="pl"><span>${i+1}</span></span><span></span><span class="pts"></span>`;
+  li.children[1].textContent=x.n;const sm=el('small');sm.textContent=`${x.l} · ${x.c}/${x.tot} верно (${Math.round(x.c/(x.tot||1)*100)}%) · ${fmt(x.t)}`;li.children[1].appendChild(sm);li.children[2].textContent=x.p;
+  const openIt=()=>details(x);li.addEventListener('click',openIt);li.addEventListener('keydown',e=>{if(e.key==='Enter')openIt();});ol.appendChild(li);});
+ $('#bNote').textContent=boardRows.length?'Лучший результат каждого. Нажмите на имя, чтобы увидеть ответы.':'Пока нет результатов.';}catch(e){$('#bNote').textContent='Таблица сейчас недоступна.';}}
+async function details(x){openModal(`<h2>${esc(x.n)}</h2><p>Загрузка ответов…</p>`);
+ try{const r=await fetch(`${SHEET_URL}?quiz=${encodeURIComponent(QUIZ)}&detail=1&name=${encodeURIComponent(x.n)}&ts=${x.d||''}&t=${Date.now()}`);const rows=await r.json();
+  if(!Array.isArray(rows)||!rows.length){openModal(`<h2>${esc(x.n)}</h2><p>Ответы не найдены. Обновите скрипт Google Таблицы до новой версии (см. инструкцию).</p>`);return;}
+  openModal(reviewHTML(x.n,`${x.l} · ${x.c}/${x.tot} верно · ${x.p} очков · ${fmt(x.t)}`,rows));}catch(e){openModal(`<h2>${esc(x.n)}</h2><p>Не удалось загрузить ответы.</p>`);}}
+
+/* режим для проектора: ?board=1 (и ?g=группа) */
+if(params.get('board')){show('sBoard');loadBoard();setInterval(loadBoard,5000);}
+})();
+</script>
+</body>
+</html>

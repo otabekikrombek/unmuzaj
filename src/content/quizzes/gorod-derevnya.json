@@ -1,0 +1,15 @@
+{
+ "key": "gorod-derevnya",
+ "title": "Город и деревня",
+ "description": "Тематическая викторина: лексика и грамматика по теме «Город и деревня».",
+ "level": "A1",
+ "topics": [
+  "город"
+ ],
+ "added": "2026-09-25",
+ "kind": "quiz",
+ "legacy": "v1/viktorina_gorod_derevnya.html",
+ "courses": [
+  "tsu-2-sem1"
+ ]
+}

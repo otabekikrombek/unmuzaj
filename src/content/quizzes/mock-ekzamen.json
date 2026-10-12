@@ -1,0 +1,15 @@
+{
+ "key": "mock-ekzamen",
+ "title": "Пробный экзамен",
+ "description": "Пробный экзамен: чтение, аудирование, лексика, грамматика.",
+ "level": "A1",
+ "topics": [
+  "экзамен"
+ ],
+ "added": "2026-10-08",
+ "kind": "test",
+ "legacy": "v1/viktorina_mock_ekzamen.html",
+ "courses": [
+  "tsu-2-sem1"
+ ]
+}

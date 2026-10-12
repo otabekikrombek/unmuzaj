@@ -1,0 +1,15 @@
+{
+ "key": "predlogi",
+ "title": "Предлоги",
+ "description": "Интерактивное упражнение: предлоги и родительный падеж.",
+ "level": "A1",
+ "topics": [
+  "грамматика",
+  "предлоги"
+ ],
+ "added": "2026-09-28",
+ "legacy": "v1/predlogi_interaktiv.html",
+ "courses": [
+  "tsu-2-sem1"
+ ]
+}

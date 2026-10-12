@@ -1,0 +1,15 @@
+{
+ "key": "dvuhpadezhnye",
+ "title": "Двупадежные имена и алиф максура",
+ "description": "Сортировка и тренировка: двупадежные имена, имена на алиф максуру.",
+ "level": "A1",
+ "topics": [
+  "грамматика",
+  "двупадежные"
+ ],
+ "added": "2026-10-03",
+ "legacy": "v1/dvuhpadezhnye_interaktiv.html",
+ "courses": [
+  "tsu-2-sem1"
+ ]
+}

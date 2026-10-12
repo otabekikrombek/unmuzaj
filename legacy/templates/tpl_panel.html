@@ -1,0 +1,143 @@
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Журнал карточек</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--teal:#1D5C63;--t2:#2A9D8F;--coral:#E76F51;--sun:#E9C46A;--ink:#263238;--bg:#F1F7F6;--line:#D5E6E3}
+*{box-sizing:border-box}body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(135deg,#1D5C63,#2B1055);color:#fff;padding:18px 16px}
+header h1{margin:0;font-size:24px}header p{margin:4px 0 0;color:#cfe;font-size:14px}
+.wrap{max-width:1100px;margin:0 auto;padding:16px}
+.box{background:#fff;border-radius:14px;padding:14px 16px;margin-bottom:16px;box-shadow:0 2px 8px rgba(29,92,99,.08)}
+h2{margin:0 0 10px;font-size:19px;color:var(--teal)}h3{margin:12px 0 6px;font-size:15px}
+.btn{border:0;border-radius:10px;padding:9px 14px;font-weight:700;cursor:pointer;background:var(--teal);color:#fff;font-size:14px}
+.btn.sec{background:#e3efed;color:var(--teal)}
+input{padding:10px;border-radius:10px;border:1px solid var(--line);font-size:15px;width:240px;max-width:100%}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kpi{background:#E8F4F2;border-radius:12px;padding:10px 12px}.kpi b{display:block;font-size:24px;color:var(--teal)}.kpi span{font-size:13px;color:#567}
+.noms{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px}
+.nom{border:1px solid var(--line);border-radius:12px;padding:10px 12px}.nom h4{margin:0 0 6px;font-size:14px}
+.nom ol{margin:0;padding-left:22px;font-size:14px}.nom li{padding:2px 0}.nom li:first-child{font-weight:700}
+.nom.warn{border-color:#f3c3b5;background:#fff7f4}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+th{background:var(--teal);color:#fff;position:sticky;top:0;cursor:pointer;font-size:13px}
+tbody tr:nth-child(even){background:#F6FAF9}tbody tr:hover{background:#E3F1EE;cursor:pointer}
+td.n{text-align:right}.ar{font-family:Amiri,'Times New Roman',serif;font-size:20px;direction:rtl}
+.bars{display:grid;grid-template-columns:minmax(110px,max-content) 1fr 92px;gap:4px 8px;align-items:center;font-size:13px}
+.bars .t{height:14px;background:#E3EFED;border-radius:7px;overflow:hidden}.bars .t i{display:block;height:100%;background:var(--t2);border-radius:7px}
+.bars .t i.c{background:var(--coral)}.bars .v{text-align:right;color:#456}
+.cols{display:flex;align-items:flex-end;gap:3px;height:120px;border-bottom:1px solid var(--line);padding-top:6px}
+.cols div{flex:1;background:var(--t2);border-radius:4px 4px 0 0;min-height:1px;position:relative}
+.cl{display:flex;gap:3px;font-size:11px;color:#678}.cl span{flex:1;text-align:center;overflow:hidden}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.note{font-size:13px;color:#567;background:#FFF8E5;border-left:4px solid var(--sun);padding:8px 10px;border-radius:6px;margin-top:8px}
+.msg{color:var(--coral);margin-top:8px}
+dialog{border:0;border-radius:16px;max-width:820px;width:95%;padding:0}dialog::backdrop{background:rgba(0,0,0,.45)}
+.dh{background:var(--teal);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}.dh h2{color:#fff;margin:0}
+.db{padding:14px 16px;max-height:75vh;overflow:auto}
+select{padding:8px;border-radius:8px;border:1px solid var(--line);font-size:14px}
+@media print{header,.noprint{display:none}.box{box-shadow:none;border:1px solid #ccc}}
+</style></head><body>
+<header><h1>Журнал карточек · 2 курс</h1><p>Прогресс студентов по карточкам «100 слов», тестам и викторинам</p></header>
+<div class="wrap">
+<div class="box noprint" id="keybox">
+ <h2>Вход для преподавателя</h2>
+ <input id="key" type="password" placeholder="Ключ учителя (лист «Настройки»)"> <button class="btn" id="load">Открыть</button>
+ <div class="msg" id="kmsg"></div>
+</div>
+<div id="out" style="display:none">
+ <div class="box"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:center"><h2 style="margin:0">Общая картина</h2>
+  <span class="noprint"><button class="btn sec" id="re">↻ Обновить</button> <button class="btn sec" id="csv">⬇ Таблица CSV</button> <button class="btn sec" onclick="print()">🖨 Печать</button></span></div>
+  <p style="font-size:13px;color:#678" id="gen"></p><div class="kpis" id="kpis"></div></div>
+ <div class="box"><h2>Номинации</h2><div class="noms" id="noms"></div>
+  <div class="note">«Нужна помощь» и «Не занимались» видите только вы: у студентов в карточках показываются лишь положительные номинации.</div></div>
+ <div class="box"><h2>Студенты</h2><p style="font-size:13px;color:#678;margin-top:0">Нажмите на заголовок, чтобы отсортировать, или на строку, чтобы открыть подробности.</p><div class="tw"><table id="tbl"></table></div></div>
+ <div class="g2">
+  <div class="box"><h2>Трудные слова группы</h2><select id="wdeck"></select><p style="font-size:13px;color:#678">Порядок: сначала слова, в которых ошиблось больше студентов.</p><div class="tw"><table id="words"></table></div></div>
+  <div class="box"><h2>Темы: доля ошибок</h2><select id="tdeck"></select><div class="bars" id="themes" style="margin-top:10px"></div></div>
+ </div>
+ <div class="g2">
+  <div class="box"><h2>Когда занимаются</h2><h3>По дням недели (минуты)</h3><div id="wk"></div><h3>По часам (минуты)</h3><div id="hr"></div></div>
+  <div class="box"><h2>Последние 30 дней (минуты)</h2><div id="dly"></div><h2 style="margin-top:18px">Юноши и девушки</h2><div id="sex"></div></div>
+ </div>
+</div>
+</div>
+<dialog id="dlg"><div class="dh"><h2 id="dt"></h2><button class="btn sec" onclick="dlg.close()">✕</button></div><div class="db" id="dbody"></div></dialog>
+<script>
+const API='__API__';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function lsGet(k,d){try{return localStorage.getItem(k)||d}catch(e){return d}}function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+let R=null,sortK='known',sortD=-1;
+const known=s=>Object.values(s.decks||{}).reduce((a,d)=>a+(d.good||0)+(d.done||0),0);
+const seen=s=>Object.values(s.decks||{}).reduce((a,d)=>a+(d.seen||0),0);
+const fmtD=t=>t?new Date(t).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
+const sexName=x=>x==='м'?'юноша':x==='ж'?'девушка':'—';
+async function load(){const key=$('key').value.trim();if(!key)return;$('kmsg').textContent='Загрузка… (до 10–20 секунд)';
+ try{const r=await (await fetch(API+'?action=report&key='+encodeURIComponent(key)+'&t='+Date.now())).json();
+  if(!r.ok){$('kmsg').textContent='Неверный ключ.';return}R=r;lsSet('panel:key',key);$('kmsg').textContent='';$('keybox').style.display='none';$('out').style.display='';render()}
+ catch(e){$('kmsg').textContent='Нет связи с таблицей. Проверьте, что скрипт развернут (новая версия).'}}
+$('load').onclick=load;$('key').onkeydown=e=>{if(e.key==='Enter')load()};$('re').onclick=load;
+function bars(el,items,max,cls){el.innerHTML=items.map(x=>`<span>${x.l}</span><span class="t"><i class="${cls||''}" style="width:${max?Math.max(1,100*x.v/max):0}%"></i></span><span class="v">${x.s!=null?x.s:x.v}</span>`).join('')}
+function cols(el,vals,labels){const m=Math.max(1,...vals);el.innerHTML=`<div class="cols">${vals.map((v,i)=>`<div title="${labels[i]}: ${v} мин." style="height:${100*v/m}%"></div>`).join('')}</div><div class="cl">${labels.map(l=>`<span>${l}</span>`).join('')}</div>`}
+function render(){const S=R.students,act=S.filter(s=>s.minutes>0||s.answers>0);
+ $('gen').textContent='Данные на '+new Date(R.generated).toLocaleString('ru-RU');
+ const tm=S.reduce((a,s)=>a+s.minutes,0),ta=S.reduce((a,s)=>a+s.answers,0),tok=S.reduce((a,s)=>a+s.ok,0);
+ $('kpis').innerHTML=[[act.length+' из '+S.length,'занимались'],[Math.round(tm),'минут всего'],[act.length?Math.round(tm/act.length):0,'минут на студента'],[ta,'ответов на карточки'],[ta?Math.round(100*tok/ta)+'%':'—','верных ответов'],[S.reduce((a,s)=>a+s.sessions,0),'входов']]
+  .map(k=>`<div class="kpi"><b>${k[0]}</b><span>${k[1]}</span></div>`).join('');
+ // номинации
+ const top=(f,k,u,n,flt)=>{const L=S.filter(flt||(s=>k(s)>0)).sort((a,b)=>k(b)-k(a)).slice(0,n||3);return L.length?L.map(s=>`<li>${esc(s.name)} — ${Math.round(k(s)*10)/10} ${u}</li>`).join(''):'<li style="font-weight:400">пока нет данных</li>'};
+ const N=[['⏱ Больше всех времени',top(null,s=>s.minutes,'мин.')],['📚 Больше всех выучил слов',top(null,known,'сл.')],
+  ['🎯 Самый точный (от 50 ответов)',top(null,s=>s.acc,'%',3,s=>s.answers>=50)],['📅 Больше всех дней занятий',top(null,s=>s.days,'дн.')],
+  ['🔁 Чаще всех заходил',top(null,s=>s.sessions,'раз')],['🧪 Лучший в тестах карточек',top(null,s=>s.ct.avg||0,'%')],
+  ['🏆 Лучший в викторинах',top(null,s=>s.qz.avg||0,'%')],['⚠ Нужна помощь: больше всех ошибок',top(null,s=>s.bad,'ош.',3),'warn'],
+  ['💤 Не занимались',S.filter(s=>!s.minutes&&!s.answers).map(s=>`<li style="font-weight:400">${esc(s.name)}</li>`).join('')||'<li style="font-weight:400">все занимались 🎉</li>','warn']];
+ $('noms').innerHTML=N.map(x=>`<div class="nom ${x[2]||''}"><h4>${x[0]}</h4><ol>${x[1]}</ol></div>`).join('');
+ table();
+ // слова и темы
+ const decks=R.decks;[$('wdeck'),$('tdeck')].forEach(sel=>{if(!sel.options.length)Object.keys(decks).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=decks[k];sel.appendChild(o)})});
+ words();themes();
+ cols($('wk'),R.weekday,['пн','вт','ср','чт','пт','сб','вс']);
+ cols($('hr'),R.hour,R.hour.map((_,i)=>i%3===0?String(i):''));
+ const days=[];for(let i=29;i>=0;i--){const d=new Date(Date.now()-i*864e5);days.push(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'))}
+ cols($('dly'),days.map(d=>Math.round((R.daily[d]||0)*10)/10),days.map((d,i)=>i%5===0?d.slice(8)+'.'+d.slice(5,7):''));
+ // юноши и девушки
+ const grp=x=>S.filter(s=>s.sex===x),avg=(L,f)=>{const v=L.map(f).filter(v=>v!=null);return v.length?Math.round(10*v.reduce((a,b)=>a+b,0)/v.length)/10:'—'};
+ const G=[['м','Юноши'],['ж','Девушки']].map(([k,l])=>{const L=grp(k);return [l,L.length,avg(L,s=>s.minutes),avg(L,known),avg(L,s=>s.answers>=20?s.acc:null),avg(L,s=>s.ct.avg),avg(L,s=>s.qz.avg)]});
+ $('sex').innerHTML=`<div class="tw"><table><thead><tr><th>Группа</th><th>Чел.</th><th>Минут</th><th>Знает слов</th><th>Точность %</th><th>Тесты %</th><th>Викторины %</th></tr></thead><tbody>${G.map(r=>`<tr>${r.map((c,i)=>`<td class="${i?'n':''}">${c}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`+
+  (S.some(s=>!s.sex)?'<div class="note">Не у всех указан пол: заполните столбец «Пол (м/ж)» на листе «Студенты».</div>':'')+
+  '<div class="note">В группе около 19 человек, поэтому разница между юношами и девушками даже в 10–15% может быть случайной. Это описание группы, а не вывод о полах.</div>'}
+const COLS=[['name','Имя',s=>s.name],['sex','Пол',s=>s.sex||''],['sessions','Входов',s=>s.sessions],['minutes','Минут',s=>s.minutes],['days','Дней',s=>s.days],
+ ['known','Знает слов',known],['seen','Видел слов',seen],['answers','Ответов',s=>s.answers],['acc','Верно %',s=>s.acc],['bad','Ошибок',s=>s.bad],
+ ['ct','Тесты %',s=>s.ct.avg],['qz','Викторины %',s=>s.qz.avg],['last','Последний вход',s=>s.last]];
+function table(){const C=COLS.find(c=>c[0]===sortK);const L=R.students.slice().sort((a,b)=>{const x=C[2](a),y=C[2](b);if(x==null)return 1;if(y==null)return -1;return (x>y?1:x<y?-1:0)*sortD});
+ $('tbl').innerHTML=`<thead><tr><th>№</th>${COLS.map(c=>`<th data-k="${c[0]}">${c[1]}${c[0]===sortK?(sortD>0?' ▲':' ▼'):''}</th>`).join('')}</tr></thead><tbody>`+
+  L.map((s,i)=>`<tr data-id="${esc(s.id)}"><td>${i+1}</td>${COLS.map(c=>{const v=c[2](s);return `<td class="${c[0]==='name'||c[0]==='sex'?'':'n'}">${c[0]==='last'?fmtD(v):v==null?'—':esc(v)}</td>`}).join('')}</tr>`).join('')+'</tbody>';
+ $('tbl').querySelectorAll('th[data-k]').forEach(th=>th.onclick=()=>{const k=th.dataset.k;sortD=k===sortK?-sortD:(k==='name'?1:-1);sortK=k;table()});
+ $('tbl').querySelectorAll('tbody tr').forEach(tr=>tr.onclick=()=>detail(tr.dataset.id))}
+function words(){const d=$('wdeck').value,L=R.words.filter(w=>w.deck===d).slice(0,30);
+ $('words').innerHTML='<thead><tr><th>Слово</th><th>Перевод</th><th>Ошиблись</th><th>Ошибок %</th></tr></thead><tbody>'+
+  (L.length?L.map(w=>`<tr><td class="ar">${esc(w.a)}</td><td>${esc(w.r)}<br><small style="color:#789">${esc(w.t)}</small></td><td class="n">${w.studs} чел.</td><td class="n">${w.pct}%</td></tr>`).join(''):'<tr><td colspan="4">Пока нет ошибок.</td></tr>')+'</tbody>'}
+function themes(){const d=$('tdeck').value,L=R.themes.filter(t=>t.deck===d).sort((a,b)=>b.pct-a.pct);
+ bars($('themes'),L.map(t=>({l:esc(t.t),v:t.pct,s:t.pct+'%'})),Math.max(1,...L.map(t=>t.pct)),'c');if(!L.length)$('themes').innerHTML='Пока нет данных.'}
+$('wdeck').onchange=words;$('tdeck').onchange=themes;
+function detail(id){const s=R.students.find(x=>String(x.id)===String(id));if(!s)return;$('dt').textContent=s.name;
+ const D=Object.keys(R.decks).map(k=>{const d=s.decks[k]||{};return `<tr><td>${esc(R.decks[k])}</td><td class="n">${d.seen||0}</td><td class="n">${d.learn||0}</td><td class="n">${d.good||0}</td><td class="n">${d.done||0}</td></tr>`}).join('');
+ const th=s.themes.slice().sort((a,b)=>b.bad/b.n-a.bad/a.n);
+ const days=Object.keys(s.daily).sort().slice(-20);
+ $('dbody').innerHTML=`<p>${sexName(s.sex)}${s.group?' · группа '+esc(s.group):''} · входов: <b>${s.sessions}</b> · минут: <b>${s.minutes}</b> · дней: <b>${s.days}</b> · ответов: <b>${s.answers}</b> (верно ${s.acc==null?'—':s.acc+'%'}) · последний вход: ${fmtD(s.last)}</p>
+ <h3>Слова по спискам</h3><div class="tw"><table><thead><tr><th>Список</th><th>Видел</th><th>Учит (ошибки)</th><th>Знает</th><th>Выучил</th></tr></thead><tbody>${D}</tbody></table></div>
+ <h3>Тесты карточек и викторины</h3><p>Тестов «20 вопросов»: ${s.ct.n}${s.ct.n?` · средний ${s.ct.avg}% · лучший ${s.ct.best}%`:''}<br>Викторин: ${s.qz.n}${s.qz.n?` · средний ${s.qz.avg}% · лучший ${s.qz.best}%`:''}</p>
+ ${Object.keys(s.qz.list||{}).length?`<div class="bars">${Object.entries(s.qz.list).map(([q,v])=>`<span>${esc(q)}</span><span class="t"><i style="width:${v}%"></i></span><span class="v">${v}%</span>`).join('')}</div>`:''}
+ <h3>Темы: доля ошибок</h3><div class="bars" id="dth"></div>
+ <h3>Самые трудные слова</h3>${s.hard.length?`<div class="tw"><table><tbody>${s.hard.map(h=>`<tr><td class="ar">${esc(h.a)}</td><td>${esc(h.r)}</td><td class="n">ошибок: ${h.bad}</td></tr>`).join('')}</tbody></table></div>`:'<p>Ошибок нет.</p>'}
+ <h3>Минуты по дням</h3><div id="dday"></div>`;
+ bars($('dth'),th.map(t=>({l:esc(t.t),v:Math.round(100*t.bad/t.n),s:Math.round(100*t.bad/t.n)+'% из '+t.n})),100,'c');if(!th.length)$('dth').innerHTML='Нет ответов.';
+ if(days.length)cols($('dday'),days.map(d=>s.daily[d]),days.map(d=>d.slice(8)+'.'+d.slice(5,7)));else $('dday').textContent='Нет занятий.';
+ $('dlg').showModal()}
+$('csv').onclick=()=>{const head=['ID',...COLS.map(c=>c[1])];const rows=R.students.map(s=>[s.id,...COLS.map(c=>{const v=c[2](s);return c[0]==='last'?(v?new Date(v).toLocaleString('ru-RU'):''):v==null?'':v})]);
+ const csv='﻿'+[head,...rows].map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\r\n');
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='zhurnal_kartochek.csv';a.click()};
+const k0=lsGet('panel:key','');if(k0){$('key').value=k0;load()}
+</script></body></html>

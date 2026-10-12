@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Двухпадежные имена и имена на алиф максуру · интерактив</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Noto+Naskh+Arabic:wght@400;600;700&family=PT+Sans:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F1F6F4;--card:#FFFFFF;--ink:#1E2B2F;--muted:#51656A;--teal:#1D5C63;--sea:#2A9D8F;--coral:#D8573A;--sand:#E9C46A;--line:#CFE3DF;--soft:#E3F0ED;
+ --tri:#2A7F62;--tribg:#E2F3EC;--di:#B3541E;--dibg:#FBEADF;--maq:#5B4B9A;--maqbg:#ECE8F7;--ok:#2A7F62;--bad:#C0392B;--okbg:#E2F3EC;--badbg:#FBE7E4;
+ --ru:'PT Sans','Segoe UI',Arial,sans-serif;--arf:'Noto Naskh Arabic','Amiri','Times New Roman',serif;}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--paper:#12201F;--card:#1A2B2A;--ink:#E7F0EE;--muted:#A5BAB6;--teal:#7CC7C9;--sea:#56C2B2;--coral:#F08A6E;--line:#2D4543;--soft:#20363A;
+ --tri:#63C79A;--tribg:#1D3A30;--di:#F0A06E;--dibg:#3D2B1F;--maq:#B3A6F0;--maqbg:#2A2640;--ok:#63C79A;--bad:#F08074;--okbg:#1D3A30;--badbg:#3D2522;}}
+:root[data-theme="dark"]{--paper:#12201F;--card:#1A2B2A;--ink:#E7F0EE;--muted:#A5BAB6;--teal:#7CC7C9;--sea:#56C2B2;--coral:#F08A6E;--line:#2D4543;--soft:#20363A;
+ --tri:#63C79A;--tribg:#1D3A30;--di:#F0A06E;--dibg:#3D2B1F;--maq:#B3A6F0;--maqbg:#2A2640;--ok:#63C79A;--bad:#F08074;--okbg:#1D3A30;--badbg:#3D2522;}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--ru);font-size:17px;line-height:1.55}
+.ar{font-family:var(--arf);direction:rtl;unicode-bidi:isolate;font-size:1.45em;line-height:1.9}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--sand);outline-offset:2px}
+.hero{background:var(--teal);color:#fff}
+.hero-in{max-width:1040px;margin:0 auto;padding:36px 20px 30px;display:grid;gap:8px}
+.hero h1{font-family:'Amiri',var(--arf);font-weight:700;font-size:clamp(40px,8vw,76px);line-height:1.3;margin:0;direction:rtl;text-align:right}
+.hero p{margin:0;max-width:64ch;color:#D9EEEC}.hero .t{font-size:24px;font-weight:700;color:#fff}
+.band{height:10px;background:linear-gradient(90deg,var(--tri) 0 33.3%,var(--di) 33.3% 66.6%,var(--maq) 66.6%)}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border-bottom:1px solid var(--line)}
+.tabs{max-width:1040px;margin:0 auto;display:flex;gap:4px;overflow-x:auto;padding:8px 12px}
+.tabs button{white-space:nowrap;border:0;background:transparent;color:var(--muted);padding:8px 14px;border-radius:999px}
+.tabs button[aria-selected="true"]{background:var(--teal);color:#fff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tabs button[aria-selected="true"]{color:#0E1B1A}}
+:root[data-theme="dark"] .tabs button[aria-selected="true"]{color:#0E1B1A}
+main{max-width:1040px;margin:0 auto;padding:24px 16px 64px}
+section{display:none}section.on{display:block}
+h2{font-size:30px;line-height:1.2;margin:6px 0;color:var(--teal)}h3{font-size:21px;margin:22px 0 8px}
+.lead{color:var(--muted);max-width:72ch;margin:0 0 18px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:14px 0}
+.rule{border-left:6px solid var(--coral)}
+.muted{color:var(--muted)}
+.btn{border:0;background:var(--teal);color:#fff;padding:9px 16px;border-radius:10px;font-weight:700}
+.btn.ghost{background:transparent;color:var(--teal);border:1.5px solid var(--teal)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn:not(.ghost){color:#0E1B1A}}
+:root[data-theme="dark"] .btn:not(.ghost){color:#0E1B1A}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+/* type cards */
+.types{display:grid;gap:14px}
+@media (min-width:820px){.types{grid-template-columns:repeat(3,1fr)}}
+.tcard{border-radius:16px;padding:16px 18px;border:2px solid}
+.tcard.tri{background:var(--tribg);border-color:var(--tri)}.tcard.di{background:var(--dibg);border-color:var(--di)}.tcard.maq{background:var(--maqbg);border-color:var(--maq)}
+.tcard h3{margin:0 0 6px}.tri h3{color:var(--tri)}.di h3{color:var(--di)}.maq h3{color:var(--maq)}
+.mini{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;align-items:center}
+.mini .ar{text-align:right;font-size:1.5em}
+/* decliner */
+.chips{display:flex;flex-wrap:wrap;gap:8px;direction:rtl}
+.chip{border:2px solid var(--line);background:var(--card);border-radius:12px;padding:0 12px;font-family:var(--arf);font-size:24px;line-height:1.8;color:var(--ink)}
+.chip[data-k="tri"]{border-color:var(--tri)}.chip[data-k="di"]{border-color:var(--di)}.chip[data-k="maq"]{border-color:var(--maq)}
+.chip[aria-pressed="true"]{background:var(--soft);box-shadow:0 0 0 3px var(--sand)}
+.switch{display:inline-flex;border:1.5px solid var(--line);border-radius:999px;overflow:hidden}
+.switch button{border:0;background:var(--card);color:var(--ink);padding:7px 16px}
+.switch button[aria-pressed="true"]{background:var(--teal);color:#fff;font-weight:700}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .switch button[aria-pressed="true"]{color:#0E1B1A}}
+:root[data-theme="dark"] .switch button[aria-pressed="true"]{color:#0E1B1A}
+.decl{display:grid;grid-template-columns:150px 1fr 150px;gap:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--card);margin-top:14px}
+.decl>div{padding:10px 14px;border-top:1px solid var(--line);display:flex;align-items:center}
+.decl>div:nth-child(-n+3){border-top:0;background:var(--soft);font-weight:700;color:var(--muted);font-size:15px}
+.decl .form{justify-content:flex-start;font-family:var(--arf);font-size:40px;line-height:1.7;direction:rtl}
+.decl .end b{font-weight:700;border-radius:8px;padding:0 8px;font-size:1.6em;line-height:1.4}
+.decl .end{font-size:15px;color:var(--muted)}
+.e-tri b{background:var(--tribg);color:var(--tri)}.e-di b{background:var(--dibg);color:var(--di)}.e-maq b{background:var(--maqbg);color:var(--maq)}
+.flash{animation:fl .6s}
+@keyframes fl{0%{transform:scale(1.08)}100%{transform:scale(1)}}
+.why{margin-top:12px;padding:12px 16px;border-radius:12px;background:var(--soft)}
+/* sort */
+.bins{display:grid;gap:12px;margin-top:14px}
+@media (min-width:820px){.bins{grid-template-columns:repeat(3,1fr)}}
+.bin{border:2px dashed;border-radius:14px;padding:12px;min-height:90px;background:var(--card)}
+.bin.tri{border-color:var(--tri)}.bin.di{border-color:var(--di)}.bin.maq{border-color:var(--maq)}
+.bin h3{margin:0 0 8px;font-size:18px}.bin.tri h3{color:var(--tri)}.bin.di h3{color:var(--di)}.bin.maq h3{color:var(--maq)}
+.bin .chips{min-height:40px}
+.tray{margin-top:12px;padding:12px;border-radius:14px;background:var(--card);border:1px solid var(--line)}
+.chip.ok{background:var(--okbg);border-color:var(--ok)}.chip.bad{background:var(--badbg);border-color:var(--bad)}
+.tag{display:inline-block;font-size:14px;font-weight:700;padding:2px 10px;border-radius:999px;background:var(--soft);color:var(--teal)}
+/* quiz */
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+.qhead{display:flex;justify-content:space-between;color:var(--muted);font-size:15px}
+.bar{height:8px;background:var(--soft);border-radius:99px;overflow:hidden;margin:8px 0 16px}.bar i{display:block;height:100%;background:var(--sea);width:0;transition:width .3s}
+.qtext{font-size:20px;font-weight:700;margin:0 0 14px}
+.opts{display:grid;gap:10px}
+.opt{border:1.5px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:8px 16px;text-align:right}
+.opt.rus{text-align:left;padding:12px 16px}
+.opt .ar{font-size:1.7em}
+.opt.ok{border-color:var(--ok);background:var(--okbg)}.opt.bad{border-color:var(--bad);background:var(--badbg)}
+.expl{margin-top:12px;color:var(--muted);min-height:1.5em}
+.result{text-align:center;display:grid;gap:6px;justify-items:center}
+.level{font-size:42px;font-weight:700;color:var(--teal);line-height:1.1}
+.levels{display:grid;gap:6px}.levels div{display:flex;justify-content:space-between;padding:6px 12px;border-radius:8px;background:var(--soft)}
+@media (prefers-reduced-motion: reduce){.flash{animation:none}.bar i{transition:none}}
+@media (max-width:520px){.decl{grid-template-columns:100px 1fr 110px}.decl .form{font-size:32px}}
+</style>
+</head>
+<body>
+<header class="hero"><div class="hero-in">
+ <h1 lang="ar">الْمَمْنُوعُ مِنَ الصَّرْفِ</h1>
+ <p class="t">Двухпадежные имена и имена на алиф максуру</p>
+ <p>Интерактивное пособие · 2 курс · начальная группа. Посмотрите, как склоняются слова, разложите их по группам и проверьте себя в тесте.</p>
+</div><div class="band" aria-hidden="true"></div></header>
+<nav><div class="tabs" role="tablist">
+ <button role="tab" data-t="map" aria-selected="true">Три типа</button>
+ <button role="tab" data-t="decl" aria-selected="false">Склонение вживую</button>
+ <button role="tab" data-t="groups" aria-selected="false">Почему двухпадежное</button>
+ <button role="tab" data-t="sort" aria-selected="false">Разложи по группам</button>
+ <button role="tab" data-t="quiz" aria-selected="false">Тест</button>
+</div></nav>
+<main>
+<section id="map" class="on">
+ <h2>Три типа склонения</h2>
+ <p class="lead">Смотрим на неопределённое состояние: сколько разных окончаний у слова в трёх падежах.</p>
+ <div class="types">
+  <div class="tcard tri"><h3>Трёхпадежное</h3><p class="muted" style="margin:0 0 6px">три окончания с танвином</p>
+   <div class="mini"><span>им.</span><span class="ar" lang="ar">بَيْتٌ</span><span>род.</span><span class="ar" lang="ar">بَيْتٍ</span><span>вин.</span><span class="ar" lang="ar">بَيْتًا</span></div></div>
+  <div class="tcard di"><h3>Двухпадежное</h3><p class="muted" style="margin:0 0 6px">без танвина; род. = вин.</p>
+   <div class="mini"><span>им.</span><span class="ar" lang="ar">أَحْمَرُ</span><span>род.</span><span class="ar" lang="ar">أَحْمَرَ</span><span>вин.</span><span class="ar" lang="ar">أَحْمَرَ</span></div></div>
+  <div class="tcard maq"><h3>На алиф максуру</h3><p class="muted" style="margin:0 0 6px">одна форма во всех падежах</p>
+   <div class="mini"><span>им.</span><span class="ar" lang="ar">فَتًى</span><span>род.</span><span class="ar" lang="ar">فَتًى</span><span>вин.</span><span class="ar" lang="ar">فَتًى</span></div></div>
+ </div>
+ <div class="box rule"><b>Главное:</b> двухпадежное имя с артиклем становится трёхпадежным — в родительном падеже снова появляется кясра: <span class="ar" lang="ar" style="font-size:1.3em">الْأَحْمَرِ</span>. Проверьте это во вкладке «Склонение вживую».</div>
+</section>
+
+<section id="decl">
+ <h2>Склонение вживую</h2>
+ <p class="lead">Выберите слово и переключайте состояние. Цвет рамки слова — его тип: зелёный — трёхпадежное, оранжевый — двухпадежное, фиолетовый — на алиф максуру.</p>
+ <div class="chips" id="wordChips"></div>
+ <div class="row" style="margin-top:14px"><span class="muted">Состояние:</span>
+  <div class="switch"><button id="stIndef" aria-pressed="true">неопределённое</button><button id="stDef" aria-pressed="false">с артиклем</button></div>
+ </div>
+ <div class="decl" id="declTable"></div>
+ <div class="why" id="declWhy"></div>
+</section>
+
+<section id="groups">
+ <h2>Почему имя двухпадежное</h2>
+ <p class="lead">Три группы. Нажмите на группу, чтобы увидеть примеры.</p>
+ <div id="groupList"></div>
+ <div class="box" style="border-left:6px solid var(--maq)"><b>Имена на алиф максуру</b> пишутся с <span class="ar" lang="ar" style="font-size:1.2em">ا</span>, если это трёхбуквенное слово с корневой вав (<span class="ar" lang="ar" style="font-size:1.2em">عَصًا</span>), и с <span class="ar" lang="ar" style="font-size:1.2em">ى</span> в остальных случаях (<span class="ar" lang="ar" style="font-size:1.2em">فَتًى، مُسْتَشْفًى</span>). Если алиф — признак женского рода, танвина нет вообще: <span class="ar" lang="ar" style="font-size:1.2em">ذِكْرَى، كُبْرَى</span>.</div>
+</section>
+
+<section id="sort">
+ <h2>Разложи по группам</h2>
+ <p class="lead">Нажмите на слово, затем на нужную группу. Верные ответы станут зелёными.</p>
+ <div class="row"><span class="tag" id="sortScore">Верно: 0 из 0</span><button class="btn ghost" id="sortReset">Заново</button></div>
+ <div class="tray"><div class="chips" id="tray"></div></div>
+ <div class="bins">
+  <div class="bin tri" data-k="tri"><h3>Трёхпадежные</h3><div class="chips"></div></div>
+  <div class="bin di" data-k="di"><h3>Двухпадежные</h3><div class="chips"></div></div>
+  <div class="bin maq" data-k="maq"><h3>На алиф максуру</h3><div class="chips"></div></div>
+ </div>
+</section>
+
+<section id="quiz">
+ <h2>Тест</h2>
+ <p class="lead">15 вопросов. В конце вы увидите свой уровень — сделайте снимок экрана и отправьте преподавателю.</p>
+ <div id="qStart" class="qcard">
+  <label for="qName"><b>Имя и фамилия</b></label>
+  <input id="qName" type="text" maxlength="40" style="width:100%;font:inherit;padding:8px 10px;margin:8px 0 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink)">
+  <div class="row"><button class="btn" id="qGo">Начать</button><span class="muted" id="qMsg"></span></div>
+  <h3>Уровни</h3><div class="levels" id="levels"></div>
+ </div>
+ <div id="qRun" class="qcard" hidden>
+  <div class="qhead"><span id="qNum"></span><span id="qTime">0:00</span></div>
+  <div class="bar"><i id="qBar"></i></div>
+  <p class="qtext" id="qText"></p><div class="opts" id="qOpts"></div>
+  <p class="expl" id="qExpl"></p><button class="btn" id="qNext" hidden>Дальше</button>
+ </div>
+ <div id="qEnd" class="qcard" hidden><div class="result">
+  <span class="muted" id="rName"></span><div class="level" id="rLevel"></div><div id="rScore" style="font-size:20px"></div><span class="muted" id="rDate"></span>
+  <button class="btn" id="qAgain">Пройти ещё раз</button></div></div>
+</section>
+</main>
+<script>
+(function(){"use strict";
+const $=s=>document.querySelector(s);
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const ar=t=>`<span class="ar" lang="ar">${t}</span>`;
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+document.querySelectorAll('.tabs button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-selected',String(x===b)));document.querySelectorAll('main section').forEach(s=>s.classList.toggle('on',s.id===b.dataset.t));}));
+
+/* words: [word, type, stem, indef endings, def (with article) forms or null, reason] */
+const WORDS=[
+ {w:'كِتَابٌ',k:'tri',ru:'книга',ind:['كِتَاب','ٌ','ٍ','ًا'],def:['الْكِتَاب','ُ','ِ','َ'],why:'Обычное слово: три окончания с танвином.'},
+ {w:'مُحَمَّدٌ',k:'tri',ru:'Мухаммад',ind:['مُحَمَّد','ٌ','ٍ','ًا'],def:null,why:'Мужское арабское имя — трёхпадежное, хотя это имя собственное.'},
+ {w:'أَحْمَدُ',k:'di',ru:'Ахмад',ind:['أَحْمَد','ُ','َ','َ'],def:null,why:'Имя собственное по модели глагола (группа 1г). Артикля не принимает.'},
+ {w:'فَاطِمَةُ',k:'di',ru:'Фатима',ind:['فَاطِمَ','ةُ','ةَ','ةَ'],def:null,why:'Женское имя (группа 1а).'},
+ {w:'إِبْرَاهِيمُ',k:'di',ru:'Ибрахим',ind:['إِبْرَاهِيم','ُ','َ','َ'],def:null,why:'Иностранное имя (группа 1б).'},
+ {w:'عُثْمَانُ',k:'di',ru:'Усман',ind:['عُثْمَان','ُ','َ','َ'],def:null,why:'Мужское имя на -ан (группа 1в).'},
+ {w:'مِصْرُ',k:'di',ru:'Египет',ind:['مِصْر','ُ','َ','َ'],def:null,why:'Название страны (группа 1а).'},
+ {w:'أَحْمَرُ',k:'di',ru:'красный',ind:['أَحْمَر','ُ','َ','َ'],def:['الْأَحْمَر','ُ','ِ','َ'],why:'Модель аф‘алу (группа 2а). С артиклем — трёхпадежное.'},
+ {w:'عَطْشَانُ',k:'di',ru:'томимый жаждой',ind:['عَطْشَان','ُ','َ','َ'],def:['الْعَطْشَان','ُ','ِ','َ'],why:'Модель фа‘лану (группа 2б).'},
+ {w:'صَحْرَاءُ',k:'di',ru:'пустыня',ind:['صَحْرَاء','ُ','َ','َ'],def:['الصَّحْرَاء','ُ','ِ','َ'],why:'Женская алиф мамдуда (группа 2в).'},
+ {w:'جَرَائِدُ',k:'di',ru:'газеты',ind:['جَرَائِد','ُ','َ','َ'],def:['الْجَرَائِد','ُ','ِ','َ'],why:'Мн. ч. модели мафа‘илу: после алифа два слога (группа 3а).'},
+ {w:'أُمَرَاءُ',k:'di',ru:'эмиры',ind:['أُمَرَاء','ُ','َ','َ'],def:['الْأُمَرَاء','ُ','ِ','َ'],why:'Мн. ч. на -а’у (группа 3б).'},
+ {w:'فَتًى',k:'maq',ru:'юноша',ind:['فَت','ًى','ًى','ًى'],def:['الْفَت','َى','َى','َى'],why:'Алиф максура: окончание одно во всех падежах. Без артикля — танвин (фатан).'},
+ {w:'عَصًا',k:'maq',ru:'палка (ж. р.)',ind:['عَص','ًا','ًا','ًا'],def:['الْعَص','َا','َا','َا'],why:'Трёхбуквенное слово с корневой вав — пишется алиф.'},
+ {w:'مُسْتَشْفًى',k:'maq',ru:'больница',ind:['مُسْتَشْف','ًى','ًى','ًى'],def:['الْمُسْتَشْف','َى','َى','َى'],why:'Длинное слово — всегда ى.'},
+ {w:'ذِكْرَى',k:'maq',ru:'воспоминание',ind:['ذِكْر','َى','َى','َى'],def:['الذِّكْر','َى','َى','َى'],why:'Алиф — признак женского рода: танвина нет ни в каком состоянии.'}];
+let cur=0,defSt=false;
+const chipsBox=$('#wordChips');
+WORDS.forEach((w,i)=>{const b=el('button','chip',w.w);b.dataset.k=w.k;b.setAttribute('aria-pressed',String(i===0));b.title=w.ru;b.addEventListener('click',()=>{cur=i;chipsBox.querySelectorAll('.chip').forEach((c,j)=>c.setAttribute('aria-pressed',String(j===i)));renderDecl(true);});chipsBox.appendChild(b);});
+const setSt=d=>{defSt=d;$('#stIndef').setAttribute('aria-pressed',String(!d));$('#stDef').setAttribute('aria-pressed',String(d));renderDecl(true);};
+$('#stIndef').addEventListener('click',()=>setSt(false));$('#stDef').addEventListener('click',()=>setSt(true));
+const TNAME={tri:'трёхпадежное',di:'двухпадежное',maq:'на алиф максуру'};
+function renderDecl(anim){const w=WORDS[cur];const t=$('#declTable');const f=defSt?w.def:w.ind;
+ t.innerHTML='<div>Падеж</div><div style="justify-content:flex-end">Форма</div><div>Окончание</div>';
+ if(!f){t.innerHTML+=`<div style="grid-column:1/-1;color:var(--muted)">Это имя собственное: оно определённое само по себе и артикля не принимает.</div>`;}
+ else{const kind=defSt&&w.k==='di'?'tri':w.k;const names=['Именительный','Родительный','Винительный'];const endN={'ٌ':'-ун','ٍ':'-ин','ًا':'-ан','ُ':'-у','ِ':'-и','َ':'-а','ةُ':'-ату','ةَ':'-ата','ًى':'-ан','َى':'-а','َا':'-а'};
+  names.forEach((n,i)=>{t.innerHTML+=`<div>${n}</div><div class="form${anim?' flash':''}" lang="ar">${f[0]}${f[i+1]}</div><div class="end e-${kind}"><b class="ar" lang="ar">ـ${f[i+1]}</b>&nbsp;${endN[f[i+1]]||''}</div>`;});}
+ const note=defSt&&w.k==='di'&&w.def?' <b>С артиклем слово стало трёхпадежным.</b>':'';
+ $('#declWhy').innerHTML=`${ar(w.w)} — «${w.ru}», <b>${TNAME[w.k]}</b>. ${w.why}${note}`;}
+renderDecl(false);
+
+/* groups */
+const GROUPS=[
+ ['Группа 1. Имена собственные',[['а) женские имена, страны и города','فَاطِمَةُ · زَيْنَبُ · عَائِشَةُ · مِصْرُ · دِمَشْقُ'],['б) иностранные имена и названия','إِبْرَاهِيمُ · إِسْمَاعِيلُ · يُوسُفُ · يُونُسُ · طَشْقَنْدُ'],['в) мужские имена на -ан','عُثْمَانُ · سَلْمَانُ · سُلَيْمَانُ · لُبْنَانُ'],['г) имена по модели глагола','أَحْمَدُ · يَزِيدُ · أَنْوَرُ'],['д) модель фу‘ал','عُمَرُ · زُفَرُ'],['е) составные названия','حَضْرَمَوْتُ · بَعْلَبَكُّ']],'Но: مُحَمَّدٌ · عَلِيٌّ · خَالِدٌ — трёхпадежные.'],
+ ['Группа 2. Прилагательные и существительные ед. ч.',[['а) аф‘алу – фа‘ла’у','أَحْمَرُ · أَبْيَضُ · حَمْرَاءُ · أَكْبَرُ'],['б) фа‘лану – фа‘ла','عَطْشَانُ · جَوْعَانُ · ظَمْآنُ'],['в) женская алиф мамдуда','صَحْرَاءُ · بَأْسَاءُ · ضَرَّاءُ']],''],
+ ['Группа 3. Внутреннее множественное число',[['а) после алифа два слога','مَدَارِسُ · جَرَائِدُ · قَوَاعِدُ · مَصَابِيحُ'],['б) на -а’у','أُمَرَاءُ · عُلَمَاءُ · أَصْدِقَاءُ · أَطِبَّاءُ']],'']];
+const gl=$('#groupList');
+GROUPS.forEach(([t,rows,note],gi)=>{const d=el('details','box');if(gi===0)d.open=true;d.innerHTML=`<summary style="cursor:pointer;font-weight:700;font-size:19px;color:var(--di)">${t}</summary>`+rows.map(([a,b])=>`<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);padding:6px 0"><span>${a}</span>${ar(b)}</div>`).join('')+(note?`<p class="muted" style="margin:8px 0 0">${note.replace(/([\u0600-\u06FF][\u0600-\u06FF\u064B-\u0652\s·]*)/,m=>ar(m.trim())+' ')}</p>`:'');gl.appendChild(d);});
+
+/* sort */
+const SORT=[['كِتَابٌ','tri'],['مَدَارِسُ','di'],['فَتًى','maq'],['أَحْمَدُ','di'],['مُحَمَّدٌ','tri'],['صَحْرَاءُ','di'],['مُسْتَشْفًى','maq'],['أَصْدِقَاءُ','di'],['بَيْتٌ','tri'],['أَزْرَقُ','di'],['عَصًا','maq'],['زَيْنَبُ','di'],['طُلَّابٌ','tri'],['مَعْنًى','maq'],['عَطْشَانُ','di'],['شَوَارِعُ','di'],['خَالِدٌ','tri'],['مَبْنًى','maq'],['يُوسُفُ','di'],['كُتُبٌ','tri']];
+let sel=null,sOk=0,sDone=0;
+function buildSort(){sel=null;sOk=0;sDone=0;$('#tray').innerHTML='';document.querySelectorAll('.bin .chips').forEach(c=>c.innerHTML='');upd();
+ shuffle(SORT.slice()).forEach(([w,k])=>{const b=el('button','chip',w);b.dataset.ans=k;b.addEventListener('click',()=>{if(b.dataset.done)return;$('#tray').querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');sel=b;});$('#tray').appendChild(b);});}
+function upd(){$('#sortScore').textContent=`Верно: ${sOk} из ${sDone}`;}
+document.querySelectorAll('.bin').forEach(bin=>bin.addEventListener('click',()=>{if(!sel)return;const ok=sel.dataset.ans===bin.dataset.k;sel.dataset.done='1';sel.setAttribute('aria-pressed','false');sel.classList.add(ok?'ok':'bad');sDone++;if(ok)sOk++;
+ (ok?bin:document.querySelector(`.bin[data-k="${sel.dataset.ans}"]`)).querySelector('.chips').appendChild(sel);sel=null;upd();}));
+$('#sortReset').addEventListener('click',buildSort);buildSort();
+
+/* quiz */
+const Q=[
+ ['Родительный падеж, неопределённое: جَرَائِدُ',['جَرَائِدَ','جَرَائِدٍ','جَرَائِدِ','جَرَائِدُ'],'Двухпадежное: в родительном — фатха, без танвина.'],
+ ['Родительный падеж, с артиклем: الْجَرَائِدُ',['الْجَرَائِدِ','الْجَرَائِدَ','الْجَرَائِدٍ','الْجَرَائِدُ'],'С артиклем двухпадежное становится трёхпадежным.'],
+ ['Родительный падеж: فَتًى',['فَتًى','فَتَيٍ','فَتًا','فَتِي'],'На алиф максуру: форма не меняется.'],
+ ['Винительный падеж: كِتَابٌ',['كِتَابًا','كِتَابَ','كِتَابٍ','كِتَابُ'],'Трёхпадежное: -ан.'],
+ ['Какое слово трёхпадежное?',['مُحَمَّدٌ','أَحْمَدُ','عُثْمَانُ','يُوسُفُ'],'Мухаммад — трёхпадежное имя.'],
+ ['Какое слово двухпадежное?',['مَدَارِسُ','كُتُبٌ','طُلَّابٌ','بُيُوتٌ'],'После алифа два слога — модель мафа‘илу.'],
+ ['Как правильно: «Это — палка»?',['هَذِهِ عَصًا','هَذِهِ عَصَى','هَذِهِ عَصَا','هَذِهِ عَصٌ'],'Корневая вав — пишется алиф, с танвином.'],
+ ['Как правильно: «больница» с артиклем?',['الْمُسْتَشْفَى','الْمُسْتَشْفًى','الْمُسْتَشْفِي','الْمُسْتَشْفَا'],'С артиклем танвина нет.'],
+ ['Почему أَحْمَرُ без танвина?',['модель аф‘алу','иностранное слово','мн. ч. на -а’у','имя на -ан'],'Прилагательные модели аф‘алу — двухпадежные.','ru'],
+ ['Почему عُثْمَانُ без танвина?',['мужское имя на -ан','женское имя','модель аф‘алу','составное название'],'Группа 1в.','ru'],
+ ['Почему صَحْرَاءُ без танвина?',['женская алиф мамдуда','иностранное слово','модель фа‘лану','мн. ч.'],'Группа 2в.','ru'],
+ ['Какое слово не имеет танвина ни в каком состоянии?',['ذِكْرَى','فَتًى','عَصًا','مَعْنًى'],'Алиф — признак женского рода.'],
+ ['«Зайнаб — студентка.»',['زَيْنَبُ طَالِبَةٌ','زَيْنَبٌ طَالِبَةٌ','زَيْنَبُ طَالِبَةُ','زَيْنَبَ طَالِبَةٌ'],'Женское имя — без танвина.'],
+ ['«Это — новые газеты.»',['هَذِهِ جَرَائِدُ جَدِيدَةٌ','هَذِهِ جَرَائِدٌ جَدِيدَةٌ','هَؤُلَاءِ جَرَائِدُ جُدُدٌ','هَذِهِ جَرَائِدُ جَدِيدَةُ'],'Диптот без танвина; мн. ч. неразумных — ж. р. ед. ч.'],
+ ['«Снег — белый.»',['الثَّلْجُ أَبْيَضُ','الثَّلْجُ أَبْيَضٌ','الثَّلْجُ الْأَبْيَضُ','ثَلْجٌ أَبْيَضُ'],'Аф‘алу — без танвина.'],
+ ['Винительный падеж: أَصْدِقَاءُ',['أَصْدِقَاءَ','أَصْدِقَاءً','أَصْدِقَاءِ','أَصْدِقَاءٍ'],'Двухпадежное: род. = вин. = -а.'],
+ ['Родительный падеж: ذِكْرَى',['ذِكْرَى','ذِكْرًى','ذِكْرِي','ذِكْرَيِ'],'Форма не меняется, танвина нет.'],
+ ['Какой ряд — все двухпадежные?',['أَحْمَدُ · زَيْنَبُ · مَدَارِسُ','خَالِدٌ · زَيْنَبُ · مَدَارِسُ','أَحْمَدُ · كِتَابٌ · مَدَارِسُ','أَحْمَدُ · زَيْنَبُ · فَتًى'],'Имя по модели глагола, женское имя, мн. ч. мафа‘илу.']];
+const N=15,LEV=[[15,'Мастер','15'],[12,'Отлично','12–14'],[9,'Хорошо','9–11'],[6,'Базовый','6–8'],[0,'Начинающий','0–5']];
+const levelOf=s=>LEV.find(l=>s>=l[0])[1];
+$('#levels').innerHTML=LEV.map(l=>`<div><b>${l[1]}</b><span>${l[2]} правильных</span></div>`).join('');
+const wrap=t=>t.replace(/([\u0600-\u06FF][\u0600-\u06FF\u064B-\u0652\s·]*)/g,m=>`<span class="ar" lang="ar" style="font-size:1.25em">${m.trim()}</span> `);
+const fmt=s=>`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+let qs=[],qi=0,score=0,t0=0,timer=null,done=false,name='';
+try{const n=localStorage.getItem('dipName');if(n)$('#qName').value=n;}catch(e){}
+function start(){name=$('#qName').value.trim();if(!name){$('#qMsg').textContent='Введите имя.';return;}try{localStorage.setItem('dipName',name);}catch(e){}
+ qs=shuffle(Q.slice()).slice(0,N).map(q=>({t:q[0],o:shuffle(q[1].slice()),c:q[1][0],e:q[2],ru:q[3]==='ru'}));qi=0;score=0;t0=Date.now();
+ $('#qStart').hidden=true;$('#qEnd').hidden=true;$('#qRun').hidden=false;clearInterval(timer);timer=setInterval(()=>$('#qTime').textContent=fmt(Math.floor((Date.now()-t0)/1000)),500);show();}
+function show(){const q=qs[qi];done=false;$('#qNum').textContent=`Вопрос ${qi+1} из ${N} · верно: ${score}`;$('#qBar').style.width=`${qi/N*100}%`;$('#qText').innerHTML=wrap(q.t);$('#qExpl').textContent='';$('#qNext').hidden=true;
+ const box=$('#qOpts');box.innerHTML='';q.o.forEach(o=>{const b=el('button','opt'+(q.ru?' rus':''),q.ru?o:ar(o));b.addEventListener('click',()=>pick(b,o));box.appendChild(b);});}
+function pick(b,o){if(done)return;done=true;const q=qs[qi];const ok=o===q.c;if(ok)score++;[...$('#qOpts').children].forEach(x=>{if(x.textContent.trim()===q.c)x.classList.add('ok');});if(!ok)b.classList.add('bad');
+ $('#qExpl').innerHTML=(ok?'Верно. ':'Неверно. ')+wrap(q.e);$('#qNext').hidden=false;$('#qNext').textContent=qi===N-1?'Завершить':'Дальше';$('#qNext').focus();}
+$('#qNext').addEventListener('click',()=>{qi++;if(qi>=N){clearInterval(timer);const s=Math.floor((Date.now()-t0)/1000);$('#qRun').hidden=true;$('#qEnd').hidden=false;$('#rName').textContent=name;$('#rLevel').textContent=levelOf(score);$('#rScore').textContent=`${score} из ${N} · время ${fmt(s)}`;$('#rDate').textContent=new Date().toLocaleString('ru-RU',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'});}else show();});
+$('#qGo').addEventListener('click',start);$('#qName').addEventListener('keydown',e=>{if(e.key==='Enter')start();});
+$('#qAgain').addEventListener('click',()=>{$('#qEnd').hidden=true;$('#qStart').hidden=false;});
+})();
+</script>
+</body>
+</html>

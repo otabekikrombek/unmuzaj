@@ -1,0 +1,16 @@
+{
+ "key": "izafa",
+ "title": "Изафа",
+ "description": "Викторина по изафе: определённость, падеж, цепочки.",
+ "level": "A1",
+ "topics": [
+  "грамматика",
+  "изафа"
+ ],
+ "added": "2026-10-05",
+ "kind": "quiz",
+ "legacy": "v1/viktorina_izafa.html",
+ "courses": [
+  "tsu-2-sem1"
+ ]
+}
