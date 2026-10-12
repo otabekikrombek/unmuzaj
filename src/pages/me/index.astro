@@ -1,0 +1,36 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import { getCollection } from 'astro:content';
+import { u } from '../../lib/url';
+const decks = (await getCollection('decks')).map(d => ({ key: d.data.key, title: d.data.title, n: d.data.items.length, href: u(`words/${d.data.key}/`) }));
+---
+<Base title="Мой прогресс" noindex>
+  <PageHead title="Мой прогресс" ar="تَقَدُّمِي" />
+  <div class="wrap narrow" id="me"><p>Загрузка…</p></div>
+  <script type="application/json" id="me-data" set:html={JSON.stringify({ decks, login: u('login/'), home: u(''), teacher: u('teacher/') })} />
+  <script>
+    import { getWho, rpc, token, logout, AuthError } from '../../lib/api';
+    const D = JSON.parse(document.getElementById('me-data')!.textContent!);
+    const box = document.getElementById('me')!;
+    const esc = (s: unknown) => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
+    const who = getWho();
+    if (!who) box.innerHTML = `<p>Вы занимаетесь как гость: прогресс хранится только на этом устройстве.</p><p><a class="btn" href="${D.login}">Войти</a></p>`;
+    else load();
+    async function load() {
+      const head = who!.kind === 'pin' ? `<p><b>${esc(who!.nickname)}</b> · класс «${esc(who!.className)}» · код ${esc(who!.code)}</p>` : `<p><b>${esc(who!.email)}</b></p>`;
+      try {
+        const o = await rpc<any>('my_overview', { p_token: token() });
+        const rows = D.decks.map((d: any) => { const s = o.decks[d.key] || {}; const known = (s.good || 0) + (s.done || 0);
+          return `<li><a class="row" href="${d.href}"><span class="row-title">${esc(d.title)}</span><span class="row-side">знаю ${known} из ${d.n}</span><span class="row-meta">видел ${s.seen || 0} · учу ${s.learn || 0} · выучено ${s.done || 0}</span></a></li>`; }).join('');
+        const tests = o.tests.length ? `<ul>${o.tests.map((t: any) => `<li>${new Date(t.at).toLocaleDateString('ru-RU')} — ${t.correct} из ${t.total}</li>`).join('')}</ul>` : '<p class="muted">Тестов пока нет.</p>';
+        box.innerHTML = head + `<p>Всего занятий: <b>${o.visits}</b> · активное время: <b>${o.minutes}</b> мин.</p><h2>Слова</h2><ul class="list">${rows}</ul><h2 style="margin-top:28px">Последние тесты</h2>${tests}` +
+          (who!.kind === 'email' && /teacher|admin/.test((who as any).role) ? `<p><a class="btn" href="${D.teacher}">Панель учителя</a></p>` : '') +
+          `<p style="margin-top:28px"><button class="btn ghost" id="out">Выйти</button></p>`;
+      } catch (e) {
+        box.innerHTML = head + (e instanceof AuthError ? `<p>Вход устарел. <a href="${D.login}">Войдите снова</a>.</p>` : '<p>Нет связи. Попробуйте позже.</p>') + `<p><button class="btn ghost" id="out">Выйти</button></p>`;
+      }
+      document.getElementById('out')?.addEventListener('click', async () => { await logout(); location.href = D.home; });
+    }
+  </script>
+</Base>

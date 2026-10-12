@@ -1,0 +1,11 @@
+---
+import Base from '../layouts/Base.astro';
+import { u } from '../lib/url';
+---
+<Base title="Страница не найдена" noindex>
+  <div class="wrap narrow" style="padding:60px 16px">
+    <p lang="ar" dir="rtl" style="font-family:var(--ar);font-size:3rem;color:var(--turq);text-align:left;margin:0">٤٠٤</p>
+    <h1>Такой страницы нет</h1>
+    <p>Возможно, адрес изменился. Начните с <a href={u('')}>главной страницы</a> или откройте <a href={u('words/')}>слова</a>.</p>
+  </div>
+</Base>

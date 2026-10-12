@@ -1,0 +1,256 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { u } from '../../lib/url';
+import { t } from '../../i18n/ru';
+export async function getStaticPaths() {
+  return (await getCollection('decks')).map(d => ({ params: { deck: d.data.key }, props: { d: d.data } }));
+}
+const { d } = Astro.props;
+const themes = [...new Set(d.items.map(i => i.t))];
+---
+<Base title={d.title} description={`${d.description} ${d.items.length} слов с карточками и тестом.`}>
+  <section class="trainer" data-deck={d.key}>
+    <div class="wrap">
+      <div class="top">
+        <div>
+          <a class="crumb" href={u('words/')}>{t.nav.words}</a>
+          <h1>{d.title}</h1>
+        </div>
+        <p class="who" id="who" aria-live="polite"></p>
+      </div>
+      <div class="stats" id="stats"></div>
+      <div class="tabs" role="tablist">
+        <button role="tab" data-tab="cards" aria-selected="true">Карточки</button>
+        <button role="tab" data-tab="test" aria-selected="false">Тест · 20 вопросов</button>
+        <button role="tab" data-tab="hard" aria-selected="false">Мои трудные</button>
+        <button role="tab" data-tab="board" aria-selected="false">Рейтинг класса</button>
+      </div>
+
+      <div data-panel="cards">
+        <div class="controls">
+          <select id="theme" aria-label="Какие слова показывать">
+            <option value="*">Все слова</option>
+            <option value="!">Только трудные</option>
+            {themes.map(x => <option value={x}>{x}</option>)}
+          </select>
+          <div class="seg" role="group" aria-label="Направление">
+            <button data-dir="1" aria-pressed="true">ар → рус</button>
+            <button data-dir="2" aria-pressed="false">рус → ар</button>
+            <button data-dir="3" aria-pressed="false">вперемешку</button>
+          </div>
+        </div>
+        <button class="card" id="card" type="button" aria-live="polite"></button>
+        <div class="answer">
+          <button class="no" id="no" type="button">Не знаю</button>
+          <button class="yes" id="yes" type="button">Знаю</button>
+        </div>
+        <p class="hint" id="cnt"></p>
+      </div>
+
+      <div data-panel="test" hidden><div id="test"></div></div>
+      <div data-panel="hard" hidden><div id="hard" class="sheet"></div></div>
+      <div data-panel="board" hidden><div id="board" class="sheet"></div></div>
+    </div>
+  </section>
+  <div class="wrap below">
+    <p class="muted small">Новые слова и слова с ошибками попадаются чаще, выученные — реже. Нажмите «Знаю», если вспомнили перевод сами; иначе — «Не знаю», и ответ покажется.</p>
+  </div>
+  <script type="application/json" id="deck-data" set:html={JSON.stringify({ key: d.key, items: d.items, login: u('login/') })} />
+  <script>
+    import { DeckStore, type NetState } from '../../lib/deckStore';
+    import { getWho, rpc, token } from '../../lib/api';
+    import { nextWord, answer, rec, level, testWords, shuffle, type Word } from '../../lib/srs';
+
+    const D = JSON.parse(document.getElementById('deck-data')!.textContent!);
+    const W: Word[] = D.items;
+    const $ = (id: string) => document.getElementById(id)!;
+    const esc = (s: unknown) => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
+    const store = new DeckStore(D.key);
+    const who = getWho();
+
+    const netText: Record<NetState, string> = {
+      guest: `Вы занимаетесь как гость — прогресс хранится только на этом устройстве. <a href="${D.login}">Войти</a>`,
+      saved: '☁ Сохранено',
+      pending: '☁ Сохраняю…',
+      offline: '⚠ Нет связи — ответы сохранятся, когда появится интернет',
+      relogin: `⚠ Вход устарел. <a href="${D.login}">Войдите снова</a>`,
+    };
+    store.onNet = s => { $('who').innerHTML = (who ? `<b>${esc(who.nickname)}</b> · ` : '') + netText[s]; };
+
+    // ---------- статистика ----------
+    function stats() {
+      const c = { new: 0, learn: 0, good: 0, done: 0 } as Record<string, number>;
+      W.forEach(w => c[level(store.S, w)]++);
+      const N = W.length, col: Record<string, string> = { done: 'var(--turq)', good: 'var(--sun)', learn: 'var(--coral)', new: 'rgba(255,255,255,.25)' };
+      const nm: Record<string, string> = { new: 'новые', learn: 'учу', good: 'знаю', done: 'выучено' };
+      $('stats').innerHTML = `<div class="bar">${['done', 'good', 'learn', 'new'].map(k => `<i style="width:${c[k] / N * 100}%;background:${col[k]}"></i>`).join('')}</div>
+        <div class="leg">${['new', 'learn', 'good', 'done'].map(k => `<span><b style="background:${col[k]}"></b>${nm[k]}: ${c[k]}</span>`).join('')}<span>пройдено ${N - c.new} из ${N}</span></div>`;
+    }
+
+    // ---------- карточки ----------
+    let dir = 1, cd = 1, cur: Word | null = null, flip = false, marked = false, prevA: string | null = null;
+    const sel = $('theme') as HTMLSelectElement;
+    function pool() {
+      const v = sel.value;
+      if (v === '*') return W;
+      if (v === '!') return W.filter(w => { const r = store.S.words[w.a]; return r && r.bad > 0 && r.box < 4; });
+      return W.filter(w => w.t === v);
+    }
+    function next() { cur = nextWord(store.S, pool(), prevA); marked = false; flip = false; cd = dir === 3 ? (Math.random() < .5 ? 1 : 2) : dir; show(); }
+    function show() {
+      stats();
+      const c = $('card'), A = pool();
+      $('cnt').textContent = A.length ? `В этой подборке ${A.length} слов, из них новых: ${A.filter(w => !rec(store.S, w).n).length}` : '';
+      if (!cur) { c.innerHTML = `<span class="ru">${sel.value === '!' ? 'Трудных слов пока нет' : 'Здесь пусто'}</span>`; return; }
+      const r = rec(store.S, cur);
+      const tag = !r.n ? '<span class="tag new">новое слово</span>' : r.box <= 1 ? `<span class="tag err">ошибок: ${r.bad}</span>` : '<span class="tag rep">повторение</span>';
+      const A1 = `<span class="ar" lang="ar" dir="rtl">${esc(cur.a)}</span>`, R1 = `<span class="ru">${esc(cur.r)}</span>`;
+      const front = cd === 1 ? A1 : R1, back = cd === 1 ? R1 : A1;
+      c.innerHTML = tag + front + (flip ? '<span class="rule"></span>' + back : '<span class="th">нажмите, чтобы увидеть ответ</span>') + `<span class="th">${esc(cur.t)}</span>`;
+    }
+    function go() { prevA = cur!.a; next(); }
+    $('card').addEventListener('click', () => { if (!cur) return; flip = !flip; store.touch(); show(); });
+    $('yes').addEventListener('click', () => {
+      if (!cur) return; if (marked) return go();
+      const r = answer(store.S, cur, true); store.record(cur.a, cur.t, r, true, 'c', cd as 1 | 2); go();
+    });
+    $('no').addEventListener('click', () => {
+      if (!cur) return; if (marked) return go();
+      const r = answer(store.S, cur, false); store.record(cur.a, cur.t, r, false, 'c', cd as 1 | 2);
+      if (!flip) { flip = true; marked = true; show(); $('cnt').textContent = 'Запомните ответ и нажмите любую кнопку'; return; }
+      go();
+    });
+    sel.addEventListener('change', () => { prevA = null; next(); });
+    document.querySelectorAll<HTMLButtonElement>('[data-dir]').forEach(b => b.addEventListener('click', () => {
+      dir = +b.dataset.dir!; document.querySelectorAll('[data-dir]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      cd = dir === 3 ? (Math.random() < .5 ? 1 : 2) : dir; flip = false; show();
+    }));
+
+    // ---------- тест ----------
+    type Q = { w: Word; dq: number; opts: Word[] };
+    let Qs: Q[] = [], qi = 0, score = 0, t0 = 0;
+    function startTest() {
+      Qs = testWords(store.S, W).map((w, k) => {
+        const same = W.filter(x => x !== w && x.t === w.t), other = W.filter(x => x !== w && x.t !== w.t);
+        const ds = shuffle(same).slice(0, 2).concat(shuffle(other)).slice(0, 3);
+        return { w, dq: k % 2, opts: shuffle([w, ...ds]) };
+      });
+      qi = 0; score = 0; t0 = Date.now(); showQ();
+    }
+    function showQ() {
+      stats();
+      const T = $('test');
+      if (qi >= Qs.length) {
+        store.recordTest(score, Qs.length, Math.round((Date.now() - t0) / 1000));
+        const lvl = score >= 18 ? 'Отлично' : score >= 14 ? 'Хорошо' : score >= 10 ? 'Удовлетворительно' : 'Нужно повторить';
+        T.innerHTML = `<div class="result"><p class="big">${score} из ${Qs.length}</p><p>${lvl}. Слова с ошибками теперь будут попадаться чаще.</p><button class="btn" id="again">Пройти ещё раз</button></div>`;
+        $('again').addEventListener('click', startTest); return;
+      }
+      const q = Qs[qi];
+      T.innerHTML = `<p class="hint">Вопрос ${qi + 1} из ${Qs.length} · верно: ${score}</p>
+        <div class="q">${q.dq ? `<span class="ru">${esc(q.w.r)}</span>` : `<span class="ar" lang="ar" dir="rtl">${esc(q.w.a)}</span>`}</div>
+        <div class="opts">${q.opts.map((o, k) => `<button class="opt ${q.dq ? 'ar' : ''}" ${q.dq ? 'lang="ar" dir="rtl"' : ''} data-k="${k}">${esc(q.dq ? o.a : o.r)}</button>`).join('')}</div>`;
+      T.querySelectorAll<HTMLButtonElement>('.opt').forEach(b => b.addEventListener('click', () => {
+        const o = q.opts[+b.dataset.k!], right = o === q.w;
+        if (right) score++;
+        const r = answer(store.S, q.w, right); store.record(q.w.a, q.w.t, r, right, 't', q.dq ? 2 : 1);
+        T.querySelectorAll<HTMLButtonElement>('.opt').forEach(x => { x.disabled = true; if (q.opts[+x.dataset.k!] === q.w) x.classList.add('ok'); });
+        if (!right) b.classList.add('bad');
+        setTimeout(() => { qi++; showQ(); }, right ? 600 : 1700);
+      }));
+    }
+
+    // ---------- трудные ----------
+    function hard() {
+      const L = W.filter(w => (store.S.words[w.a]?.bad ?? 0) > 0).sort((a, b) => store.S.words[b.a].bad - store.S.words[a.a].bad);
+      $('hard').innerHTML = L.length ? `<h2>Слова, в которых вы ошибались</h2><table>${L.map(w => `<tr><td>${esc(w.r)}</td><td class="n">${store.S.words[w.a].bad}${store.S.words[w.a].box >= 4 ? ' ✓' : ''}</td><td class="ar" lang="ar" dir="rtl">${esc(w.a)}</td></tr>`).join('')}</table><p class="hint">✓ — слово уже выучено заново.</p>` : '<p>Ошибок пока нет.</p>';
+    }
+
+    // ---------- рейтинг ----------
+    async function board() {
+      const B = $('board');
+      if (!who || who.kind !== 'pin') { B.innerHTML = `<p>Рейтинг виден ученикам класса. <a href="${D.login}#class">Войти в класс</a></p>`; return; }
+      B.innerHTML = '<p>Загрузка…</p>';
+      await store.sync();
+      try {
+        const r = await rpc<any>('class_board', { p_token: token(), p_deck: D.key });
+        const part = (title: string, L: any[], unit: string) => {
+          const top = L.slice(0, 10), mine = L.findIndex(x => x.id === r.me);
+          return `<h3>${title}</h3>` + (top.length ? `<ol>${top.map(x => `<li class="${x.id === r.me ? 'me' : ''}">${esc(x.n)} — ${x.v} ${unit}</li>`).join('')}</ol>` + (mine >= 10 ? `<p class="hint">Ваше место: ${mine + 1}</p>` : '') : '<p class="hint">Пока пусто.</p>');
+        };
+        B.innerHTML = part('Больше всех занимались', r.time, 'мин.') + part('Знают больше всего слов', r.known, 'сл.') + part('Самые точные (от 50 ответов)', r.acc, '%') +
+          '<p class="hint">Время считается только активное: когда вы отвечаете на карточки.</p>';
+      } catch { B.innerHTML = '<p>Нет связи. Попробуйте позже.</p>'; }
+    }
+
+    // ---------- вкладки ----------
+    function tab(name: string) {
+      document.querySelectorAll<HTMLElement>('[data-tab]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
+      document.querySelectorAll<HTMLElement>('[data-panel]').forEach(p => (p.hidden = p.dataset.panel !== name));
+      if (name === 'test') startTest(); if (name === 'hard') hard(); if (name === 'board') board(); if (name === 'cards') next();
+    }
+    document.querySelectorAll<HTMLElement>('[data-tab]').forEach(b => b.addEventListener('click', () => tab(b.dataset.tab!)));
+
+    setInterval(() => store.tick(), 5000);
+    setInterval(() => store.sync(), 60_000);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') store.flush(); });
+    window.addEventListener('pagehide', () => store.flush());
+
+    store.onNet(store.net);
+    await store.load();
+    tab(location.hash === '#test' ? 'test' : 'cards');
+  </script>
+</Base>
+
+<style>
+  .trainer { background: linear-gradient(160deg, #1d5c63 0%, #183f5e 55%, #2b1055 100%); color: #fff; padding: 20px 0 32px; }
+  .trainer h1 { color: #fff; margin: 2px 0 8px; font-size: clamp(1.5rem, 4vw, 2rem); }
+  .crumb { color: #cfe8e3; font-size: .95rem; }
+  .top { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+  .who { margin: 0 0 10px; font-size: .95rem; color: #dff1ed; max-width: 420px; }
+  .who :global(a) { color: var(--sun); }
+  .stats { background: rgba(255,255,255,.08); border-radius: var(--r-m); padding: 10px 12px; margin-bottom: 14px; }
+  .stats :global(.bar) { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: rgba(255,255,255,.12); }
+  .stats :global(.bar i) { display: block; height: 100%; }
+  .stats :global(.leg) { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: .88rem; margin-top: 8px; color: #e4f3ef; }
+  .stats :global(.leg b) { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+  .tabs button, .seg button { border: 0; min-height: 44px; padding: 0 14px; border-radius: 8px; font: 600 .95rem var(--sans); cursor: pointer; background: rgba(255,255,255,.14); color: #fff; }
+  .tabs button[aria-selected='true'], .seg button[aria-pressed='true'] { background: var(--sun); color: #1b2a28; }
+  .controls { display: grid; grid-template-columns: 1fr auto; gap: 10px; margin-bottom: 12px; }
+  .seg { display: flex; gap: 4px; }
+  .card { width: 100%; min-height: 250px; border: 0; border-radius: 16px; background: #fff; color: var(--ink); cursor: pointer; position: relative;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 36px 18px 18px; box-shadow: 0 12px 30px rgba(0,0,0,.25); font: inherit; }
+  .card :global(.ar), .q :global(.ar) { font-family: var(--ar); font-size: clamp(2rem, 7vw, 2.6rem); line-height: 1.6; }
+  .card :global(.ru), .q :global(.ru) { font-family: var(--serif); font-size: 1.45rem; font-weight: 700; color: var(--teal); }
+  .card :global(.th) { font-size: .85rem; color: #6c8681; }
+  .card :global(.rule) { width: 50%; border-top: 1px solid #d5e3df; }
+  .card :global(.tag) { position: absolute; top: 12px; left: 12px; font-size: .78rem; font-weight: 700; }
+  .card :global(.tag.new) { background: #fff3c4; color: #6d5200; }
+  .card :global(.tag.err) { background: #fde0d8; color: #9a3017; }
+  .card :global(.tag.rep) { background: #d9f0eb; color: var(--teal); }
+  .answer { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .answer button { min-height: 52px; border: 0; border-radius: 10px; font: 700 1.05rem var(--sans); cursor: pointer; color: #fff; }
+  .no { background: var(--coral); } .yes { background: var(--turq); }
+  .hint { color: #cfe8e3; font-size: .92rem; text-align: center; margin: 10px 0 0; }
+  .q { background: #fff; color: var(--ink); border-radius: 14px; padding: 22px; text-align: center; margin: 8px 0; }
+  .opts { display: grid; gap: 8px; }
+  .opts :global(.opt) { min-height: 54px; border: 0; border-radius: 10px; background: #fff; color: var(--ink); font: 1.1rem var(--sans); cursor: pointer; padding: 8px 12px; }
+  .opts :global(.opt.ar) { font-family: var(--ar); font-size: 1.6rem; }
+  .opts :global(.opt.ok) { background: #b9f0c9; } .opts :global(.opt.bad) { background: #f7c2b6; }
+  .opts :global(.opt:disabled) { cursor: default; opacity: 1; }
+  #test :global(.result) { background: rgba(255,255,255,.08); border-radius: 14px; padding: 24px; text-align: center; }
+  #test :global(.big) { font-family: var(--serif); font-size: 3rem; font-weight: 700; margin: 0; color: var(--sun); }
+  #test :global(.btn) { background: var(--sun); border-color: var(--sun); color: #1b2a28; }
+  .sheet { background: #fff; color: var(--ink); border-radius: 14px; padding: 16px 18px; }
+  .sheet :global(h2), .sheet :global(h3) { font-size: 1.15rem; margin-top: 8px; }
+  .sheet :global(table) { width: 100%; border-collapse: collapse; }
+  .sheet :global(td) { padding: 5px 6px; border-bottom: 1px solid var(--line); }
+  .sheet :global(td.ar) { font-size: 1.35rem; text-align: right; }
+  .sheet :global(td.n) { text-align: center; color: var(--coral); white-space: nowrap; }
+  .sheet :global(li.me) { font-weight: 700; color: var(--lapis); }
+  .sheet :global(.hint) { color: var(--ink-soft); text-align: left; }
+  .below { margin-top: 16px; }
+  @media (max-width: 640px) { .controls { grid-template-columns: 1fr; } .seg button { flex: 1; padding: 0 6px; font-size: .88rem; } }
+</style>

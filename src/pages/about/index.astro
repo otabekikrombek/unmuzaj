@@ -1,0 +1,21 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import { SITE } from '../../config/site';
+---
+<Base title="О сайте" description="Unmuzaj — сайт для изучения арабского языка. Автор — Отабек Икромбеков.">
+  <PageHead title="О сайте" ar={SITE.nameAr} />
+  <div class="wrap narrow prose">
+    <p class="motto">{SITE.motto}<br /><span class="muted">{SITE.mottoRu}</span></p>
+    <p><b>Unmuzaj</b> — сайт для всех, кто учит арабский язык: слова с карточками, викторины, тесты, упражнения, а со временем — грамматика и тексты для чтения. Всем можно пользоваться без регистрации.</p>
+    <h2>Почему «الأُنْمُوذَجُ»</h2>
+    <p>«Ал-Унмӯзадж фӣ-н-наҳв» (الأُنْمُوذَجُ فِي النَّحْوِ) — краткая грамматика арабского языка для начинающих, которую написал аз-Замахшари (1074–1143), учёный из Хорезма, автор знаменитого «ал-Муфассаля». Слово «унмӯзадж» значит «образец, введение». Так и этот сайт задуман как введение в арабский язык.</p>
+    <h2>Для кого</h2>
+    <p>Для студентов-востоковедов и всех, кто изучает арабский самостоятельно. Преподаватели могут вести на сайте свои классы: ученики входят по коду и ПИН, а преподаватель видит их прогресс.</p>
+    <h2>Автор</h2>
+    <p>{SITE.author}, {SITE.authorRole}.<br />
+      <a href={`mailto:${SITE.contacts.email}`}>{SITE.contacts.email}</a> · <a href={SITE.contacts.phoneHref} class="nb">{SITE.contacts.phone}</a> · <a href={SITE.contacts.telegramHref}>Telegram {SITE.contacts.telegram}</a></p>
+    <p class="notice">Материалы добавляются постепенно. Нашли ошибку — напишите автору.</p>
+  </div>
+</Base>
+<style>.prose h2 { margin-top: 1.6em; } .motto { font-family: var(--serif); font-style: italic; font-size: 1.3rem; color: var(--teal); }</style>

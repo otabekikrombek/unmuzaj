@@ -16,6 +16,7 @@ export const SITE = {
 };
 
 // Публичные данные Supabase (это не секрет: доступ ограничен правилами в базе).
-export const SUPABASE_URL = 'https://orclqaqvxzczhxfzflau.supabase.co';
-export const SUPABASE_ANON_KEY =
+export const SUPABASE_URL: string = import.meta.env.PUBLIC_SUPABASE_URL || 'https://orclqaqvxzczhxfzflau.supabase.co';
+export const SUPABASE_ANON_KEY: string =
+  import.meta.env.PUBLIC_SUPABASE_ANON_KEY ||
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9yY2xxYXF2eHpjemh4ZnpmbGF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTE4MjA0NTgsImV4cCI6MjEwNzM5NjQ1OH0.XySFR25iMGAi2ufcZ4YHbEVrlPTLlo6qDcDxAx_awfc';

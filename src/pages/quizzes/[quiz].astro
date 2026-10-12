@@ -1,0 +1,21 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import { getCollection } from 'astro:content';
+import { u } from '../../lib/url';
+import { t } from '../../i18n/ru';
+export async function getStaticPaths() {
+  return (await getCollection('quizzes')).map(q => ({ params: { quiz: q.data.key }, props: { q: q.data } }));
+}
+const { q } = Astro.props;
+---
+<Base title={q.title} description={q.description}>
+  <PageHead title={q.title} ar={q.kind === 'test' ? t.sectionsAr.tests : t.sectionsAr.quizzes} lead={q.description} />
+  <div class="wrap narrow">
+    <p><span class="tag">{t.common.level} {q.level}</span> {q.topics.map(x => <span class="tag">{x}</span>)}</p>
+    {q.legacy && <>
+      <p><a class="btn" href={u(q.legacy)}>Начать</a></p>
+      <p class="notice">{t.common.oldVersion} Результаты пока сохраняются в прежней таблице преподавателя.</p>
+    </>}
+  </div>
+</Base>

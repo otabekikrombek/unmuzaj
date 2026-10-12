@@ -1,0 +1,14 @@
+---
+import { t } from '../i18n/ru';
+interface Props { text?: string }
+const { text } = Astro.props;
+---
+<div class="soon">
+  <p class="soon-h">{t.common.soon}</p>
+  <p>{text ?? t.common.soonLong}</p>
+  <slot />
+</div>
+<style>
+  .soon { border: 2px dashed #a9c3bc; border-radius: var(--r-m); padding: 28px 24px; max-width: 640px; background: #fff; }
+  .soon-h { font-family: var(--serif); font-size: 1.4rem; font-weight: 700; color: var(--teal); margin-bottom: 6px; }
+</style>

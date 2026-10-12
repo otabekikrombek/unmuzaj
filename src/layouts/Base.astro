@@ -1,0 +1,128 @@
+---
+import '../styles/global.css';
+import { SITE } from '../config/site';
+import { u } from '../lib/url';
+import { t } from '../i18n/ru';
+
+interface Props { title?: string; description?: string; noindex?: boolean; wide?: boolean }
+const { title, description = t.home.lead, noindex = false } = Astro.props;
+const fullTitle = title ? `${title} — ${SITE.name}` : `${SITE.name} · ${SITE.nameAr} — арабский язык`;
+const path = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ''), '');
+const nav = [
+  ['words', 'words/'], ['quizzes', 'quizzes/'], ['tests', 'tests/'], ['exercises', 'exercises/'],
+  ['grammar', 'grammar/'], ['texts', 'texts/'], ['dictionary', 'dictionary/'], ['courses', 'courses/'],
+] as const;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+---
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{fullTitle}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  {noindex && <meta name="robots" content="noindex" />}
+  <meta property="og:title" content={fullTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={canonical} />
+  <meta name="theme-color" content="#1d5c63" />
+  <link rel="icon" href={u('favicon.svg')} type="image/svg+xml" />
+  <link rel="sitemap" href={u('sitemap-index.xml')} />
+</head>
+<body>
+  <a class="skip" href="#main">К содержанию</a>
+  <header class="site-head">
+    <div class="wrap head-row">
+      <a class="logo" href={u('')} aria-label={`${SITE.name} — на главную`}>
+        <span class="logo-ar" lang="ar" dir="rtl">{SITE.nameAr}</span>
+        <span class="logo-lat">{SITE.name}</span>
+      </a>
+      <button class="menu-btn" aria-expanded="false" aria-controls="site-nav">{t.nav.menu}</button>
+      <nav id="site-nav" class="site-nav" aria-label="Разделы">
+        {nav.map(([k, href]) => (
+          <a href={u(href)} aria-current={path.startsWith('/' + href) ? 'page' : undefined}>{t.nav[k]}</a>
+        ))}
+        <a class="nav-login" href={u('login/')} data-auth-link>{t.nav.login}</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main"><slot /></main>
+  <footer class="site-foot">
+    <div class="wrap foot-grid">
+      <div>
+        <p class="foot-logo" lang="ar" dir="rtl">{SITE.nameAr}</p>
+        <p class="foot-motto">{SITE.motto}<br /><span class="muted small">{SITE.mottoRu}</span></p>
+      </div>
+      <div>
+        <p class="foot-h">{t.footer.contacts}</p>
+        <p>{SITE.author}, {SITE.authorRole}</p>
+        <ul class="foot-list">
+          <li><a href={`mailto:${SITE.contacts.email}`}>{SITE.contacts.email}</a></li>
+          <li><a href={SITE.contacts.phoneHref} class="nb">{SITE.contacts.phone}</a></li>
+          <li><a href={SITE.contacts.telegramHref}>Telegram {SITE.contacts.telegram}</a></li>
+        </ul>
+      </div>
+      <div>
+        <ul class="foot-list">
+          <li><a href={u('about/')}>{t.footer.about}</a></li>
+          <li><a href={u('privacy/')}>{t.footer.privacy}</a></li>
+          <li><a href={u('teacher/')}>{t.nav.teacher}</a></li>
+        </ul>
+        <p class="muted small">{t.common.gradually}</p>
+      </div>
+    </div>
+  </footer>
+  <script>
+    const b = document.querySelector('.menu-btn');
+    const n = document.getElementById('site-nav');
+    b?.addEventListener('click', () => {
+      const open = b.getAttribute('aria-expanded') === 'true';
+      b.setAttribute('aria-expanded', String(!open));
+      n?.classList.toggle('open', !open);
+    });
+    // «Войти» → «Мой прогресс», если пользователь уже вошёл
+    try {
+      if (localStorage.getItem('unmuzaj:who')) {
+        const a = document.querySelector('[data-auth-link]');
+        if (a) { a.textContent = 'Мой прогресс'; a.setAttribute('href', a.getAttribute('href')!.replace(/login\/$/, 'me/')); }
+      }
+    } catch {}
+  </script>
+</body>
+</html>
+
+<style>
+  .skip { position: absolute; left: -999px; top: 8px; background: #fff; padding: 8px 12px; z-index: 10; }
+  .skip:focus { left: 8px; }
+  .site-head { background: var(--teal); color: #fff; border-bottom: 3px solid var(--turq); }
+  .head-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; }
+  .logo { display: flex; align-items: baseline; gap: 10px; color: #fff; text-decoration: none; }
+  .logo-ar { font-family: var(--ar); font-size: 1.9rem; line-height: 1.2; }
+  .logo-lat { font-family: var(--serif); font-size: .95rem; letter-spacing: .02em; opacity: .85; }
+  .site-nav { display: flex; flex-wrap: wrap; gap: 2px 4px; align-items: center; }
+  .site-nav a { color: #e4f3ef; text-decoration: none; padding: 8px 10px; border-radius: 6px; font-size: .97rem; }
+  .site-nav a:hover { background: rgba(255,255,255,.12); color: #fff; }
+  .site-nav a[aria-current='page'] { color: #fff; box-shadow: inset 0 -2px 0 var(--sun); border-radius: 0; }
+  .site-nav .nav-login { border: 1px solid rgba(255,255,255,.55); margin-left: 6px; }
+  .menu-btn { display: none; background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.6); border-radius: 6px; min-height: 44px; padding: 0 14px; font: 600 1rem var(--sans); }
+  @media (max-width: 900px) {
+    .menu-btn { display: block; }
+    .site-nav { display: none; position: absolute; left: 0; right: 0; top: 67px; background: var(--teal); padding: 8px 16px 16px; flex-direction: column; align-items: stretch; z-index: 5; }
+    .site-nav.open { display: flex; }
+    .site-nav a { padding: 12px 8px; font-size: 1.05rem; }
+    .site-nav .nav-login { margin: 8px 0 0; text-align: center; }
+    .site-head { position: relative; }
+  }
+  .site-foot { background: var(--ink); color: #d9e9e4; margin-top: 64px; padding: 40px 0 32px; font-size: .97rem; }
+  .site-foot a { color: #fff; }
+  .foot-grid { display: grid; grid-template-columns: 1.2fr 1.2fr 1fr; gap: 28px; }
+  .foot-logo { font-family: var(--ar); font-size: 2.2rem; margin: 0; color: #fff; text-align: left; }
+  .foot-motto { font-family: var(--serif); font-style: italic; }
+  .foot-h { font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .foot-list { list-style: none; padding: 0; margin: 0 0 12px; }
+  .foot-list li { padding: 3px 0; }
+  .site-foot .muted { color: #9fbbb4; }
+  @media (max-width: 760px) { .foot-grid { grid-template-columns: 1fr; } .foot-logo { text-align: left; } }
+</style>

@@ -1,0 +1,12 @@
+---
+interface Props { title: string; ar?: string; lead?: string }
+const { title, ar, lead } = Astro.props;
+---
+<div class="page-head">
+  <div class="wrap">
+    {ar && <span class="ar" lang="ar" dir="rtl">{ar}</span>}
+    <h1>{title}</h1>
+    {lead && <p class="muted" style="max-width:60ch">{lead}</p>}
+    <slot />
+  </div>
+</div>

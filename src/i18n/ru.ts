@@ -21,7 +21,7 @@ export const t = {
     exercises: 'التَّمَارِينُ',
     grammar: 'النَّحْوُ وَالصَّرْفُ',
     texts: 'النُّصُوصُ',
-    courses: 'الدُّرُوسُ',
+    courses: 'الْمُقَرَّرَاتُ',
     dictionary: 'الْمُعْجَمُ',
   },
   sectionsDesc: {
