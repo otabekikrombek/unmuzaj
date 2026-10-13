@@ -1,0 +1,185 @@
+/* ═══════════════════════════════════════════════════════════════════
+   Дизайн-токены Unmuzaj. Все цвета сайта — только отсюда.
+   Палитра и режим ставятся на <html data-palette="…" data-theme="light|dark">
+   (скрипт в <head> Base.astro, до отрисовки). Проверка контраста AA:
+   tests/e2e/design.py (axe-core) и пары токенов в tests/contrast.mjs.
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* шрифты */
+  --ar: 'Amiri', 'Noto Naskh Arabic', 'Times New Roman', serif;
+  --serif: 'PT Serif', Georgia, serif;
+  --sans: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+  /* размер текста (меню «Оформление»): data-fs и data-ar на <html> */
+  --fs-scale: 1;
+  --ar-scale: 1;
+  /* шкала */
+  --fs-sm: .9rem;
+  --fs-md: 1rem;
+  --fs-lg: 1.15rem;
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px; --sp-5: 24px; --sp-6: 40px;
+  --r-s: 6px;
+  --r-m: 12px;
+  --r-l: 20px;
+  --focus-w: 3px;
+  /* цвета частей викторины (плашки с тёмным текстом) — одинаковы во всех палитрах */
+  --sec-F: #36b3c9; --sec-R: #36b3c9; --sec-Q: #36b3c9; --sec-V: #6cc46a; --sec-G: #f08a4b; --sec-E: #8e7cf0; --sec-L: #8e7cf0;
+  --on-sec: #10202a;
+  /* полупрозрачные слои на учебном градиенте */
+  --study-card: rgba(255, 255, 255, .1);
+  --study-line: rgba(255, 255, 255, .25);
+  --study-chip: rgba(255, 255, 255, .14);
+  --shadow: 0 12px 30px rgba(0, 0, 0, .18);
+  /* старые имена → новые (вёрстка этапов 1–4 использует их) */
+  --teal: var(--accent);
+  --turq: var(--accent-2);
+  --lapis: var(--link);
+}
+
+:root[data-fs='-1'] { --fs-scale: .9; }
+:root[data-fs='1'] { --fs-scale: 1.12; }
+:root[data-fs='2'] { --fs-scale: 1.25; }
+:root[data-ar='-1'] { --ar-scale: .9; }
+:root[data-ar='1'] { --ar-scale: 1.2; }
+:root[data-ar='2'] { --ar-scale: 1.4; }
+
+/* ─── «Бирюза» (по умолчанию) ─── */
+:root, :root[data-palette='turquoise'][data-theme='light'] {
+  color-scheme: light;
+  --paper: #f3f7f5; --sheet: #ffffff; --surface-2: #e3efeb; --hover: #e6f0ec; --stripe: #f7faf9;
+  --ink: #16322f; --ink-soft: #46625e; --line: #d3e2dd; --line-strong: #6f8f88;
+  --accent: #1d5c63; --accent-hover: #164a50; --on-accent: #ffffff; --accent-2: #1d7268;
+  --link: #22407a; --link-hover: #1d5c63;
+  --gold: #b8901f; --sun: #ffd54f; --on-sun: #1b2a28; --coral: #e76f51;
+  --bad: #c8462a; --bad-ink: #a33b20; --bad-bg: #fdecea; --ok: #23915e; --ok-bg: #e9f7ef;
+  --tag-bg: #e2efeb; --tag-ink: #1d5c63; --notice-bg: #fbf6e6; --input-bg: #ffffff; --input-border: #6f8f88; --focus: #22407a;
+  --head-bg: #1d5c63; --head-ink: #ffffff; --head-ink-soft: #e4f3ef; --head-line: #2a9d8f;
+  --foot-bg: #16322f; --foot-ink: #d9e9e4; --foot-muted: #a5c0b9; --foot-link: #ffffff;
+  --hero-from: #e3efeb; --card-bg: #1d5c63; --card-ink: #ffffff; --card-accent: #ffd54f;
+  --study-from: #1d5c63; --study-mid: #183f5e; --study-to: #2b1055; --study-ink: #ffffff; --study-muted: #d3e4ea; --study-link: #ffd54f;
+  --tile-0: #c8403c; --tile-1: #2a68c4; --tile-2: #8a5d00; --tile-3: #1d7a50; --on-tile: #ffffff;
+  --chart: #2a9d8f; --chart-2: #e76f51;
+}
+:root[data-palette='turquoise'][data-theme='dark'] {
+  color-scheme: dark;
+  --paper: #0e1a1b; --sheet: #152426; --surface-2: #1c3033; --hover: #1f3538; --stripe: #122022;
+  --ink: #e4efec; --ink-soft: #a8c0bb; --line: #2b4245; --line-strong: #6a8a84;
+  --accent: #4fc1b1; --accent-hover: #6fd0c2; --on-accent: #062022; --accent-2: #5ec8b9;
+  --link: #9cc2ff; --link-hover: #c2d9ff;
+  --gold: #d9b54a; --sun: #ffd54f; --on-sun: #1b2a28; --coral: #f08a6e;
+  --bad: #f08a6e; --bad-ink: #ff9f87; --bad-bg: #3a1f1a; --ok: #4cc98d; --ok-bg: #13301f;
+  --tag-bg: #1f3a3c; --tag-ink: #9fe0d6; --notice-bg: #2e2a17; --input-bg: #0f1e20; --input-border: #6a8a84; --focus: #ffd54f;
+  --head-bg: #0a1415; --head-ink: #ffffff; --head-ink-soft: #cfe3de; --head-line: #2a9d8f;
+  --foot-bg: #091213; --foot-ink: #c9dcd7; --foot-muted: #93ada7; --foot-link: #ffffff;
+  --hero-from: #132a2c; --card-bg: #1d5c63; --card-ink: #ffffff; --card-accent: #ffd54f;
+  --study-from: #0f3a3f; --study-mid: #10263d; --study-to: #1c0b38; --study-ink: #ffffff; --study-muted: #cfe0e6; --study-link: #ffd54f;
+  --tile-0: #c8403c; --tile-1: #2a68c4; --tile-2: #8a5d00; --tile-3: #1d7a50; --on-tile: #ffffff;
+  --chart: #4fc1b1; --chart-2: #f08a6e;
+}
+
+/* ─── «Лазурит» ─── */
+:root[data-palette='lapis'][data-theme='light'] {
+  color-scheme: light;
+  --paper: #f4f6fb; --sheet: #ffffff; --surface-2: #e4eaf6; --hover: #e8edf8; --stripe: #f8f9fd;
+  --ink: #14213d; --ink-soft: #45516b; --line: #d4dbea; --line-strong: #7d8bab;
+  --accent: #22407a; --accent-hover: #1a3263; --on-accent: #ffffff; --accent-2: #2b5598;
+  --link: #1f4a96; --link-hover: #22407a;
+  --gold: #a07c16; --sun: #ffd54f; --on-sun: #14213d; --coral: #e76f51;
+  --bad: #c8462a; --bad-ink: #a33b20; --bad-bg: #fdecea; --ok: #23915e; --ok-bg: #e9f7ef;
+  --tag-bg: #e1e8f6; --tag-ink: #22407a; --notice-bg: #fbf6e6; --input-bg: #ffffff; --input-border: #7d8bab; --focus: #1f4a96;
+  --head-bg: #22407a; --head-ink: #ffffff; --head-ink-soft: #dde6f7; --head-line: #5b83c9;
+  --foot-bg: #14213d; --foot-ink: #d5dcec; --foot-muted: #a3b0cc; --foot-link: #ffffff;
+  --hero-from: #e4eaf6; --card-bg: #22407a; --card-ink: #ffffff; --card-accent: #ffd54f;
+  --study-from: #22407a; --study-mid: #1b2f63; --study-to: #2b1055; --study-ink: #ffffff; --study-muted: #d8e0f2; --study-link: #ffd54f;
+  --tile-0: #c8403c; --tile-1: #2a68c4; --tile-2: #8a5d00; --tile-3: #1d7a50; --on-tile: #ffffff;
+  --chart: #2b5598; --chart-2: #e76f51;
+}
+:root[data-palette='lapis'][data-theme='dark'] {
+  color-scheme: dark;
+  --paper: #0d1424; --sheet: #141d31; --surface-2: #1b2640; --hover: #1e2a46; --stripe: #10182a;
+  --ink: #e3e9f6; --ink-soft: #a6b3cf; --line: #2a3756; --line-strong: #6c7ca8;
+  --accent: #8fb0ef; --accent-hover: #aec6f5; --on-accent: #0d1424; --accent-2: #8fb0ef;
+  --link: #a9c4ff; --link-hover: #cddcff;
+  --gold: #d9b54a; --sun: #ffd54f; --on-sun: #14213d; --coral: #f08a6e;
+  --bad: #f08a6e; --bad-ink: #ff9f87; --bad-bg: #3a1f1a; --ok: #4cc98d; --ok-bg: #13301f;
+  --tag-bg: #1e2c4d; --tag-ink: #b9cdf7; --notice-bg: #2e2a17; --input-bg: #0f1729; --input-border: #6c7ca8; --focus: #ffd54f;
+  --head-bg: #0a1020; --head-ink: #ffffff; --head-ink-soft: #cfd9ee; --head-line: #5b83c9;
+  --foot-bg: #080d19; --foot-ink: #c9d3e8; --foot-muted: #949fbc; --foot-link: #ffffff;
+  --hero-from: #16213b; --card-bg: #22407a; --card-ink: #ffffff; --card-accent: #ffd54f;
+  --study-from: #1a315f; --study-mid: #14234a; --study-to: #1c0b38; --study-ink: #ffffff; --study-muted: #d3dcef; --study-link: #ffd54f;
+  --tile-0: #c8403c; --tile-1: #2a68c4; --tile-2: #8a5d00; --tile-3: #1d7a50; --on-tile: #ffffff;
+  --chart: #8fb0ef; --chart-2: #f08a6e;
+}
+
+/* ─── «Пергамент» (тёплая, книжная) ─── */
+:root[data-palette='parchment'][data-theme='light'] {
+  color-scheme: light;
+  --paper: #f6efe2; --sheet: #fffaf0; --surface-2: #efe3cc; --hover: #f1e6d2; --stripe: #fbf5ea;
+  --ink: #3b2a1a; --ink-soft: #66503c; --line: #e2d3b8; --line-strong: #94795a;
+  --accent: #8a3b1f; --accent-hover: #722f17; --on-accent: #fffaf0; --accent-2: #80520f;
+  --link: #245278; --link-hover: #8a3b1f;
+  --gold: #a87d1e; --sun: #f2c14e; --on-sun: #3b2a1a; --coral: #c0502f;
+  --bad: #b5452a; --bad-ink: #9a3418; --bad-bg: #f8e1d6; --ok: #3a8049; --ok-bg: #e6f0dc;
+  --tag-bg: #efe0c4; --tag-ink: #6b3a1a; --notice-bg: #f4e8c8; --input-bg: #fffaf0; --input-border: #94795a; --focus: #245278;
+  --head-bg: #5a3a22; --head-ink: #fff8ec; --head-ink-soft: #f0e2cc; --head-line: #c08a3e;
+  --foot-bg: #3b2a1a; --foot-ink: #ecdcc4; --foot-muted: #cbb393; --foot-link: #fff8ec;
+  --hero-from: #efe3cc; --card-bg: #5a3a22; --card-ink: #fff8ec; --card-accent: #f2c14e;
+  --study-from: #6b3f1f; --study-mid: #4f3324; --study-to: #3b2440; --study-ink: #ffffff; --study-muted: #f0e2d2; --study-link: #f2c14e;
+  --tile-0: #b23a2e; --tile-1: #2a5f9e; --tile-2: #7d5300; --tile-3: #2f6e3f; --on-tile: #ffffff;
+  --chart: #a8742a; --chart-2: #c0502f;
+}
+:root[data-palette='parchment'][data-theme='dark'] {
+  color-scheme: dark;
+  --paper: #1c1611; --sheet: #261e17; --surface-2: #30261d; --hover: #33291f; --stripe: #211a14;
+  --ink: #f0e6d6; --ink-soft: #c4b39c; --line: #3e3226; --line-strong: #8a755e;
+  --accent: #e0a46b; --accent-hover: #eab887; --on-accent: #1c1611; --accent-2: #e0b46b;
+  --link: #9cc3e6; --link-hover: #c3dbf0;
+  --gold: #d9b54a; --sun: #f2c14e; --on-sun: #1c1611; --coral: #e88a6a;
+  --bad: #e88a6a; --bad-ink: #f5a184; --bad-bg: #3a2018; --ok: #7cc28a; --ok-bg: #1e2e1c;
+  --tag-bg: #3a2c1f; --tag-ink: #f0cfa5; --notice-bg: #33291a; --input-bg: #1f1812; --input-border: #8a755e; --focus: #f2c14e;
+  --head-bg: #14100c; --head-ink: #fff8ec; --head-ink-soft: #e3d3bd; --head-line: #c08a3e;
+  --foot-bg: #110d0a; --foot-ink: #e0d0b8; --foot-muted: #b29d82; --foot-link: #fff8ec;
+  --hero-from: #2a2018; --card-bg: #5a3a22; --card-ink: #fff8ec; --card-accent: #f2c14e;
+  --study-from: #4a2c16; --study-mid: #36241a; --study-to: #2a1830; --study-ink: #ffffff; --study-muted: #eadccb; --study-link: #f2c14e;
+  --tile-0: #b23a2e; --tile-1: #2a5f9e; --tile-2: #7d5300; --tile-3: #2f6e3f; --on-tile: #ffffff;
+  --chart: #e0a46b; --chart-2: #e88a6a;
+}
+
+/* ─── «Контраст» (для слабого зрения) ─── */
+:root[data-palette='contrast'][data-theme='light'] {
+  color-scheme: light;
+  --paper: #ffffff; --sheet: #ffffff; --surface-2: #f0f0f0; --hover: #e6e6e6; --stripe: #f5f5f5;
+  --ink: #000000; --ink-soft: #1f1f1f; --line: #595959; --line-strong: #000000;
+  --accent: #000000; --accent-hover: #262626; --on-accent: #ffffff; --accent-2: #000000;
+  --link: #0000c8; --link-hover: #000000;
+  --gold: #000000; --sun: #ffe600; --on-sun: #000000; --coral: #b00020;
+  --bad: #b00020; --bad-ink: #b00020; --bad-bg: #fff0f0; --ok: #006400; --ok-bg: #effaef;
+  --tag-bg: #000000; --tag-ink: #ffffff; --notice-bg: #fff8cc; --input-bg: #ffffff; --input-border: #000000; --focus: #0000c8;
+  --head-bg: #000000; --head-ink: #ffffff; --head-ink-soft: #ffffff; --head-line: #ffe600;
+  --foot-bg: #000000; --foot-ink: #ffffff; --foot-muted: #ffffff; --foot-link: #ffe600;
+  --hero-from: #ffffff; --card-bg: #000000; --card-ink: #ffffff; --card-accent: #ffe600;
+  --study-from: #000000; --study-mid: #000000; --study-to: #000000; --study-ink: #ffffff; --study-muted: #ffffff; --study-link: #ffe600;
+  --tile-0: #b00020; --tile-1: #0033aa; --tile-2: #6b4a00; --tile-3: #006400; --on-tile: #ffffff;
+  --chart: #000000; --chart-2: #b00020;
+  --focus-w: 4px;
+}
+:root[data-palette='contrast'][data-theme='dark'] {
+  color-scheme: dark;
+  --paper: #000000; --sheet: #000000; --surface-2: #141414; --hover: #262626; --stripe: #0a0a0a;
+  --ink: #ffffff; --ink-soft: #f0f0f0; --line: #a6a6a6; --line-strong: #ffffff;
+  --accent: #ffe600; --accent-hover: #fff27a; --on-accent: #000000; --accent-2: #ffe600;
+  --link: #7fd4ff; --link-hover: #ffffff;
+  --gold: #ffe600; --sun: #ffe600; --on-sun: #000000; --coral: #ff6b6b;
+  --bad: #ff6b6b; --bad-ink: #ff8a8a; --bad-bg: #2a0000; --ok: #5cff8a; --ok-bg: #002a0a;
+  --tag-bg: #ffe600; --tag-ink: #000000; --notice-bg: #1f1a00; --input-bg: #000000; --input-border: #ffffff; --focus: #ffe600;
+  --head-bg: #000000; --head-ink: #ffffff; --head-ink-soft: #ffffff; --head-line: #ffe600;
+  --foot-bg: #000000; --foot-ink: #ffffff; --foot-muted: #ffffff; --foot-link: #ffe600;
+  --hero-from: #000000; --card-bg: #141414; --card-ink: #ffffff; --card-accent: #ffe600;
+  --study-from: #000000; --study-mid: #000000; --study-to: #000000; --study-ink: #ffffff; --study-muted: #ffffff; --study-link: #ffe600;
+  --tile-0: #b00020; --tile-1: #0033aa; --tile-2: #6b4a00; --tile-3: #006400; --on-tile: #ffffff;
+  --chart: #ffe600; --chart-2: #ff6b6b;
+  --focus-w: 4px;
+}
+/* «Контраст»: ссылки всегда подчёркнуты, рамки толще */
+:root[data-palette='contrast'] a { text-decoration-thickness: 2px; }
+:root[data-palette='contrast'] { --study-card: rgba(255, 255, 255, .06); --study-line: rgba(255, 255, 255, .8); }

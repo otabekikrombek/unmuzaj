@@ -13,7 +13,7 @@ const total = dict.reduce((a, g) => a + g.items.length, 0);
     <p class="muted small" id="cnt" aria-live="polite"></p>
     <div id="dict">
       {dict.map(g => (
-        <section class="theme" data-theme>
+        <section class="theme" data-topic>
           <h2>{g.t}</h2>
           <table>
             <tbody>
@@ -25,26 +25,38 @@ const total = dict.reduce((a, g) => a + g.items.length, 0);
     </div>
   </div>
   <script>
-    const strip = (s: string) => s.replace(/[ً-ٰٟـ]/g, '').replace(/[أإآٱ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه');
+    import { norm } from '../../lib/normalize';
     const rows = [...document.querySelectorAll<HTMLTableRowElement>('#dict tr')];
-    const keys = rows.map(r => (r.dataset.s!.toLowerCase().replace(/ё/g, 'е') + ' ' + strip(r.dataset.a!)));
+    const keys = rows.map(r => norm(r.dataset.s! + ' ' + r.dataset.a!));
     const q = document.getElementById('q') as HTMLInputElement, cnt = document.getElementById('cnt')!;
     function run() {
-      const v = strip(q.value.trim().toLowerCase().replace(/ё/g, 'е'));
+      const v = norm(q.value);
       let n = 0;
       rows.forEach((r, i) => { const ok = !v || keys[i].includes(v); r.hidden = !ok; if (ok) n++; });
-      document.querySelectorAll<HTMLElement>('[data-theme]').forEach(s => { s.hidden = !s.querySelector('tr:not([hidden])'); });
+      document.querySelectorAll<HTMLElement>("[data-topic]").forEach(s => { s.hidden = !s.querySelector('tr:not([hidden])'); });
       cnt.textContent = v ? `Найдено: ${n}` : '';
     }
     q.addEventListener('input', run);
+    // переход из поиска по сайту: /dictionary/?q=книга
+    const pre = new URLSearchParams(location.search).get('q');
+    if (pre) { q.value = pre; run(); document.querySelector('#dict tr:not([hidden])')?.scrollIntoView({ block: 'center' }); }
   </script>
 </Base>
 <style>
   .theme { margin-top: 28px; }
-  .theme h2 { font-size: 1.25rem; color: var(--teal); border-bottom: 2px solid var(--teal); padding-bottom: 4px; }
+  .theme h2 { font-size: 1.25rem; color: var(--accent); border-bottom: 2px solid var(--accent); padding-bottom: 4px; }
   table { width: 100%; border-collapse: collapse; }
+  td { overflow-wrap: anywhere; hyphens: auto; }
   td { padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
-  td.ar { font-size: 1.45rem; text-align: right; width: 55%; line-height: 1.7; }
+  td.ar { font-size: calc(1.45rem * var(--ar-scale)); text-align: right; width: 55%; line-height: 1.7; }
   td.ru { color: var(--ink); }
-  tr:nth-child(even) td { background: #f8fbfa; }
+  tr:nth-child(even) td { background: var(--stripe); }
+  [hidden] { display: none !important; }
+  /* узкий экран и крупный шрифт: перевод над арабским словом */
+  @media (max-width: 520px) {
+    table, tbody, tr, td, td.ar { display: block; width: auto; }
+    td.ru { border-bottom: 0; padding-bottom: 0; }
+    tr:nth-child(even) { background: var(--stripe); }
+    tr:nth-child(even) td { background: transparent; }
+  }
 </style>

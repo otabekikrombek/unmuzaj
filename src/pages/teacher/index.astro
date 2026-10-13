@@ -220,7 +220,8 @@ const siteUrl = new URL(u(''), Astro.site).href;
       $<HTMLDialogElement>('pins').showModal();
     }
     $('pclose').addEventListener('click', () => { if (confirm('Вы распечатали или записали ПИН? После закрытия их не будет видно.')) { $<HTMLDialogElement>('pins').close(); $('print').innerHTML = ''; } });
-    // Печать в отдельном окне: в нём только полоски с ПИН, без интерфейса панели
+    // Печать в отдельном окне: в нём только полоски с ПИН, без интерфейса панели.
+    // Цвета здесь намеренно постоянные (лист печатается чёрным по белому при любой теме сайта).
     $('pprint').addEventListener('click', () => {
       const html = `<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>ПИН учеников — ${esc(cur?.name || '')}</title><style>
         @page { size: A4 portrait; margin: 10mm; }
@@ -450,12 +451,12 @@ const siteUrl = new URL(u(''), Astro.site).href;
   .sr { position: absolute; left: -9999px; }
   .classrow { display: flex; gap: 10px; margin: 16px 0; align-items: center; }
   .classrow select { max-width: 460px; }
-  .box { background: #fff; border: 1px solid var(--line); border-radius: var(--r-m); padding: 16px 18px; margin-bottom: 16px; }
+  .box { background: var(--sheet); border: 1px solid var(--line); border-radius: var(--r-m); padding: 16px 18px; margin-bottom: 16px; }
   .box h2 { font-size: 1.2rem; }
   .grid3 { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; }
-  .tabs { display: flex; gap: 6px; border-bottom: 2px solid var(--teal); margin: 8px 0 18px; flex-wrap: wrap; }
+  .tabs { display: flex; gap: 6px; border-bottom: 2px solid var(--accent); margin: 8px 0 18px; flex-wrap: wrap; }
   .tabs button { border: 0; background: transparent; min-height: 44px; padding: 0 14px; font: 600 1rem var(--sans); color: var(--ink-soft); cursor: pointer; border-radius: 8px 8px 0 0; }
-  .tabs button[aria-selected='true'] { background: var(--teal); color: #fff; }
+  .tabs button[aria-selected='true'] { background: var(--accent); color: var(--on-accent); }
   .filters { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
   .filters label { margin: 0; } .filters select { width: auto; }
   .acts { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
@@ -464,52 +465,52 @@ const siteUrl = new URL(u(''), Astro.site).href;
   .tp :global(.tw), dialog :global(.tw) { overflow-x: auto; max-width: 100%; }
   .tp :global(table), dialog :global(table) { border-collapse: collapse; width: 100%; font-size: .95rem; }
   .tp :global(th), .tp :global(td), dialog :global(th), dialog :global(td) { padding: 7px 8px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
-  .tp :global(th), dialog :global(th) { background: var(--teal); color: #fff; font-size: .85rem; }
+  .tp :global(th), dialog :global(th) { background: var(--accent); color: var(--on-accent); font-size: .85rem; }
   .tp :global(table.words td:nth-child(2)) { white-space: normal; min-width: 140px; }
   #people input[type=text], #people select { min-height: 38px; padding: 4px 8px; }
   #qzRep :global(.kpis), #report :global(.kpis) { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 20px; }
-  #qzRep :global(.kpi), #report :global(.kpi) { background: #e3efeb; border-radius: 10px; padding: 10px 12px; }
-  #qzRep :global(.kpi b), #report :global(.kpi b) { display: block; font: 700 1.5rem var(--serif); color: var(--teal); }
+  #qzRep :global(.kpi), #report :global(.kpi) { background: var(--surface-2); border-radius: 10px; padding: 10px 12px; }
+  #qzRep :global(.kpi b), #report :global(.kpi b) { display: block; font: 700 1.5rem var(--serif); color: var(--accent); }
   #qzRep :global(.kpi span), #report :global(.kpi span) { font-size: .88rem; color: var(--ink-soft); }
   #qzRep :global(h2), #report :global(h2) { font-size: 1.3rem; margin-top: 26px; }
   #report :global(h3) { font-size: 1rem; margin: 14px 0 6px; }
   #report :global(.noms) { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; }
-  #report :global(.nom) { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: #fff; }
+  #report :global(.nom) { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--sheet); }
   #report :global(.nom h3) { margin: 0 0 6px; font-family: var(--sans); font-size: .95rem; }
   #report :global(.nom ol) { margin: 0; padding-left: 20px; font-size: .95rem; }
   #report :global(.nom li:first-child) { font-weight: 700; }
   #report :global(.nom li.none) { font-weight: 400; color: var(--ink-soft); }
-  #report :global(.nom.warn) { border-color: #f1c4b6; background: #fff7f4; }
+  #report :global(.nom.warn) { border-color: var(--bad); background: var(--bad-bg); }
   #report :global(table.rep th) { cursor: pointer; }
   #report :global(table.rep tbody tr) { cursor: pointer; }
-  #report :global(tbody tr:hover) { background: #e9f2ef; }
+  #report :global(tbody tr:hover) { background: var(--hover); }
   :global(td.n) { text-align: right; }
   .tp :global(th.n) { text-align: right; }
-  :global(td.ar) { font-family: var(--ar); font-size: 1.3rem; text-align: right; }
+  :global(td.ar) { font-family: var(--ar); font-size: calc(1.3rem * var(--ar-scale)); text-align: right; }
   #qzRep :global(.g2), #report :global(.g2) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; }
   #qzRep :global(.g2 > div), #report :global(.g2 > div) { min-width: 0; }
   #report :global(select) { width: auto; margin-bottom: 8px; }
   :global(.bars) { display: grid; grid-template-columns: minmax(90px, max-content) minmax(40px, 1fr) 80px; gap: 4px 8px; align-items: center; font-size: .9rem; }
-  :global(.bars .t) { height: 14px; background: #e3efeb; border-radius: 7px; overflow: hidden; }
-  :global(.bars .t i) { display: block; height: 100%; background: var(--turq); border-radius: 7px; }
-  :global(.bars .t i.c) { background: var(--coral); }
+  :global(.bars .t) { height: 14px; background: var(--surface-2); border-radius: 7px; overflow: hidden; }
+  :global(.bars .t i) { display: block; height: 100%; background: var(--chart); border-radius: 7px; }
+  :global(.bars .t i.c) { background: var(--chart-2); }
   :global(.bars .v) { text-align: right; color: var(--ink-soft); }
   :global(.cols) { display: flex; align-items: flex-end; gap: 3px; height: 110px; border-bottom: 1px solid var(--line); }
-  :global(.cols div) { flex: 1; background: var(--turq); border-radius: 3px 3px 0 0; min-height: 1px; }
+  :global(.cols div) { flex: 1; background: var(--chart); border-radius: 3px 3px 0 0; min-height: 1px; }
   :global(.cl) { display: flex; gap: 3px; font-size: .72rem; color: var(--ink-soft); }
   :global(.cl span) { flex: 1; text-align: center; overflow: hidden; }
-  :global(.note) { font-size: .88rem; background: #fbf6e6; border-left: 4px solid var(--gold); padding: 6px 10px; margin-top: 8px; }
+  :global(.note) { font-size: .88rem; background: var(--notice-bg); color: var(--ink); border-left: 4px solid var(--gold); padding: 6px 10px; margin-top: 8px; }
   dialog { border: 0; border-radius: 14px; width: min(860px, 95vw); padding: 0; }
   dialog::backdrop { background: rgba(0,0,0,.45); }
-  .dh { background: var(--teal); color: #fff; display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; gap: 10px; }
-  .dh h2 { color: #fff; margin: 0; font-size: 1.2rem; }
-  .dh .btn { color: #fff; border-color: #fff; }
+  .dh { background: var(--accent); color: var(--on-accent); display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; gap: 10px; }
+  .dh h2 { color: var(--on-accent); margin: 0; font-size: 1.2rem; }
+  .dh .btn { color: var(--on-accent); border-color: var(--on-accent); }
   .db { padding: 14px 16px; max-height: 75vh; overflow: auto; }
   :global(.pins td.pin) { font: 700 1.3rem var(--serif); letter-spacing: .1em; }
   .msg { min-height: 1.4em; color: var(--lapis); }
   #print { display: none; }
   .tp :global(table.hardq td) { white-space: normal; min-width: 160px; }
-  .tp :global(table.hardq .ar), dialog :global(.rv .ar) { font-family: var(--ar); font-size: 1.25rem; }
+  .tp :global(table.hardq .ar), dialog :global(.rv .ar) { font-family: var(--ar); font-size: calc(1.25rem * var(--ar-scale)); }
   @media (max-width: 760px) { .grid3, #report :global(.g2), #qzRep :global(.g2) { grid-template-columns: 1fr; } }
   @media print {
     :global(header), :global(footer) { display: none !important; }

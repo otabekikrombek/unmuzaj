@@ -3,31 +3,32 @@ import Base from '../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
 import { u } from '../../lib/url';
 import { t } from '../../i18n/ru';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
 export async function getStaticPaths() {
   return (await getCollection('decks')).map(d => ({ params: { deck: d.data.key }, props: { d: d.data } }));
 }
 const { d } = Astro.props;
 const themes = [...new Set(d.items.map(i => i.t))];
 ---
-<Base title={d.title} description={`${d.description} ${d.items.length} слов с карточками и тестом.`}>
+<Base title={d.title} description={`${d.description} ${d.items.length} слов с карточками и тестом.`} group="tasks">
   <section class="trainer" data-deck={d.key}>
     <div class="wrap">
       <div class="top">
         <div>
-          <a class="crumb" href={u('words/')}>{t.nav.words}</a>
+          <Breadcrumbs title={d.title} tone="study" />
           <h1>{d.title}</h1>
         </div>
-        <p class="who" id="who" aria-live="polite"></p>
+        <p class="who" id="who" aria-live="polite" data-pagefind-ignore></p>
       </div>
-      <div class="stats" id="stats"></div>
-      <div class="tabs" role="tablist">
+      <div class="stats" id="stats" data-pagefind-ignore></div>
+      <div class="tabs" role="tablist" data-pagefind-ignore>
         <button role="tab" data-tab="cards" aria-selected="true">Карточки</button>
         <button role="tab" data-tab="test" aria-selected="false">Тест · 20 вопросов</button>
         <button role="tab" data-tab="hard" aria-selected="false">Мои трудные</button>
         <button role="tab" data-tab="board" aria-selected="false">Рейтинг класса</button>
       </div>
 
-      <div data-panel="cards">
+      <div data-panel="cards" data-pagefind-ignore>
         <div class="controls">
           <select id="theme" aria-label="Какие слова показывать">
             <option value="*">Все слова</option>
@@ -82,7 +83,7 @@ const themes = [...new Set(d.items.map(i => i.t))];
     function stats() {
       const c = { new: 0, learn: 0, good: 0, done: 0 } as Record<string, number>;
       W.forEach(w => c[level(store.S, w)]++);
-      const N = W.length, col: Record<string, string> = { done: 'var(--turq)', good: 'var(--sun)', learn: 'var(--coral)', new: 'rgba(255,255,255,.25)' };
+      const N = W.length, col: Record<string, string> = { done: 'var(--sec-F)', good: 'var(--sun)', learn: 'var(--sec-G)', new: 'var(--study-chip)' };
       const nm: Record<string, string> = { new: 'новые', learn: 'учу', good: 'знаю', done: 'выучено' };
       $('stats').innerHTML = `<div class="bar">${['done', 'good', 'learn', 'new'].map(k => `<i style="width:${c[k] / N * 100}%;background:${col[k]}"></i>`).join('')}</div>
         <div class="leg">${['new', 'learn', 'good', 'done'].map(k => `<span><b style="background:${col[k]}"></b>${nm[k]}: ${c[k]}</span>`).join('')}<span>пройдено ${N - c.new} из ${N}</span></div>`;
@@ -204,51 +205,50 @@ const themes = [...new Set(d.items.map(i => i.t))];
 </Base>
 
 <style>
-  .trainer { background: linear-gradient(160deg, #1d5c63 0%, #183f5e 55%, #2b1055 100%); color: #fff; padding: 20px 0 32px; }
-  .trainer h1 { color: #fff; margin: 2px 0 8px; font-size: clamp(1.5rem, 4vw, 2rem); }
-  .crumb { color: #cfe8e3; font-size: .95rem; }
+  .trainer { background: linear-gradient(160deg, var(--study-from) 0%, var(--study-mid) 55%, var(--study-to) 100%); color: var(--study-ink); padding: 20px 0 32px; }
+  .trainer h1 { color: var(--study-ink); margin: 2px 0 8px; font-size: clamp(1.5rem, 4vw, 2rem); }
   .top { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
-  .who { margin: 0 0 10px; font-size: .95rem; color: #dff1ed; max-width: 420px; }
-  .who :global(a) { color: var(--sun); }
-  .stats { background: rgba(255,255,255,.08); border-radius: var(--r-m); padding: 10px 12px; margin-bottom: 14px; }
-  .stats :global(.bar) { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: rgba(255,255,255,.12); }
+  .who { margin: 0 0 10px; font-size: .95rem; color: var(--study-muted); max-width: 420px; }
+  .who :global(a) { color: var(--study-link); }
+  .stats { background: var(--study-card); border-radius: var(--r-m); padding: 10px 12px; margin-bottom: 14px; }
+  .stats :global(.bar) { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: var(--study-chip); }
   .stats :global(.bar i) { display: block; height: 100%; }
-  .stats :global(.leg) { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: .88rem; margin-top: 8px; color: #e4f3ef; }
+  .stats :global(.leg) { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: .88rem; margin-top: 8px; color: var(--study-muted); }
   .stats :global(.leg b) { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; }
   .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
-  .tabs button, .seg button { border: 0; min-height: 44px; padding: 0 14px; border-radius: 8px; font: 600 .95rem var(--sans); cursor: pointer; background: rgba(255,255,255,.14); color: #fff; }
-  .tabs button[aria-selected='true'], .seg button[aria-pressed='true'] { background: var(--sun); color: #1b2a28; }
+  .tabs button, .seg button { border: 0; min-height: 44px; padding: 0 14px; border-radius: 8px; font: 600 .95rem var(--sans); cursor: pointer; background: var(--study-chip); color: var(--study-ink); }
+  .tabs button[aria-selected='true'], .seg button[aria-pressed='true'] { background: var(--sun); color: var(--on-sun); }
   .controls { display: grid; grid-template-columns: 1fr auto; gap: 10px; margin-bottom: 12px; }
   .seg { display: flex; gap: 4px; }
-  .card { width: 100%; min-height: 250px; border: 0; border-radius: 16px; background: #fff; color: var(--ink); cursor: pointer; position: relative;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 36px 18px 18px; box-shadow: 0 12px 30px rgba(0,0,0,.25); font: inherit; }
-  .card :global(.ar), .q :global(.ar) { font-family: var(--ar); font-size: clamp(2rem, 7vw, 2.6rem); line-height: 1.6; }
-  .card :global(.ru), .q :global(.ru) { font-family: var(--serif); font-size: 1.45rem; font-weight: 700; color: var(--teal); }
-  .card :global(.th) { font-size: .85rem; color: #6c8681; }
-  .card :global(.rule) { width: 50%; border-top: 1px solid #d5e3df; }
+  .card { width: 100%; min-height: 250px; border: 0; border-radius: 16px; background: var(--sheet); color: var(--ink); cursor: pointer; position: relative;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 36px 18px 18px; box-shadow: var(--shadow); font: inherit; }
+  .card :global(.ar), .q :global(.ar) { font-family: var(--ar); font-size: calc(clamp(2rem, 7vw, 2.6rem) * var(--ar-scale)); line-height: 1.6; }
+  .card :global(.ru), .q :global(.ru) { font-family: var(--serif); font-size: 1.45rem; font-weight: 700; color: var(--accent); }
+  .card :global(.th) { font-size: .85rem; color: var(--ink-soft); }
+  .card :global(.rule) { width: 50%; border-top: 1px solid var(--line); }
   .card :global(.tag) { position: absolute; top: 12px; left: 12px; font-size: .78rem; font-weight: 700; }
-  .card :global(.tag.new) { background: #fff3c4; color: #6d5200; }
-  .card :global(.tag.err) { background: #fde0d8; color: #9a3017; }
-  .card :global(.tag.rep) { background: #d9f0eb; color: var(--teal); }
+  .card :global(.tag.new) { background: var(--sun); color: var(--on-sun); }
+  .card :global(.tag.err) { background: var(--bad-bg); color: var(--bad-ink); }
+  .card :global(.tag.rep) { background: var(--tag-bg); color: var(--tag-ink); }
   .answer { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
-  .answer button { min-height: 52px; border: 0; border-radius: 10px; font: 700 1.05rem var(--sans); cursor: pointer; color: #fff; }
-  .no { background: var(--coral); } .yes { background: var(--turq); }
-  .hint { color: #cfe8e3; font-size: .92rem; text-align: center; margin: 10px 0 0; }
-  .q { background: #fff; color: var(--ink); border-radius: 14px; padding: 22px; text-align: center; margin: 8px 0; }
+  .answer button { min-height: 52px; border: 0; border-radius: 10px; font: 700 1.05rem var(--sans); cursor: pointer; color: var(--on-tile); }
+  .no { background: var(--tile-0); } .yes { background: var(--tile-3); }
+  .hint { color: var(--study-muted); font-size: .92rem; text-align: center; margin: 10px 0 0; }
+  .q { background: var(--sheet); color: var(--ink); border-radius: 14px; padding: 22px; text-align: center; margin: 8px 0; }
   .opts { display: grid; gap: 8px; }
-  .opts :global(.opt) { min-height: 54px; border: 0; border-radius: 10px; background: #fff; color: var(--ink); font: 1.1rem var(--sans); cursor: pointer; padding: 8px 12px; }
-  .opts :global(.opt.ar) { font-family: var(--ar); font-size: 1.6rem; }
-  .opts :global(.opt.ok) { background: #b9f0c9; } .opts :global(.opt.bad) { background: #f7c2b6; }
+  .opts :global(.opt) { min-height: 54px; border: 0; border-radius: 10px; background: var(--sheet); color: var(--ink); font: 1.1rem var(--sans); cursor: pointer; padding: 8px 12px; }
+  .opts :global(.opt.ar) { font-family: var(--ar); font-size: calc(1.6rem * var(--ar-scale)); }
+  .opts :global(.opt.ok) { background: var(--ok-bg); outline: 3px solid var(--ok); } .opts :global(.opt.bad) { background: var(--bad-bg); outline: 3px solid var(--bad); }
   .opts :global(.opt:disabled) { cursor: default; opacity: 1; }
-  #test :global(.result) { background: rgba(255,255,255,.08); border-radius: 14px; padding: 24px; text-align: center; }
+  #test :global(.result) { background: var(--study-card); border-radius: 14px; padding: 24px; text-align: center; }
   #test :global(.big) { font-family: var(--serif); font-size: 3rem; font-weight: 700; margin: 0; color: var(--sun); }
-  #test :global(.btn) { background: var(--sun); border-color: var(--sun); color: #1b2a28; }
-  .sheet { background: #fff; color: var(--ink); border-radius: 14px; padding: 16px 18px; }
+  #test :global(.btn) { background: var(--sun); border-color: var(--sun); color: var(--on-sun); }
+  .sheet { background: var(--sheet); color: var(--ink); border-radius: 14px; padding: 16px 18px; }
   .sheet :global(h2), .sheet :global(h3) { font-size: 1.15rem; margin-top: 8px; }
   .sheet :global(table) { width: 100%; border-collapse: collapse; }
   .sheet :global(td) { padding: 5px 6px; border-bottom: 1px solid var(--line); }
-  .sheet :global(td.ar) { font-size: 1.35rem; text-align: right; }
-  .sheet :global(td.n) { text-align: center; color: var(--coral); white-space: nowrap; }
+  .sheet :global(td.ar) { font-size: calc(1.35rem * var(--ar-scale)); text-align: right; }
+  .sheet :global(td.n) { text-align: center; color: var(--bad-ink); white-space: nowrap; }
   .sheet :global(li.me) { font-weight: 700; color: var(--lapis); }
   .sheet :global(.hint) { color: var(--ink-soft); text-align: left; }
   .below { margin-top: 16px; }

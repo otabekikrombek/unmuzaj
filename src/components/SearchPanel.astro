@@ -1,0 +1,143 @@
+---
+// Поиск по сайту: лупа в шапке, клавиши «/» и Ctrl+K.
+// Страницы — Pagefind (индекс строится после сборки: npm run build), слова — свой индекс /search/words.json.
+import { t } from '../i18n/ru';
+import { u } from '../lib/url';
+const S = t.search;
+const data = { t: S, base: u(''), groups: S.groups };
+---
+<dialog id="searchDlg" class="srch" aria-labelledby="srchLabel">
+  <div class="sh">
+    <label id="srchLabel" for="srchQ" class="sr-only">{S.label}</label>
+    <span class="sh-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></span>
+    <input id="srchQ" type="search" placeholder={S.placeholder} autocomplete="off" spellcheck="false" enterkeyhint="search" />
+    <button type="button" class="sh-x" data-close aria-label={t.nav.close}>✕</button>
+  </div>
+  <div class="sb">
+    <p class="hint muted small" id="srchHint">{S.hint}</p>
+    <p class="sr-only" id="srchStatus" aria-live="polite"></p>
+    <div id="srchRes"></div>
+  </div>
+</dialog>
+<script type="application/json" id="srch-data" set:html={JSON.stringify(data)} />
+
+<script>
+  import { norm } from '../lib/normalize';
+  const D = JSON.parse(document.getElementById('srch-data')!.textContent!);
+  const T = D.t, BASE: string = D.base;
+  const dlg = document.getElementById('searchDlg') as HTMLDialogElement;
+  const q = document.getElementById('srchQ') as HTMLInputElement;
+  const res = document.getElementById('srchRes')!, hint = document.getElementById('srchHint')!, status = document.getElementById('srchStatus')!;
+  const esc = (s: unknown) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
+
+  type W = { a: string; r: string; t: string; h: string; n: string };
+  let words: W[] | null = null, pf: any = null, pfFailed = false;
+  async function loadWords() {
+    if (words) return words;
+    try { words = await (await fetch(BASE + 'search/words.json')).json(); } catch { words = []; }
+    return words!;
+  }
+  async function loadPagefind() {
+    if (pf || pfFailed) return pf;
+    try {
+      pf = await import(/* @vite-ignore */ BASE + 'pagefind/pagefind.js');
+      await pf.options({ baseUrl: BASE, excerptLength: 18 });
+      await pf.init();
+    } catch { pfFailed = true; pf = null; }
+    return pf;
+  }
+
+  // ---------- открыть / закрыть ----------
+  let opener: HTMLElement | null = null;
+  function open() {
+    if (dlg.open) return;
+    opener = document.activeElement as HTMLElement;
+    dlg.showModal(); q.focus(); q.select();
+    loadWords(); loadPagefind();
+  }
+  dlg.addEventListener('close', () => opener?.focus?.());
+  dlg.querySelector('[data-close]')!.addEventListener('click', () => dlg.close());
+  dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+  document.querySelectorAll<HTMLElement>('[data-open-search]').forEach(b => b.addEventListener('click', open));
+  document.addEventListener('keydown', e => {
+    const el = e.target as HTMLElement;
+    const typing = el && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName));
+    if ((e.key === 'k' || e.key === 'K' || e.key === 'л' || e.key === 'Л') && (e.ctrlKey || e.metaKey)) { e.preventDefault(); open(); }
+    else if (e.key === '/' && !typing && !e.altKey && !e.ctrlKey && !e.metaKey) { e.preventDefault(); open(); }
+  });
+
+  // ---------- поиск ----------
+  let seq = 0, timer = 0;
+  q.addEventListener('input', () => { clearTimeout(timer); timer = window.setTimeout(run, 120); });
+  async function run() {
+    const my = ++seq, raw = q.value.trim();
+    if (!raw) { res.innerHTML = ''; hint.hidden = false; status.textContent = ''; return; }
+    hint.hidden = true;
+    const nq = norm(raw);
+    const W = await loadWords();
+    const ws = W.filter(w => w.n.includes(nq))
+      .sort((a, b) => Number(!a.n.startsWith(nq)) - Number(!b.n.startsWith(nq)) || a.n.length - b.n.length).slice(0, 8);
+    let pages: any[] = [];
+    const P = await loadPagefind();
+    if (P) {
+      // Pagefind сам находит арабское и с огласовками, и без
+      const r = await P.search(raw);
+      pages = await Promise.all(r.results.slice(0, 12).map((x: any) => x.data()));
+    }
+    if (my !== seq) return;
+    const groups: Record<string, string[]> = {};
+    for (const p of pages) {
+      const g = p.meta?.group || 'sections';
+      (groups[g] ||= []).push(`<li><a href="${esc(p.url)}"><b>${esc(p.meta?.title || p.url)}</b><span class="ex">${p.excerpt || ''}</span></a></li>`);
+    }
+    let html = '';
+    if (ws.length) {
+      html += `<h3>${esc(D.groups.words)}</h3><ul>${ws.map(w => `<li><a href="${esc(BASE + w.h)}"><span class="w-ar" lang="ar" dir="rtl">${esc(w.a)}</span><span class="w-ru">${esc(w.r)}</span><span class="ex">${esc(w.t)}</span></a></li>`).join('')}</ul>` +
+        `<p class="more"><a href="${esc(BASE + 'dictionary/?q=' + encodeURIComponent(raw))}">${esc(T.allInDict)}</a></p>`;
+    }
+    for (const g of ['tasks', 'grammar', 'texts', 'articles', 'sections']) if (groups[g]) html += `<h3>${esc(D.groups[g] || g)}</h3><ul>${groups[g].join('')}</ul>`;
+    if (!html) html = `<p class="empty">${esc(T.empty)}</p>`;
+    if (!P) html += `<p class="muted small">${esc(T.noIndex)}</p>`;
+    res.innerHTML = html;
+    status.textContent = `${ws.length + pages.length}`;
+  }
+
+  // ---------- клавиши ↑ ↓ ----------
+  dlg.addEventListener('keydown', e => {
+    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
+    const links = [...res.querySelectorAll<HTMLAnchorElement>('a')];
+    if (!links.length) return;
+    e.preventDefault();
+    const i = links.indexOf(document.activeElement as HTMLAnchorElement);
+    if (e.key === 'ArrowDown') (links[i + 1] || links[0]).focus();
+    else if (i <= 0) q.focus(); else links[i - 1].focus();
+  });
+</script>
+
+<style>
+  .srch { border: 1px solid var(--line); border-radius: var(--r-l); padding: 0; width: min(680px, calc(100vw - 16px)); max-height: min(80vh, 720px); margin-top: 8vh; box-shadow: var(--shadow); overflow: hidden; }
+  .srch[open] { display: flex; flex-direction: column; }
+  .srch::backdrop { background: rgba(0, 0, 0, .45); }
+  .sh { display: flex; align-items: center; gap: 8px; padding: 10px 10px 10px 14px; border-bottom: 1px solid var(--line); }
+  .sh-ico { color: var(--ink-soft); display: flex; }
+  .sh input { border: 0; min-height: 48px; font-size: 1.1rem; padding: 6px 4px; background: transparent; flex: 1; min-width: 0; }
+  .sh input:focus-visible { outline: none; }
+  .sh input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+  .sh:focus-within { box-shadow: inset 0 -3px 0 var(--focus); }
+  .sh-x { border: 0; background: transparent; color: var(--ink); font-size: 1.3rem; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; flex: none; }
+  .sh-x:hover { background: var(--hover); }
+  .sb { overflow: auto; padding: 4px 14px 16px; }
+  .hint { margin: 10px 0; }
+  .sb :global(h3) { font-family: var(--sans); font-size: .82rem; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-soft); margin: 16px 0 6px; }
+  .sb :global(ul) { list-style: none; margin: 0; padding: 0; }
+  .sb :global(li a) { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: 8px 10px; border-radius: var(--r-s); text-decoration: none; color: var(--ink); min-height: 44px; align-items: center; }
+  .sb :global(li a:hover), .sb :global(li a:focus-visible) { background: var(--hover); }
+  .sb :global(li a b) { grid-column: 1 / -1; font-family: var(--serif); }
+  .sb :global(.ex) { grid-column: 1 / -1; color: var(--ink-soft); font-size: .88rem; }
+  .sb :global(.ex mark) { background: var(--sun); color: var(--on-sun); border-radius: 2px; }
+  .sb :global(.w-ar) { font-size: calc(1.45rem * var(--ar-scale)); line-height: 1.6; text-align: right; grid-column: 2; grid-row: 1; }
+  .sb :global(.w-ru) { font-weight: 600; grid-column: 1; grid-row: 1; }
+  .sb :global(.more) { margin: 6px 10px 0; font-size: .92rem; }
+  .sb :global(.empty) { margin: 16px 0; }
+  @media (max-width: 560px) { .srch { margin-top: 8px; max-height: calc(100vh - 16px); } }
+</style>

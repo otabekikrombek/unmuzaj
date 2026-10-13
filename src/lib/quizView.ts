@@ -11,9 +11,8 @@ export function wrapAr(t: unknown): string {
   return esc(s).replace(/([«(]?[؀-ۿ][؀-ۿً-ْٰ\s،؟:«»()….!]*)/g, m => `<span class="ar" lang="ar" dir="rtl">${m.trim()}</span> `);
 }
 
-/** цвет части викторины (как в прототипах) */
-export const SEC_COLOR: Record<string, string> = { F: '#36B3C9', R: '#36B3C9', V: '#6CC46A', G: '#F08A4B', E: '#8E7CF0', L: '#8E7CF0', Q: '#36B3C9' };
-export const secColor = (s: string) => SEC_COLOR[s] ?? '#FFD54F';
+/** цвет части викторины — токен --sec-X из tokens.css */
+export const secColor = (s: string) => (/^[A-Z]$/.test(s) ? `var(--sec-${s}, var(--sun))` : 'var(--sun)');
 export const fmtTime = (s: number) => `${Math.floor(s / 60)}:${String(Math.round(s) % 60).padStart(2, '0')}`;
 
 export const secName = (sec: Section | undefined) =>
