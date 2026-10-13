@@ -92,3 +92,18 @@ input[type=text], input[type=email], input[type=password], input[type=search], s
 label { display: block; font-weight: 600; margin: 12px 0 6px; }
 
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* Разбор викторины (страница викторины, «Мой прогресс», панель учителя) */
+.rv { border-radius: 12px; padding: 10px 12px; margin: 10px 0; border: 2px solid; color: var(--ink); }
+.rv.ok { border-color: #2aa36b; background: #e9f7ef; }
+.rv.bad { border-color: #e2504c; background: #fdecea; }
+.rvh { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px 10px; font-size: .88rem; color: #51656a; margin-bottom: 4px; }
+.rvq { font-weight: 700; margin-bottom: 6px; }
+.rve { color: #51656a; margin-top: 6px; font-style: italic; }
+.rv .ar { font-size: 1.3em; line-height: 1.7; }
+.qsecs { display: grid; grid-template-columns: minmax(0, max-content) minmax(60px, 1fr) auto; gap: 6px 10px; align-items: center; margin: 12px 0; }
+.qsn { font-size: .95rem; }
+.qsn [lang='ar'] { font-size: 1.15rem; }
+.qsb { height: 14px; border-radius: 99px; background: rgba(127,127,127,.22); overflow: hidden; }
+.qsb i { display: block; height: 100%; }
+@media (max-width: 420px) { .qsn .qar { display: none; } }

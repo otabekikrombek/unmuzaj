@@ -1,21 +1,360 @@
 ---
 import Base from '../../layouts/Base.astro';
-import PageHead from '../../components/PageHead.astro';
 import { getCollection } from 'astro:content';
 import { u } from '../../lib/url';
 import { t } from '../../i18n/ru';
+import { secName } from '../../lib/quizView';
 export async function getStaticPaths() {
   return (await getCollection('quizzes')).map(q => ({ params: { quiz: q.data.key }, props: { q: q.data } }));
 }
 const { q } = Astro.props;
+const N = q.plan.reduce((a, [, n]) => a + n, 0);
+const back = q.kind === 'test' ? ['tests/', t.nav.tests] : ['quizzes/', t.nav.quizzes];
+const data = {
+  quiz: { key: q.key, title: q.title, title_ar: q.title_ar, kind: q.kind, plan: q.plan, sections: q.sections, ins: q.ins, text_in: q.text_in,
+    para: q.para, lis: q.lis, audio: q.audio ? u(q.audio) : undefined, levels: q.levels, pool: q.pool },
+  t: t.quiz, login: u('login/') + '#class', list: u(back[0]),
+};
+// Разметка для поисковиков: что это за задание (без вопросов и ответов)
+const ld = {
+  '@context': 'https://schema.org', '@type': 'Quiz', name: q.title, description: q.description, inLanguage: ['ar', 'ru'],
+  educationalLevel: q.level, about: q.topics, numberOfQuestions: N, isAccessibleForFree: true,
+  url: new URL(u(`quizzes/${q.key}/`), Astro.site).href,
+};
 ---
-<Base title={q.title} description={q.description}>
-  <PageHead title={q.title} ar={q.kind === 'test' ? t.sectionsAr.tests : t.sectionsAr.quizzes} lead={q.description} />
-  <div class="wrap narrow">
-    <p><span class="tag">{t.common.level} {q.level}</span> {q.topics.map(x => <span class="tag">{x}</span>)}</p>
-    {q.legacy && <>
-      <p><a class="btn" href={u(q.legacy)}>Начать</a></p>
-      <p class="notice">{t.common.oldVersion} Результаты пока сохраняются в прежней таблице преподавателя.</p>
-    </>}
-  </div>
+<Base title={q.title} description={`${q.description} ${t.quiz.questions.replace('{n}', String(N))}.`}>
+  <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+  <section class="qz">
+    <div class="wrap">
+      <div class="top">
+        <a class="crumb" href={u(back[0])}>{back[1]}</a>
+        <button class="pill" id="snd" type="button">{t.quiz.sound}</button>
+      </div>
+
+      <div id="sStart" class="card">
+        <h1>{q.title}</h1>
+        {q.title_ar && <p class="har" lang="ar" dir="rtl">{q.title_ar}</p>}
+        <p class="sub">{q.description} {t.quiz.questions.replace('{n}', String(N))}.</p>
+        <div class="parts">
+          {q.plan.map(([s, n]) => (
+            <div class={`part p${s}`}><span set:html={secName(q.sections[s])} /><small>{n}</small></div>
+          ))}
+        </div>
+        <p class="who" id="who" aria-live="polite"></p>
+        <button class="go" id="start" type="button">{t.quiz.start}</button>
+      </div>
+
+      <div id="sCount" class="card" hidden><div class="count" id="cnt">3</div></div>
+
+      <div id="sIntro" class="card" hidden>
+        <span class="chip" id="inChip"></span>
+        <h2 id="inTitle"></h2>
+        <div id="inText"></div>
+        <div id="inExtra" class="extra"></div>
+        <button class="go" id="inGo" type="button">{t.quiz.toQuestions}</button>
+      </div>
+
+      <div id="sQ" hidden>
+        <div class="hud">
+          <span class="chip" id="qChip"></span><span id="qn"></span><span id="pts"></span>
+          <button class="pill" id="txtBtn" type="button" hidden>{t.quiz.text}</button>
+          <span class="tm" id="tm" aria-label="секунд осталось"></span>
+        </div>
+        <div class="tbar"><i id="tb"></i></div>
+        <div class="q" id="qt"></div>
+        <div class="tiles" id="tiles"></div>
+        <div class="fb" id="fb" aria-live="polite"></div>
+        <div class="expl" id="ex"></div>
+      </div>
+
+      <div id="sEnd" class="card" hidden>
+        <div class="big" id="ePts"></div>
+        <p class="lvl" id="eLvl"></p>
+        <div id="eSecs"></div>
+        <p class="note" id="eInfo"></p>
+        <p class="note" id="eNet" aria-live="polite"></p>
+        <div class="btns">
+          <button class="pill" id="myAns" type="button">{t.quiz.myAnswers}</button>
+          <button class="pill" id="again" type="button">{t.quiz.again}</button>
+          <a class="pill" href={u(back[0])}>{t.quiz.toList}</a>
+        </div>
+      </div>
+
+      <div id="sBoard" class="card" hidden>
+        <h2>{t.quiz.board}</h2>
+        <p class="note" id="bNote">{t.quiz.boardNote}</p>
+        <ol class="lb" id="board"></ol>
+        <p class="note" id="bMine"></p>
+      </div>
+    </div>
+  </section>
+
+  <dialog id="modal" aria-labelledby="mTitle">
+    <div class="mh"><h2 id="mTitle"></h2><button class="btn ghost" id="mclose" type="button">{t.quiz.close}</button></div>
+    <div class="mb" id="mbody"></div>
+  </dialog>
+  <canvas id="conf" aria-hidden="true"></canvas>
+  <noscript><p class="wrap">Для викторины нужен включённый JavaScript.</p></noscript>
+
+  <script type="application/json" id="qz-data" set:html={JSON.stringify(data)} />
+  <script>
+    import { getWho, rpc, token, device, uid } from '../../lib/api';
+    import { buildQuestions, gain, levelOf, levelPlain, bySection, total, type QuizData, type Question, type Answer } from '../../lib/quiz';
+    import { submitAttempt, flushQuizzes, guestBest, type SendState } from '../../lib/quizStore';
+    import { esc, wrapAr, secName, secBars, secColor, reviewHTML, fmtTime } from '../../lib/quizView';
+
+    const D = JSON.parse(document.getElementById('qz-data')!.textContent!);
+    const Q: QuizData = D.quiz, T: Record<string, string> = D.t;
+    const f = (s: string, v: Record<string, unknown>) => s.replace(/\{(\w+)\}/g, (_, k) => String(v[k] ?? ''));
+    const $ = <E extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as E;
+    const N = total(Q);
+    const explain: Record<number, string> = {}; Q.pool.forEach(p => (explain[p.id] = p.e));
+    const SCREENS = ['sStart', 'sCount', 'sIntro', 'sQ', 'sEnd', 'sBoard'];
+    const show = (...ids: string[]) => SCREENS.forEach(s => ($(s).hidden = !ids.includes(s)));
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // ---------- кто проходит ----------
+    const who = getWho();
+    function whoLine() {
+      if (who?.kind === 'pin') return f(T.whoPin, { name: esc(who.nickname), cls: esc(who.className) });
+      if (who?.kind === 'email') return f(T.whoEmail, { name: esc(who.email) });
+      const b = guestBest(Q.key);
+      return `${T.whoGuest} <a href="${D.login}">${T.login}</a>` + (b ? `<br>${f(T.guestBest, { p: b.points, c: b.correct, t: b.total })}` : '');
+    }
+    $('who').innerHTML = whoLine();
+    if (who) flushQuizzes(); // вдруг остались неотправленные попытки
+    addEventListener('online', () => { if (who) flushQuizzes().then(netShow); });
+
+    // ---------- окно ----------
+    const modal = $<HTMLDialogElement>('modal');
+    const openModal = (title: string, html: string) => { $('mTitle').textContent = title; $('mbody').innerHTML = html; modal.showModal(); };
+    $('mclose').addEventListener('click', () => modal.close());
+    modal.addEventListener('click', e => { if (e.target === modal) modal.close(); });
+    const textHTML = () => (Q.title_ar ? `<p class="mt" lang="ar" dir="rtl">${esc(Q.title_ar)}</p>` : '') +
+      (Q.para || []).map(p => `<p class="lab" lang="ar" dir="rtl">${esc(p.label)}</p><p class="ptxt" lang="ar" dir="rtl">${esc(p.sentences.join(' '))}</p>`).join('');
+    const textHere = (s: string) => !!Q.para?.length && (!Q.text_in || Q.text_in.includes(s));
+    $('txtBtn').addEventListener('click', () => openModal(T.textTitle, textHTML()));
+
+    // ---------- звук ----------
+    let AC: AudioContext | null = null, soundOn = true;
+    const ctx = () => { if (!AC) { try { AC = new (window.AudioContext || (window as any).webkitAudioContext)(); } catch {} } return AC; };
+    function tone(fq: number, d: number, type: OscillatorType = 'sine', v = .15, delay = 0) {
+      const c = ctx(); if (!c || !soundOn) return;
+      const o = c.createOscillator(), g = c.createGain(); o.type = type; o.frequency.value = fq; o.connect(g); g.connect(c.destination);
+      const t0 = c.currentTime + delay; o.start(t0); g.gain.setValueAtTime(v, t0); g.gain.exponentialRampToValueAtTime(.0001, t0 + d); o.stop(t0 + d + .02);
+    }
+    const sTick = () => tone(880, .06, 'square', .05), sOk = () => [523, 659, 784].forEach((x, i) => tone(x, .18, 'triangle', .18, i * .09));
+    const sBad = () => { tone(180, .35, 'sawtooth', .12); tone(140, .35, 'sawtooth', .1, .05); }, sGo = () => tone(660, .15, 'square', .08);
+    const sFan = () => [523, 659, 784, 1047, 784, 1047].forEach((x, i) => tone(x, .22, 'triangle', .18, i * .13));
+    $('snd').addEventListener('click', e => { soundOn = !soundOn; (e.currentTarget as HTMLElement).textContent = soundOn ? T.sound : T.soundOff; });
+
+    // ---------- аудирование (не больше двух раз) ----------
+    const synth = 'speechSynthesis' in window ? speechSynthesis : null;
+    let plays = 0, audio: HTMLAudioElement | null = null;
+    function listenBox(box: HTMLElement) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'pill';
+      const note = document.createElement('small'); box.append(b, note);
+      const label = () => (plays >= 2 ? T.listened : f(T.listen, { n: 2 - plays }));
+      const useTTS = () => {
+        const voices = () => synth ? synth.getVoices().filter(v => /^ar/i.test(v.lang)) : [];
+        b.disabled = plays >= 2; b.textContent = label(); note.textContent = synth ? T.ttsNote : T.noVoice;
+        b.onclick = () => {
+          if (plays >= 2 || !synth) return; plays++; synth.cancel(); const vs = voices();
+          if (!vs.length) note.textContent = T.noVoice;
+          (Q.lis || []).forEach(({ who: w, text }, i) => {
+            const ut = new SpeechSynthesisUtterance(text); ut.lang = 'ar-SA'; ut.rate = .8; ut.pitch = i % 2 ? .8 : 1.15;
+            const v = vs[w === (Q.lis![0].who) ? 0 : Math.min(1, vs.length - 1)]; if (v) ut.voice = v; synth.speak(ut);
+          });
+          b.textContent = label(); b.disabled = plays >= 2;
+        };
+      };
+      if (!Q.audio) return useTTS();
+      b.disabled = true; b.textContent = T.loadingAudio;
+      const au = new Audio(); audio = au; au.preload = 'auto';
+      au.addEventListener('error', useTTS, { once: true });
+      au.addEventListener('canplaythrough', () => { if (b.onclick) return; b.disabled = plays >= 2; b.textContent = label(); note.textContent = T.audioOk;
+        b.onclick = () => { if (plays >= 2 || !au.paused) return; plays++; au.currentTime = 0; au.play().catch(() => {}); b.disabled = true; b.textContent = T.playing; }; }, { once: true });
+      au.addEventListener('ended', () => { b.disabled = plays >= 2; b.textContent = label(); });
+      au.src = Q.audio; au.load();
+    }
+
+    // ---------- игра ----------
+    let qs: Question[] = [], qi = 0, points = 0, correct = 0, t0 = 0, startedAt = 0, qStart = 0, timer = 0, locked = false, log: Answer[] = [];
+    const SH = ['▲', '◆', '●', '■'];
+    $('start').addEventListener('click', () => {
+      ctx(); qs = buildQuestions(Q); qi = 0; points = 0; correct = 0; log = []; plays = 0; startedAt = Date.now();
+      show('sCount'); let n = 3; $('cnt').textContent = String(n); sGo();
+      const iv = setInterval(() => { n--; if (n > 0) { $('cnt').textContent = String(n); sGo(); } else { clearInterval(iv); t0 = Date.now(); next(); } }, reduced ? 400 : 900);
+    });
+    function next() { if (qi >= qs.length) return finish(); if (qi === 0 || qs[qi].s !== qs[qi - 1].s) intro(qs[qi].s); else ask(); }
+    function intro(s: string) {
+      const S = Q.sections[s], ix = Q.plan.findIndex(p => p[0] === s);
+      if (Q.plan.length === 1 && !Q.ins?.[s]) return ask(); // викторина без частей — сразу к вопросам
+      show('sIntro');
+      $('inChip').textContent = f(T.part, { i: ix + 1, n: Q.plan.length }); $('inChip').style.background = secColor(s);
+      $('inTitle').innerHTML = secName(S);
+      const I = Q.ins?.[s];
+      $('inText').innerHTML = I ? `<p class="insar" lang="ar" dir="rtl">${esc(I.ar)}</p><p class="sub">${esc(I.ru)}</p>` : '';
+      const x = $('inExtra'); x.innerHTML = '';
+      if (s === 'L' && Q.lis?.length) listenBox(x);
+      else if (textHere(s)) { const b = document.createElement('button'); b.type = 'button'; b.className = 'pill'; b.textContent = T.openText; b.onclick = () => openModal(T.textTitle, textHTML()); x.append(b); }
+      $('inGo').onclick = () => { synth?.cancel(); audio?.pause(); ask(); };
+      $('inGo').focus();
+    }
+    function ask() {
+      show('sQ'); const q = qs[qi], S = Q.sections[q.s]; locked = false;
+      $('qChip').innerHTML = secName(S); $('qChip').style.background = secColor(q.s);
+      $('txtBtn').hidden = !textHere(q.s);
+      $('qn').textContent = `${qi + 1} / ${N}`; $('pts').textContent = f(T.points, { n: points });
+      $('qt').innerHTML = wrapAr(q.q); $('fb').textContent = ''; $('ex').textContent = '';
+      const box = $('tiles'); box.innerHTML = '';
+      q.o.forEach((o, i) => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = `tile t${i % 4}`; b.dataset.v = o;
+        b.innerHTML = `<span class="sh" aria-hidden="true">${SH[i % 4]}</span>${wrapAr(o)}`;
+        b.addEventListener('click', () => pick(o)); box.append(b);
+      });
+      qStart = Date.now(); const lim = S.sec; let last = lim;
+      $('tm').textContent = String(lim); $('tb').style.width = '100%'; clearInterval(timer);
+      timer = window.setInterval(() => {
+        const left = Math.max(0, lim - (Date.now() - qStart) / 1000), c = Math.ceil(left);
+        $('tm').textContent = String(c); $('tb').style.width = `${left / lim * 100}%`;
+        if (c <= 5 && c !== last) sTick(); last = c;
+        if (left <= 0) pick(null);
+      }, 200);
+    }
+    function pick(o: string | null) {
+      if (locked) return; locked = true; clearInterval(timer);
+      const q = qs[qi], ms = Date.now() - qStart, ok = o === q.c; let g = 0;
+      if (ok) { correct++; g = gain(Q.sections[q.s].sec, ms); points += g; sOk(); } else sBad();
+      [...$('tiles').children].forEach(t => { (t as HTMLButtonElement).disabled = true; t.classList.add((t as HTMLElement).dataset.v === q.c ? 'right' : 'dim'); });
+      $('fb').textContent = ok ? f(T.right, { n: g }) : o === null ? T.timeout : T.wrong;
+      $('ex').innerHTML = wrapAr(q.e); $('pts').textContent = f(T.points, { n: points });
+      log.push({ id: q.id, s: q.s, q: q.q, a: o ?? '', c: q.c, ok, sec: Math.round(ms / 100) / 10 });
+      setTimeout(() => { qi++; next(); }, ok ? 1600 : 2800);
+    }
+
+    // ---------- итог ----------
+    let net: SendState = 'guest';
+    function netShow(s?: SendState) {
+      if (s) net = s;
+      $('eNet').textContent = net === 'guest' ? T.guestSaved : T[net];
+      $('eNet').innerHTML += net === 'relogin' ? ` <a href="${D.login}">${T.login}</a>` : '';
+    }
+    async function finish() {
+      const secs = Math.round((Date.now() - t0) / 1000), lvl = levelOf(Q, correct);
+      show('sEnd');
+      $('ePts').textContent = f(T.points, { n: points });
+      $('eLvl').textContent = f(T.result, { lvl, c: correct, t: N, pct: Math.round(100 * correct / N) });
+      $('eSecs').innerHTML = Q.plan.length > 1 ? secBars(Q.sections, bySection(Q, log).map(x => ({ s: x.s, ok: x.ok, n: x.n }))) : '';
+      $('eInfo').textContent = f(T.time, { t: fmtTime(secs) });
+      sFan(); if (!reduced) confetti();
+      netShow(who ? 'pending' : 'guest');
+      const st = await submitAttempt({ id: uid() + uid(), quiz: Q.key, points, correct, total: N, time: secs, level: levelPlain(lvl), start: startedAt, dev: device(), answers: log });
+      netShow(st);
+      if (who?.kind === 'pin') { $('sBoard').hidden = false; loadBoard(); }
+    }
+    $('myAns').addEventListener('click', () => openModal(T.reviewTitle, `<p>${esc($('eLvl').textContent)}</p>` +
+      (Q.plan.length > 1 ? secBars(Q.sections, bySection(Q, log)) : '') + reviewHTML(log, Q.sections, T as any, explain)));
+    $('again').addEventListener('click', () => { $('who').innerHTML = whoLine(); show('sStart'); scrollTo(0, 0); });
+
+    // ---------- рейтинг класса (лучший результат каждого, только псевдонимы) ----------
+    let boardTimer = 0;
+    async function loadBoard() {
+      try {
+        const r = await rpc<any>('quiz_class_board', { p_token: token(), p_quiz: Q.key, p_hours: 3 });
+        if (!r?.ok) { $('sBoard').hidden = true; return; }
+        const rows: any[] = r.rows, mine = rows.findIndex(x => x.id === r.me);
+        $('board').innerHTML = rows.slice(0, 10).map((x, i) => `<li class="${x.id === r.me ? 'me' : ''}"><span class="pl">${i < 3 ? ['🥇', '🥈', '🥉'][i] : i + 1}</span>` +
+          `<span>${esc(x.n)}<small>${x.c}/${x.tot} · ${fmtTime(x.t)}</small></span><b>${x.p}</b></li>`).join('');
+        $('bMine').textContent = mine >= 10 ? f(T.yourPlace, { n: mine + 1 }) : '';
+        $('bNote').textContent = rows.length ? T.boardNote : T.boardEmpty;
+      } catch { $('bNote').textContent = T.boardFail; }
+      clearTimeout(boardTimer); if (!$('sBoard').hidden) boardTimer = window.setTimeout(loadBoard, 8000);
+    }
+
+    // ---------- конфетти ----------
+    function confetti() {
+      const cv = $<HTMLCanvasElement>('conf'), c = cv.getContext('2d'); if (!c) return;
+      cv.width = innerWidth; cv.height = innerHeight;
+      const cols = ['#E2504C', '#2F7BE5', '#E8A520', '#2AA36B', '#FFD54F', '#fff'];
+      const P = Array.from({ length: 140 }, () => ({ x: Math.random() * cv.width, y: -20 - Math.random() * cv.height * .5, r: 4 + Math.random() * 6, c: cols[Math.floor(Math.random() * cols.length)], vy: 2 + Math.random() * 3, vx: -1.5 + Math.random() * 3, a: Math.random() * 6 }));
+      let n = 0;
+      (function step() {
+        c.clearRect(0, 0, cv.width, cv.height);
+        P.forEach(p => { p.y += p.vy; p.x += p.vx; p.a += .1; c.fillStyle = p.c; c.save(); c.translate(p.x, p.y); c.rotate(p.a); c.fillRect(-p.r / 2, -p.r / 2, p.r, p.r * 1.6); c.restore(); });
+        if (++n < 220) requestAnimationFrame(step); else c.clearRect(0, 0, cv.width, cv.height);
+      })();
+    }
+  </script>
 </Base>
+
+<style>
+  .qz { background: linear-gradient(160deg, #1d5c63 0%, #183f5e 55%, #2b1055 100%); color: #fff; padding: 18px 0 36px; min-height: 70vh; }
+  .qz .wrap { display: flex; flex-direction: column; gap: 14px; max-width: 920px; }
+  .top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .crumb { color: #cfe8e3; }
+  .card { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.22); border-radius: 20px; padding: 20px; }
+  .card[hidden], #sQ[hidden] { display: none; }
+  h1, h2 { color: #fff; }
+  h1 { font-size: clamp(1.6rem, 6vw, 2.5rem); margin: 0; }
+  .har { font-family: var(--ar); font-size: clamp(1.5rem, 6vw, 2rem); text-align: right; margin: 6px 0 0; line-height: 1.7; }
+  .sub { color: #d3e4ea; margin: 6px 0 0; }
+  .parts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin-top: 14px; }
+  .part { border-radius: 14px; padding: 10px 12px; font-weight: 600; color: #10202a; background: #36b3c9; }
+  .part :global([lang='ar']) { font-family: var(--ar); font-size: 1.15rem; }
+  .part small { display: block; font-weight: 400; }
+  .pF, .pR, .pQ { background: #36b3c9; } .pV { background: #6cc46a; } .pG { background: #f08a4b; } .pE, .pL { background: #8e7cf0; }
+  .who { margin: 14px 0 0; color: #e4f3ef; }
+  .who :global(a) { color: var(--sun); }
+  .go { margin-top: 16px; width: 100%; border: 0; border-radius: 16px; min-height: 56px; font: 800 1.3rem var(--sans); color: #1e1e2e; background: var(--sun); box-shadow: 0 6px 0 #c9a227; cursor: pointer; }
+  .go:active { transform: translateY(3px); box-shadow: 0 3px 0 #c9a227; }
+  .pill { border: 1px solid rgba(255,255,255,.35); background: rgba(255,255,255,.12); color: #fff; border-radius: 14px; min-height: 44px; padding: 0 16px; font: 600 1rem var(--sans); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }
+  .pill:disabled { opacity: .6; cursor: default; }
+  .pill[hidden] { display: none; }
+  .count { font-size: 120px; font-weight: 800; text-align: center; animation: pop .9s ease; }
+  @keyframes pop { 0% { transform: scale(.3); opacity: 0 } 60% { transform: scale(1.15); opacity: 1 } 100% { transform: scale(1) } }
+  .chip { display: inline-block; border-radius: 999px; padding: 2px 12px; font-weight: 700; color: #10202a; }
+  .chip :global([lang='ar']) { font-family: var(--ar); }
+  #inTitle :global([lang='ar']) { font-family: var(--ar); font-size: 1.3em; }
+  .insar { font-family: var(--ar); font-size: 1.5rem; text-align: right; margin: 10px 0 0; line-height: 1.8; }
+  .extra { margin-top: 14px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+  .extra :global(small) { color: #d3e4ea; }
+  .hud { display: flex; justify-content: space-between; align-items: center; gap: 8px 10px; font-weight: 600; flex-wrap: wrap; }
+  .tm { font: 800 1.4rem var(--sans); min-width: 2ch; text-align: right; }
+  .tbar { height: 12px; background: rgba(255,255,255,.2); border-radius: 99px; overflow: hidden; margin-top: 8px; }
+  .tbar i { display: block; height: 100%; background: var(--sun); width: 100%; transition: width .2s linear; }
+  .q { font-size: clamp(1.15rem, 3.4vw, 1.6rem); font-weight: 600; text-align: center; padding: 22px 16px; background: #fff; color: #1e1e2e; border-radius: 20px; margin-top: 12px; overflow-wrap: anywhere; }
+  .q :global(.ar) { color: #16324f; font-size: 1.35em; line-height: 1.7; }
+  .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+  .tiles :global(.tile) { border: 0; border-radius: 18px; padding: 12px 14px 12px 50px; min-height: 76px; color: #fff; font: 700 1.15rem var(--sans); text-align: left; position: relative; box-shadow: 0 6px 0 rgba(0,0,0,.25); transition: opacity .3s; cursor: pointer; overflow-wrap: anywhere; }
+  .tiles :global(.tile:disabled) { cursor: default; }
+  .tiles :global(.tile .sh) { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 1.5rem; }
+  .tiles :global(.tile .ar) { font-size: 1.4em; display: block; text-align: right; line-height: 1.6; }
+  .tiles :global(.t0) { background: #c8403c; } .tiles :global(.t1) { background: #2a6fd0; } .tiles :global(.t2) { background: #b97d0c; } .tiles :global(.t3) { background: #22875a; }
+  .tiles :global(.tile.dim) { opacity: .35; } .tiles :global(.tile.right) { outline: 5px solid #fff; }
+  .fb { text-align: center; font-size: 1.4rem; font-weight: 800; min-height: 1.5em; margin-top: 10px; }
+  .expl { text-align: center; color: #d3e4ea; }
+  .big { font: 800 clamp(2.6rem, 9vw, 4.2rem) var(--sans); text-align: center; line-height: 1; color: var(--sun); }
+  .lvl { text-align: center; font-size: 1.25rem; font-weight: 700; margin: 8px 0; }
+  .note { color: #d3e4ea; font-size: .95rem; text-align: center; }
+  .note :global(a) { color: var(--sun); }
+  .btns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .lb { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .lb :global(li) { display: grid; grid-template-columns: 40px 1fr auto; gap: 10px; align-items: center; background: rgba(255,255,255,.1); border-radius: 14px; padding: 8px 12px; }
+  .lb :global(li.me) { background: var(--sun); color: #1e1e2e; }
+  .lb :global(.pl) { font-weight: 800; font-size: 1.2rem; text-align: center; }
+  .lb :global(small) { display: block; opacity: .85; font-weight: 400; }
+  #eSecs :global(.qsb) { background: rgba(255,255,255,.18); }
+  dialog { border: 0; border-radius: 16px; width: min(860px, 96vw); padding: 0; }
+  dialog::backdrop { background: rgba(5,15,25,.7); }
+  .mh { position: sticky; top: 0; background: var(--teal); color: #fff; display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 14px; }
+  .mh h2 { margin: 0; font-size: 1.15rem; }
+  .mh .btn { color: #fff; border-color: #fff; min-height: 44px; }
+  .mb { padding: 12px 16px 18px; max-height: 78vh; overflow: auto; }
+  .mb :global(.mt) { font-family: var(--ar); font-size: 1.8rem; text-align: center; font-weight: 700; }
+  .mb :global(.lab) { color: #b5482f; font-weight: 700; font-family: var(--ar); font-size: 1.1rem; margin: 14px 0 0; }
+  .mb :global(.ptxt) { font-family: var(--ar); font-size: 1.5rem; line-height: 2; text-align: right; margin: 4px 0; }
+  canvas#conf { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 30; }
+  @media (max-width: 560px) { .tiles { grid-template-columns: 1fr; } .tiles :global(.tile) { min-height: 60px; } .card { padding: 16px; } }
+  @media (prefers-reduced-motion: reduce) { .count { animation: none; } .tbar i { transition: none; } }
+</style>

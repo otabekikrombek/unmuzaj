@@ -12,7 +12,7 @@ export default defineConfig({
   base: BASE,
   trailingSlash: 'always',
   output: 'static',
-  integrations: [sitemap({ filter: (p) => !/\/(teacher|me|login)\//.test(p) })],
+  integrations: [sitemap({ filter: (p) => !/\/(teacher|me|login|board)\//.test(p) })],
   i18n: {
     defaultLocale: 'ru',
     locales: ['ru'], // позже: ['ru', 'uz', 'en']

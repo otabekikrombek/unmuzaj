@@ -9,7 +9,9 @@ createdb t1
 psql -d t1 -f supabase/tests/00_supabase_stub.sql      # имитация auth.users, auth.uid(), ролей anon/authenticated
 psql -d t1 -c "insert into auth.users(email, created_at) values ('teacher@x', now() - interval '1 day'), ('other@x', now())"
 psql -d t1 -v ON_ERROR_STOP=1 -f supabase/migrations/0001_init.sql
+psql -d t1 -v ON_ERROR_STOP=1 -f supabase/migrations/0002_quizzes.sql
 psql -d t1 -f supabase/tests/10_test.sql
+psql -d t1 -f supabase/tests/20_quiz_test.sql   # викторины; в конце печатает «quiz tests passed»
 ```
 
 Что проверяется:
@@ -19,7 +21,8 @@ psql -d t1 -f supabase/tests/10_test.sql
 - устаревшие данные не затирают новые;
 - нет прямого доступа к таблицам;
 - чужой учитель ничего не видит;
-- отчёт, сброс ПИН, роли.
+- отчёт, сброс ПИН, роли;
+- викторины: сохранение попытки, повтор без дублей, чужой id, рейтинг и табло (только псевдонимы), отчёт и разбор для учителя, чужой учитель ничего не видит.
 
 ## Сквозной тест (`tests/e2e/flow.py`)
 
@@ -35,3 +38,9 @@ psql -d t1 -f supabase/tests/10_test.sql
 4. На втором устройстве виден тот же прогресс.
 5. Срабатывает блокировка ПИН.
 6. Рейтинг класса, страница «Мой прогресс», отчёт учителя, настоящие имена (видны только локально).
+
+## Викторины (этап 4)
+
+- `node tests/load_quiz.mjs` (нужен `ANON=<ключ>` из вывода эмулятора) — нагрузочный тест: 19 учеников одновременно отправляют результат, затем повторно. Ожидается 19 попыток, 380 ответов, без дублей.
+- `python3 tests/e2e/quiz.py` — сквозной тест на телефоне 360 px: гость проходит викторину без сохранения; ученик проходит урок 10, связь пропадает и возвращается, результат сохраняется один раз; разбор ответов; «Мой прогресс»; аудирование в экзамене; табло проектора; вкладка «Викторины» у учителя, разбор и CSV. Если Playwright не находит браузер: `CHROMIUM=/путь/к/chrome python3 tests/e2e/quiz.py`.
+- Для эмулятора нужны пакеты `pg` и `jsonwebtoken`: `npm i --no-save pg jsonwebtoken`.

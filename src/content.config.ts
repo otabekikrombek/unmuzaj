@@ -22,7 +22,36 @@ const decks = defineCollection({
 
 const quizzes = defineCollection({
   loader: glob({ pattern: '*.json', base: './src/content/quizzes' }),
-  schema: z.object({ ...base, kind: z.enum(['quiz', 'test']).default('quiz'), legacy: z.string().optional() }),
+  schema: z
+    .object({
+      ...base,
+      kind: z.enum(['quiz', 'test']).default('quiz'),
+      legacy: z.string().optional(),
+      title_ar: z.string().optional(),
+      // план: части по порядку и сколько вопросов из каждой берётся
+      plan: z.array(z.tuple([z.string(), z.number().int().positive()])),
+      sections: z.record(z.string(), z.object({ ar: z.string().optional(), ru: z.string(), icon: z.string(), sec: z.number().positive() })),
+      ins: z.record(z.string(), z.object({ ar: z.string(), ru: z.string() })).optional(),
+      text_in: z.array(z.string()).optional(), // в каких частях доступна кнопка «Текст» (по умолчанию — во всех)
+      para: z.array(z.object({ label: z.string(), sentences: z.array(z.string()) })).optional(),
+      lis: z.array(z.object({ who: z.string(), text: z.string() })).optional(),
+      audio: z.string().optional(), // файл записи диалога в public/ (если есть)
+      levels: z.array(z.object({ min: z.number().int(), label: z.string() })),
+      pool: z.array(z.object({ id: z.number().int(), s: z.string(), q: z.string(), o: z.array(z.string()).min(2), e: z.string().default('') })),
+    })
+    .superRefine((q, ctx) => {
+      const ids = new Set<number>();
+      for (const p of q.pool) {
+        if (ids.has(p.id)) ctx.addIssue({ code: 'custom', message: `повторяется id вопроса ${p.id}` });
+        ids.add(p.id);
+        if (!q.sections[p.s]) ctx.addIssue({ code: 'custom', message: `вопрос ${p.id}: нет части «${p.s}» в sections` });
+        if (new Set(p.o).size !== p.o.length) ctx.addIssue({ code: 'custom', message: `вопрос ${p.id}: одинаковые варианты ответа` });
+      }
+      for (const [s, n] of q.plan) {
+        const have = q.pool.filter(p => p.s === s).length;
+        if (have < n) ctx.addIssue({ code: 'custom', message: `часть ${s}: в плане ${n} вопросов, а в pool только ${have}` });
+      }
+    }),
 });
 
 const exercises = defineCollection({

@@ -1,0 +1,42 @@
+// Общий вид разбора викторины: страница викторины, «Мой прогресс», панель учителя.
+import type { Section } from './quiz';
+
+export const esc = (s: unknown) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
+const AR = /[؀-ۿ]/;
+const isAllAr = (t: string) => AR.test(t) && !/[A-Za-zА-Яа-яЁё]/.test(t);
+/** арабские фрагменты внутри текста получают lang="ar" dir="rtl" */
+export function wrapAr(t: unknown): string {
+  const s = String(t ?? '').replace(/ ≠ /g, '\u00a0≠\u00a0'); // «≠» не отрывается от слов
+  if (isAllAr(s)) return `<span class="ar" lang="ar" dir="rtl">${esc(s)}</span>`;
+  return esc(s).replace(/([«(]?[؀-ۿ][؀-ۿً-ْٰ\s،؟:«»()….!]*)/g, m => `<span class="ar" lang="ar" dir="rtl">${m.trim()}</span> `);
+}
+
+/** цвет части викторины (как в прототипах) */
+export const SEC_COLOR: Record<string, string> = { F: '#36B3C9', R: '#36B3C9', V: '#6CC46A', G: '#F08A4B', E: '#8E7CF0', L: '#8E7CF0', Q: '#36B3C9' };
+export const secColor = (s: string) => SEC_COLOR[s] ?? '#FFD54F';
+export const fmtTime = (s: number) => `${Math.floor(s / 60)}:${String(Math.round(s) % 60).padStart(2, '0')}`;
+
+export const secName = (sec: Section | undefined) =>
+  sec ? `${sec.icon} ${sec.ar ? `<span class="qar"><span lang="ar" dir="rtl">${esc(sec.ar)}</span> · </span>` : ''}${esc(sec.ru)}` : '';
+
+/** полосы «верно/всего» по частям */
+export function secBars(sections: Record<string, Section>, rows: { s: string; ok: number; n: number }[]): string {
+  return `<div class="qsecs">${rows.map(r => {
+    const pc = r.n ? Math.round(100 * r.ok / r.n) : 0;
+    return `<span class="qsn">${secName(sections[r.s])}</span><span class="qsb"><i style="width:${pc}%;background:${secColor(r.s)}"></i></span><b>${r.ok}/${r.n}</b>`;
+  }).join('')}</div>`;
+}
+
+type Row = { id?: number; s: string; q: string; a: string; c: string; ok: boolean; sec?: number | null };
+type L = { question: string; ok: string; bad: string; yourAnswer: string; rightAnswer: string; why: string; noAnswer: string };
+/** разбор ответов; explain — пояснения по id вопроса (из данных викторины) */
+export function reviewHTML(rows: Row[], sections: Record<string, Section>, l: L, explain: Record<number, string> = {}): string {
+  return rows.map((x, i) => {
+    const e = x.id != null ? explain[x.id] : '';
+    return `<div class="rv ${x.ok ? 'ok' : 'bad'}"><div class="rvh"><span>${secName(sections[x.s])} · ${l.question.replace('{n}', String(i + 1))}</span>` +
+      `<span>${x.ok ? l.ok : l.bad}${x.sec != null ? ` · ${Math.round(x.sec * 10) / 10} с` : ''}</span></div>` +
+      `<div class="rvq">${wrapAr(x.q)}</div><div>${l.yourAnswer} <b>${x.a ? wrapAr(x.a) : esc(l.noAnswer)}</b></div>` +
+      (x.ok ? '' : `<div>${l.rightAnswer} <b>${wrapAr(x.c)}</b></div>`) +
+      (e ? `<div class="rve">${l.why} ${wrapAr(e)}</div>` : '') + '</div>';
+  }).join('');
+}
