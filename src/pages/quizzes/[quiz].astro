@@ -4,6 +4,7 @@ import { getCollection } from 'astro:content';
 import { u } from '../../lib/url';
 import { t } from '../../i18n/ru';
 import { secName } from '../../lib/quizView';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
 export async function getStaticPaths() {
   return (await getCollection('quizzes')).map(q => ({ params: { quiz: q.data.key }, props: { q: q.data } }));
 }
@@ -22,12 +23,12 @@ const ld = {
   url: new URL(u(`quizzes/${q.key}/`), Astro.site).href,
 };
 ---
-<Base title={q.title} description={`${q.description} ${t.quiz.questions.replace('{n}', String(N))}.`}>
+<Base title={q.title} description={`${q.description} ${t.quiz.questions.replace('{n}', String(N))}.`} group="tasks">
   <script type="application/ld+json" set:html={JSON.stringify(ld)} />
   <section class="qz">
     <div class="wrap">
-      <div class="top">
-        <a class="crumb" href={u(back[0])}>{back[1]}</a>
+      <div class="top" data-pagefind-ignore>
+        <Breadcrumbs title={q.title} parent={{ label: back[1], href: back[0] }} tone="study" />
         <button class="pill" id="snd" type="button">{t.quiz.sound}</button>
       </div>
 
@@ -40,13 +41,13 @@ const ld = {
             <div class={`part p${s}`}><span set:html={secName(q.sections[s])} /><small>{n}</small></div>
           ))}
         </div>
-        <p class="who" id="who" aria-live="polite"></p>
-        <button class="go" id="start" type="button">{t.quiz.start}</button>
+        <p class="who" id="who" aria-live="polite" data-pagefind-ignore></p>
+        <button class="go" id="start" type="button" data-pagefind-ignore>{t.quiz.start}</button>
       </div>
 
-      <div id="sCount" class="card" hidden><div class="count" id="cnt">3</div></div>
+      <div id="sCount" class="card" hidden data-pagefind-ignore><div class="count" id="cnt">3</div></div>
 
-      <div id="sIntro" class="card" hidden>
+      <div id="sIntro" class="card" hidden data-pagefind-ignore>
         <span class="chip" id="inChip"></span>
         <h2 id="inTitle"></h2>
         <div id="inText"></div>
@@ -54,7 +55,7 @@ const ld = {
         <button class="go" id="inGo" type="button">{t.quiz.toQuestions}</button>
       </div>
 
-      <div id="sQ" hidden>
+      <div id="sQ" hidden data-pagefind-ignore>
         <div class="hud">
           <span class="chip" id="qChip"></span><span id="qn"></span><span id="pts"></span>
           <button class="pill" id="txtBtn" type="button" hidden>{t.quiz.text}</button>
@@ -67,7 +68,7 @@ const ld = {
         <div class="expl" id="ex"></div>
       </div>
 
-      <div id="sEnd" class="card" hidden>
+      <div id="sEnd" class="card" hidden data-pagefind-ignore>
         <div class="big" id="ePts"></div>
         <p class="lvl" id="eLvl"></p>
         <div id="eSecs"></div>
@@ -80,7 +81,7 @@ const ld = {
         </div>
       </div>
 
-      <div id="sBoard" class="card" hidden>
+      <div id="sBoard" class="card" hidden data-pagefind-ignore>
         <h2>{t.quiz.board}</h2>
         <p class="note" id="bNote">{t.quiz.boardNote}</p>
         <ol class="lb" id="board"></ol>
@@ -89,12 +90,12 @@ const ld = {
     </div>
   </section>
 
-  <dialog id="modal" aria-labelledby="mTitle">
+  <dialog id="modal" aria-labelledby="mTitle" data-pagefind-ignore>
     <div class="mh"><h2 id="mTitle"></h2><button class="btn ghost" id="mclose" type="button">{t.quiz.close}</button></div>
     <div class="mb" id="mbody"></div>
   </dialog>
   <canvas id="conf" aria-hidden="true"></canvas>
-  <noscript><p class="wrap">Для викторины нужен включённый JavaScript.</p></noscript>
+  <noscript data-pagefind-ignore><p class="wrap">Для викторины нужен включённый JavaScript.</p></noscript>
 
   <script type="application/json" id="qz-data" set:html={JSON.stringify(data)} />
   <script>
@@ -276,7 +277,8 @@ const ld = {
     function confetti() {
       const cv = $<HTMLCanvasElement>('conf'), c = cv.getContext('2d'); if (!c) return;
       cv.width = innerWidth; cv.height = innerHeight;
-      const cols = ['#E2504C', '#2F7BE5', '#E8A520', '#2AA36B', '#FFD54F', '#fff'];
+      const css = getComputedStyle(document.documentElement);
+      const cols = ['--tile-0', '--tile-1', '--tile-2', '--tile-3', '--sun', '--study-ink'].map(v => css.getPropertyValue(v).trim() || '#fff');
       const P = Array.from({ length: 140 }, () => ({ x: Math.random() * cv.width, y: -20 - Math.random() * cv.height * .5, r: 4 + Math.random() * 6, c: cols[Math.floor(Math.random() * cols.length)], vy: 2 + Math.random() * 3, vx: -1.5 + Math.random() * 3, a: Math.random() * 6 }));
       let n = 0;
       (function step() {
@@ -289,71 +291,71 @@ const ld = {
 </Base>
 
 <style>
-  .qz { background: linear-gradient(160deg, #1d5c63 0%, #183f5e 55%, #2b1055 100%); color: #fff; padding: 18px 0 36px; min-height: 70vh; }
+  .qz { background: linear-gradient(160deg, var(--study-from) 0%, var(--study-mid) 55%, var(--study-to) 100%); color: var(--study-ink); padding: 18px 0 36px; min-height: 70vh; }
   .qz .wrap { display: flex; flex-direction: column; gap: 14px; max-width: 920px; }
   .top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
-  .crumb { color: #cfe8e3; }
-  .card { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.22); border-radius: 20px; padding: 20px; }
+  .card { background: var(--study-card); border: 1px solid var(--study-line); border-radius: 20px; padding: 20px; }
   .card[hidden], #sQ[hidden] { display: none; }
-  h1, h2 { color: #fff; }
+  h1, h2 { color: var(--study-ink); }
   h1 { font-size: clamp(1.6rem, 6vw, 2.5rem); margin: 0; }
-  .har { font-family: var(--ar); font-size: clamp(1.5rem, 6vw, 2rem); text-align: right; margin: 6px 0 0; line-height: 1.7; }
-  .sub { color: #d3e4ea; margin: 6px 0 0; }
+  .har { font-family: var(--ar); font-size: calc(clamp(1.5rem, 6vw, 2rem) * var(--ar-scale)); text-align: right; margin: 6px 0 0; line-height: 1.7; }
+  .sub { color: var(--study-muted); margin: 6px 0 0; }
   .parts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin-top: 14px; }
-  .part { border-radius: 14px; padding: 10px 12px; font-weight: 600; color: #10202a; background: #36b3c9; }
-  .part :global([lang='ar']) { font-family: var(--ar); font-size: 1.15rem; }
+  .part { border-radius: 14px; padding: 10px 12px; font-weight: 600; color: var(--on-sec); background: var(--sec-F); }
+  .part :global([lang='ar']) { font-family: var(--ar); font-size: calc(1.15rem * var(--ar-scale)); }
   .part small { display: block; font-weight: 400; }
-  .pF, .pR, .pQ { background: #36b3c9; } .pV { background: #6cc46a; } .pG { background: #f08a4b; } .pE, .pL { background: #8e7cf0; }
-  .who { margin: 14px 0 0; color: #e4f3ef; }
-  .who :global(a) { color: var(--sun); }
-  .go { margin-top: 16px; width: 100%; border: 0; border-radius: 16px; min-height: 56px; font: 800 1.3rem var(--sans); color: #1e1e2e; background: var(--sun); box-shadow: 0 6px 0 #c9a227; cursor: pointer; }
-  .go:active { transform: translateY(3px); box-shadow: 0 3px 0 #c9a227; }
-  .pill { border: 1px solid rgba(255,255,255,.35); background: rgba(255,255,255,.12); color: #fff; border-radius: 14px; min-height: 44px; padding: 0 16px; font: 600 1rem var(--sans); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }
+  .pF, .pR, .pQ { background: var(--sec-F); } .pV { background: var(--sec-V); } .pG { background: var(--sec-G); } .pE, .pL { background: var(--sec-E); }
+  .who { margin: 14px 0 0; color: var(--study-muted); }
+  .who :global(a) { color: var(--study-link); }
+  .go { margin-top: 16px; width: 100%; border: 0; border-radius: 16px; min-height: 56px; font: 800 1.3rem var(--sans); color: var(--on-sun); background: var(--sun); box-shadow: 0 6px 0 color-mix(in srgb, var(--sun) 70%, #000); cursor: pointer; }
+  .go:active { transform: translateY(3px); box-shadow: 0 3px 0 color-mix(in srgb, var(--sun) 70%, #000); }
+  .pill { border: 1px solid var(--study-line); background: var(--study-chip); color: var(--study-ink); border-radius: 14px; min-height: 44px; padding: 0 16px; font: 600 1rem var(--sans); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }
   .pill:disabled { opacity: .6; cursor: default; }
   .pill[hidden] { display: none; }
   .count { font-size: 120px; font-weight: 800; text-align: center; animation: pop .9s ease; }
   @keyframes pop { 0% { transform: scale(.3); opacity: 0 } 60% { transform: scale(1.15); opacity: 1 } 100% { transform: scale(1) } }
-  .chip { display: inline-block; border-radius: 999px; padding: 2px 12px; font-weight: 700; color: #10202a; }
+  .chip { display: inline-block; border-radius: 999px; padding: 2px 12px; font-weight: 700; color: var(--on-sec); }
   .chip :global([lang='ar']) { font-family: var(--ar); }
-  #inTitle :global([lang='ar']) { font-family: var(--ar); font-size: 1.3em; }
-  .insar { font-family: var(--ar); font-size: 1.5rem; text-align: right; margin: 10px 0 0; line-height: 1.8; }
+  #inTitle :global([lang='ar']) { font-family: var(--ar); font-size: calc(1.3em * var(--ar-scale)); }
+  .insar { font-family: var(--ar); font-size: calc(1.5rem * var(--ar-scale)); text-align: right; margin: 10px 0 0; line-height: 1.8; }
   .extra { margin-top: 14px; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
-  .extra :global(small) { color: #d3e4ea; }
+  .extra :global(small) { color: var(--study-muted); }
   .hud { display: flex; justify-content: space-between; align-items: center; gap: 8px 10px; font-weight: 600; flex-wrap: wrap; }
   .tm { font: 800 1.4rem var(--sans); min-width: 2ch; text-align: right; }
-  .tbar { height: 12px; background: rgba(255,255,255,.2); border-radius: 99px; overflow: hidden; margin-top: 8px; }
+  .tbar { height: 12px; background: var(--study-chip); border-radius: 99px; overflow: hidden; margin-top: 8px; }
   .tbar i { display: block; height: 100%; background: var(--sun); width: 100%; transition: width .2s linear; }
-  .q { font-size: clamp(1.15rem, 3.4vw, 1.6rem); font-weight: 600; text-align: center; padding: 22px 16px; background: #fff; color: #1e1e2e; border-radius: 20px; margin-top: 12px; overflow-wrap: anywhere; }
-  .q :global(.ar) { color: #16324f; font-size: 1.35em; line-height: 1.7; }
+  .q { font-size: clamp(1.15rem, 3.4vw, 1.6rem); font-weight: 600; text-align: center; padding: 22px 16px; background: var(--sheet); color: var(--ink); border-radius: 20px; margin-top: 12px; overflow-wrap: anywhere; }
+  .q :global(.ar) { color: var(--ink); font-size: calc(1.35em * var(--ar-scale)); line-height: 1.7; }
   .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
-  .tiles :global(.tile) { border: 0; border-radius: 18px; padding: 12px 14px 12px 50px; min-height: 76px; color: #fff; font: 700 1.15rem var(--sans); text-align: left; position: relative; box-shadow: 0 6px 0 rgba(0,0,0,.25); transition: opacity .3s; cursor: pointer; overflow-wrap: anywhere; }
+  .tiles :global(.tile) { border: 0; border-radius: 18px; padding: 12px 14px 12px 50px; min-height: 76px; color: var(--on-tile); font: 700 1.15rem var(--sans); text-align: left; position: relative; box-shadow: 0 6px 0 rgba(0,0,0,.25); transition: opacity .3s; cursor: pointer; overflow-wrap: anywhere; }
   .tiles :global(.tile:disabled) { cursor: default; }
   .tiles :global(.tile .sh) { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 1.5rem; }
-  .tiles :global(.tile .ar) { font-size: 1.4em; display: block; text-align: right; line-height: 1.6; }
-  .tiles :global(.t0) { background: #c8403c; } .tiles :global(.t1) { background: #2a6fd0; } .tiles :global(.t2) { background: #b97d0c; } .tiles :global(.t3) { background: #22875a; }
-  .tiles :global(.tile.dim) { opacity: .35; } .tiles :global(.tile.right) { outline: 5px solid #fff; }
+  .tiles :global(.tile .ar) { font-size: calc(1.4em * var(--ar-scale)); display: block; text-align: right; line-height: 1.6; }
+  .tiles :global(.t0) { background: var(--tile-0); } .tiles :global(.t1) { background: var(--tile-1); } .tiles :global(.t2) { background: var(--tile-2); } .tiles :global(.t3) { background: var(--tile-3); }
+  .tiles :global(.tile.dim) { opacity: .35; } .tiles :global(.tile.right) { outline: 5px solid var(--study-ink); }
   .fb { text-align: center; font-size: 1.4rem; font-weight: 800; min-height: 1.5em; margin-top: 10px; }
-  .expl { text-align: center; color: #d3e4ea; }
+  .expl { text-align: center; color: var(--study-muted); }
   .big { font: 800 clamp(2.6rem, 9vw, 4.2rem) var(--sans); text-align: center; line-height: 1; color: var(--sun); }
   .lvl { text-align: center; font-size: 1.25rem; font-weight: 700; margin: 8px 0; }
-  .note { color: #d3e4ea; font-size: .95rem; text-align: center; }
-  .note :global(a) { color: var(--sun); }
+  .note { color: var(--study-muted); font-size: .95rem; text-align: center; }
+  .note :global(a) { color: var(--study-link); }
   .btns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
   .lb { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
-  .lb :global(li) { display: grid; grid-template-columns: 40px 1fr auto; gap: 10px; align-items: center; background: rgba(255,255,255,.1); border-radius: 14px; padding: 8px 12px; }
-  .lb :global(li.me) { background: var(--sun); color: #1e1e2e; }
+  .lb :global(li) { display: grid; grid-template-columns: 40px 1fr auto; gap: 10px; align-items: center; background: var(--study-card); border-radius: 14px; padding: 8px 12px; }
+  .lb :global(li.me) { background: var(--sun); color: var(--on-sun); }
   .lb :global(.pl) { font-weight: 800; font-size: 1.2rem; text-align: center; }
   .lb :global(small) { display: block; opacity: .85; font-weight: 400; }
-  #eSecs :global(.qsb) { background: rgba(255,255,255,.18); }
+  #eSecs :global(.qsb) { background: var(--study-chip); }
   dialog { border: 0; border-radius: 16px; width: min(860px, 96vw); padding: 0; }
   dialog::backdrop { background: rgba(5,15,25,.7); }
-  .mh { position: sticky; top: 0; background: var(--teal); color: #fff; display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 14px; }
+  .mh { position: sticky; top: 0; background: var(--accent); color: var(--on-accent); display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 14px; }
   .mh h2 { margin: 0; font-size: 1.15rem; }
-  .mh .btn { color: #fff; border-color: #fff; min-height: 44px; }
+  .mh h2 { color: var(--on-accent); }
+  .mh .btn { color: var(--on-accent); border-color: var(--on-accent); min-height: 44px; }
   .mb { padding: 12px 16px 18px; max-height: 78vh; overflow: auto; }
-  .mb :global(.mt) { font-family: var(--ar); font-size: 1.8rem; text-align: center; font-weight: 700; }
-  .mb :global(.lab) { color: #b5482f; font-weight: 700; font-family: var(--ar); font-size: 1.1rem; margin: 14px 0 0; }
-  .mb :global(.ptxt) { font-family: var(--ar); font-size: 1.5rem; line-height: 2; text-align: right; margin: 4px 0; }
+  .mb :global(.mt) { font-family: var(--ar); font-size: calc(1.8rem * var(--ar-scale)); text-align: center; font-weight: 700; }
+  .mb :global(.lab) { color: var(--accent); font-weight: 700; font-family: var(--ar); font-size: calc(1.1rem * var(--ar-scale)); margin: 14px 0 0; }
+  .mb :global(.ptxt) { font-family: var(--ar); font-size: calc(1.5rem * var(--ar-scale)); line-height: 2; text-align: right; margin: 4px 0; }
   canvas#conf { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 30; }
   @media (max-width: 560px) { .tiles { grid-template-columns: 1fr; } .tiles :global(.tile) { min-height: 60px; } .card { padding: 16px; } }
   @media (prefers-reduced-motion: reduce) { .count { animation: none; } .tbar i { transition: none; } }

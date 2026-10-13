@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && pagefind --site dist",
     "preview": "astro preview",
     "check": "astro check",
     "test:e2e": "playwright test",
@@ -17,8 +17,14 @@
     "@fontsource/pt-serif": "^5.3.0",
     "@supabase/supabase-js": "^2.110.0",
     "astro": "^7.3.5",
+    "pagefind": "^1.5.2",
     "typescript": "^5.9.3"
   },
   "private": true,
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "axe-core": "^4.11.0",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.23.1"
+  }
 }

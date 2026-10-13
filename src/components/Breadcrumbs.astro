@@ -1,0 +1,38 @@
+---
+// «Хлебные крошки»: Главная › Раздел › Страница. Раздел берётся из адреса (src/config/nav.ts),
+// его можно заменить пропом parent (например, пробный экзамен лежит в /quizzes/, но относится к «Тестам»).
+import { u } from '../lib/url';
+import { t } from '../i18n/ru';
+import { sectionOf } from '../config/nav';
+interface Props { title: string; parent?: { label: string; href: string }; tone?: 'page' | 'study' }
+const { title, parent, tone = 'page' } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const path = Astro.url.pathname.replace(base, '') || '/';
+const sec = sectionOf(path);
+const isSectionIndex = !!sec && path.replace(/^\/+/, '') === sec.href;
+const items: { label: string; href?: string }[] = [{ label: t.nav.home, href: u('') }];
+if (parent) items.push({ label: parent.label, href: u(parent.href) });
+else if (sec && !isSectionIndex) items.push({ label: t.nav[sec.key], href: u(sec.href) });
+items.push({ label: title });
+const ld = {
+  '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+  itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.label, ...(it.href ? { item: new URL(it.href, Astro.site).href } : {}) })),
+};
+---
+<nav class={`crumbs ${tone}`} aria-label={t.nav.youAreHere} data-pagefind-ignore>
+  <ol>
+    {items.map((it, i) => (
+      <li>{it.href ? <a href={it.href}>{it.label}</a> : <span aria-current="page">{it.label}</span>}{i < items.length - 1 && <span class="sep" aria-hidden="true">›</span>}</li>
+    ))}
+  </ol>
+</nav>
+<script type="application/ld+json" set:html={JSON.stringify(ld)} />
+<style>
+  .crumbs ol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 2px 0; font-size: .92rem; }
+  .crumbs li { display: inline-flex; align-items: center; min-width: 0; }
+  .crumbs a { display: inline-flex; align-items: center; min-height: 32px; padding: 0 2px; }
+  .crumbs [aria-current] { color: var(--ink-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 60vw; }
+  .sep { margin: 0 8px; color: var(--ink-soft); }
+  .crumbs.study a { color: var(--study-link); }
+  .crumbs.study [aria-current], .crumbs.study .sep { color: var(--study-muted); }
+</style>

@@ -1,25 +1,45 @@
 ---
 import '../styles/global.css';
 import { SITE } from '../config/site';
+import { NAV, sectionOf } from '../config/nav';
 import { u } from '../lib/url';
 import { t } from '../i18n/ru';
+import LookPanel from '../components/LookPanel.astro';
+import SearchPanel from '../components/SearchPanel.astro';
 
-interface Props { title?: string; description?: string; noindex?: boolean; wide?: boolean; bare?: boolean }
-// bare — без шапки и подвала (табло для проектора)
-const { title, description = t.home.lead, noindex = false, bare = false } = Astro.props;
+interface Props {
+  title?: string; description?: string; noindex?: boolean; wide?: boolean;
+  bare?: boolean;   // без шапки и подвала (табло для проектора)
+  group?: 'sections' | 'tasks' | 'grammar' | 'texts' | 'articles'; // группа в результатах поиска по сайту
+}
+const { title, description = t.home.lead, noindex = false, bare = false, group = 'sections' } = Astro.props;
 const fullTitle = title ? `${title} — ${SITE.name}` : `${SITE.name} · ${SITE.nameAr} — арабский язык`;
-const path = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ''), '');
-const nav = [
-  ['words', 'words/'], ['quizzes', 'quizzes/'], ['tests', 'tests/'], ['exercises', 'exercises/'],
-  ['grammar', 'grammar/'], ['texts', 'texts/'], ['dictionary', 'dictionary/'], ['courses', 'courses/'],
-] as const;
+const path = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ''), '') || '/';
+const cur = sectionOf(path);
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 ---
 <!doctype html>
-<html lang="ru">
+<html lang="ru" data-palette="turquoise" data-theme="light">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Оформление до отрисовки, чтобы не мигала светлая тема. Значения — как в src/lib/look.ts. -->
+  <script is:inline>
+    (function () {
+      var d = document.documentElement, l = {};
+      try { l = JSON.parse(localStorage.getItem('unmuzaj:look') || '{}') || {}; } catch (e) {}
+      var P = ['turquoise', 'lapis', 'parchment', 'contrast'], M = ['light', 'dark', 'auto'], S = [-1, 0, 1, 2];
+      var mode = M.indexOf(l.mode) >= 0 ? l.mode : 'auto';
+      var mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+      function theme() { d.setAttribute('data-theme', d.getAttribute('data-mode') === 'auto' ? (mq && mq.matches ? 'dark' : 'light') : d.getAttribute('data-mode')); }
+      d.setAttribute('data-mode', mode);
+      d.setAttribute('data-palette', P.indexOf(l.palette) >= 0 ? l.palette : 'turquoise');
+      d.setAttribute('data-fs', S.indexOf(l.fs) >= 0 ? l.fs : 0);
+      d.setAttribute('data-ar', S.indexOf(l.ar) >= 0 ? l.ar : 0);
+      theme();
+      if (mq && mq.addEventListener) mq.addEventListener('change', theme);
+    })();
+  </script>
   <title>{fullTitle}</title>
   <meta name="description" content={description} />
   <link rel="canonical" href={canonical} />
@@ -33,30 +53,45 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
   <link rel="sitemap" href={u('sitemap-index.xml')} />
 </head>
 <body>
-  {!bare && <a class="skip" href="#main">К содержанию</a>}
-  {!bare && <header class="site-head">
+  {!bare && <a class="skip" href="#main">{t.nav.skip}</a>}
+  {!bare && <header class="site-head" data-pagefind-ignore>
     <div class="wrap head-row">
-      <a class="logo" href={u('')} aria-label={`${SITE.name} — на главную`}>
+      <a class="logo" href={u('')} aria-label={`${SITE.name} — ${t.nav.home}`}>
         <span class="logo-ar" lang="ar" dir="rtl">{SITE.nameAr}</span>
         <span class="logo-lat">{SITE.name}</span>
       </a>
-      <button class="menu-btn" aria-expanded="false" aria-controls="site-nav">{t.nav.menu}</button>
-      <nav id="site-nav" class="site-nav" aria-label="Разделы">
-        {nav.map(([k, href]) => (
-          <a href={u(href)} aria-current={path.startsWith('/' + href) ? 'page' : undefined}>{t.nav[k]}</a>
-        ))}
-        <a class="nav-login" href={u('login/')} data-auth-link>{t.nav.login}</a>
+      <nav id="site-nav" class="site-nav" aria-label={t.nav.sections}>
+        <ul class="nav-top">
+          {NAV.map(g => g.items.length > 1 ? (
+            <li class="grp">
+              <button type="button" class:list={['grp-btn', { current: cur?.group === g.group }]} aria-expanded="false" aria-controls={`g-${g.group}`}>
+                {t.navGroups[g.group]}<span class="caret" aria-hidden="true">▾</span>
+              </button>
+              <ul class="sub" id={`g-${g.group}`}>
+                {g.items.map(it => <li><a href={u(it.href)} aria-current={cur?.key === it.key ? 'page' : undefined}>{t.nav[it.key]}<small>{t.sectionsDesc[it.key]}</small></a></li>)}
+              </ul>
+            </li>
+          ) : (
+            <li><a class:list={['top-link', { current: cur?.group === g.group }]} href={u(g.items[0].href)} aria-current={cur?.key === g.items[0].key ? 'page' : undefined}>{t.nav[g.items[0].key]}</a></li>
+          ))}
+        </ul>
+        <a class="nav-login" href={u('login/')} data-auth-link data-me={t.nav.me}>{t.nav.login}</a>
       </nav>
+      <div class="tools">
+        <button type="button" class="tool" data-open-search aria-label={t.search.hotkey} title={t.search.hotkey}>
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+        </button>
+        <button type="button" class="tool aa" data-open-look aria-haspopup="dialog" aria-expanded="false" aria-label={t.look.button} title={t.look.button}>Aa</button>
+        <button type="button" class="menu-btn" aria-expanded="false" aria-controls="site-nav">{t.nav.menu}</button>
+      </div>
     </div>
   </header>}
-  <main id="main"><slot /></main>
-  {!bare && <footer class="site-foot">
+  <main id="main" data-pagefind-body={noindex ? undefined : ''} data-pagefind-meta={noindex ? undefined : `group:${group}`}><slot /></main>
+  {!bare && <footer class="site-foot" data-pagefind-ignore>
     <div class="wrap foot-grid">
-      <div>
+      <div class="foot-about">
         <p class="foot-logo" lang="ar" dir="rtl">{SITE.nameAr}</p>
-        <p class="foot-motto">{SITE.motto}<br /><span class="muted small">{SITE.mottoRu}</span></p>
-      </div>
-      <div>
+        <p class="foot-motto">{SITE.motto}<br /><span class="foot-muted small">{SITE.mottoRu}</span></p>
         <p class="foot-h">{t.footer.contacts}</p>
         <p>{SITE.author}, {SITE.authorRole}</p>
         <ul class="foot-list">
@@ -65,29 +100,65 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
           <li><a href={SITE.contacts.telegramHref}>Telegram {SITE.contacts.telegram}</a></li>
         </ul>
       </div>
-      <div>
-        <ul class="foot-list">
-          <li><a href={u('about/')}>{t.footer.about}</a></li>
-          <li><a href={u('privacy/')}>{t.footer.privacy}</a></li>
-          <li><a href={u('teacher/')}>{t.nav.teacher}</a></li>
-        </ul>
-        <p class="muted small">{t.common.gradually}</p>
-      </div>
+      <nav class="foot-map" aria-label={t.nav.sections}>
+        {NAV.map(g => (
+          <div>
+            <p class="foot-h">{t.navGroups[g.group]}</p>
+            <ul class="foot-list">{g.items.map(it => <li><a href={u(it.href)}>{t.nav[it.key]}</a></li>)}</ul>
+          </div>
+        ))}
+        <div>
+          <p class="foot-h">{t.nav.more}</p>
+          <ul class="foot-list">
+            <li><a href={u('about/')}>{t.footer.about}</a></li>
+            <li><a href={u('privacy/')}>{t.footer.privacy}</a></li>
+            <li><a href={u('teacher/')}>{t.nav.teacher}</a></li>
+          </ul>
+        </div>
+      </nav>
+      <p class="foot-muted small foot-note">{t.common.gradually}</p>
     </div>
   </footer>}
+  {!bare && <SearchPanel />}
+  {!bare && <LookPanel />}
   <script>
-    const b = document.querySelector('.menu-btn');
-    const n = document.getElementById('site-nav');
-    b?.addEventListener('click', () => {
-      const open = b.getAttribute('aria-expanded') === 'true';
-      b.setAttribute('aria-expanded', String(!open));
-      n?.classList.toggle('open', !open);
+    import { getLook, applyLook } from '../lib/look';
+    applyLook(getLook()); // цвет строки браузера и событие для страниц, которым нужна тема
+    const menuBtn = document.querySelector<HTMLButtonElement>('.menu-btn');
+    const nav = document.getElementById('site-nav');
+    const groups = [...document.querySelectorAll<HTMLButtonElement>('.grp-btn')];
+    const mobile = () => matchMedia('(max-width: 900px)').matches;
+    const closeGroups = (except?: HTMLButtonElement) => groups.forEach(b => { if (b !== except) b.setAttribute('aria-expanded', String(mobile())); });
+    // мобильное меню («шторка»): все группы раскрыты
+    menuBtn?.addEventListener('click', () => {
+      const open = menuBtn.getAttribute('aria-expanded') !== 'true';
+      menuBtn.setAttribute('aria-expanded', String(open));
+      nav?.classList.toggle('open', open);
+      closeGroups();
     });
+    // компьютер: выпадающие группы по нажатию (и с клавиатуры)
+    groups.forEach(b => b.addEventListener('click', () => {
+      if (mobile()) return;
+      const open = b.getAttribute('aria-expanded') !== 'true';
+      closeGroups(b); b.setAttribute('aria-expanded', String(open));
+    }));
+    document.addEventListener('click', e => { if (!mobile() && !(e.target as HTMLElement).closest('.grp')) closeGroups(); });
+    document.addEventListener('keydown', e => {
+      if (e.key !== 'Escape') return;
+      const openGrp = groups.find(b => b.getAttribute('aria-expanded') === 'true');
+      if (!mobile() && openGrp) { closeGroups(); openGrp.focus(); }
+      if (nav?.classList.contains('open')) { nav.classList.remove('open'); menuBtn?.setAttribute('aria-expanded', 'false'); menuBtn?.focus(); }
+    });
+    document.querySelectorAll('.grp').forEach(g => g.addEventListener('focusout', e => {
+      if (!mobile() && !g.contains((e as FocusEvent).relatedTarget as Node)) g.querySelector('.grp-btn')?.setAttribute('aria-expanded', 'false');
+    }));
+    matchMedia('(max-width: 900px)').addEventListener('change', () => closeGroups());
+    closeGroups();
     // «Войти» → «Мой прогресс», если пользователь уже вошёл
     try {
-      if (localStorage.getItem('unmuzaj:who')) {
-        const a = document.querySelector('[data-auth-link]');
-        if (a) { a.textContent = 'Мой прогресс'; a.setAttribute('href', a.getAttribute('href')!.replace(/login\/$/, 'me/')); }
+      if (localStorage.getItem('unmuzaj:who') || sessionStorage.getItem('unmuzaj:who')) {
+        const a = document.querySelector<HTMLElement>('[data-auth-link]');
+        if (a) { a.textContent = a.dataset.me!; a.setAttribute('href', a.getAttribute('href')!.replace(/login\/$/, 'me/')); }
       }
     } catch {}
   </script>
@@ -95,35 +166,66 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
 </html>
 
 <style>
-  .skip { position: absolute; left: -999px; top: 8px; background: #fff; padding: 8px 12px; z-index: 10; }
+  .skip { position: absolute; left: -999px; top: 8px; background: var(--sheet); color: var(--link); padding: 8px 12px; z-index: 20; }
   .skip:focus { left: 8px; }
-  .site-head { background: var(--teal); color: #fff; border-bottom: 3px solid var(--turq); }
-  .head-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; }
-  .logo { display: flex; align-items: baseline; gap: 10px; color: #fff; text-decoration: none; }
-  .logo-ar { font-family: var(--ar); font-size: 1.8rem; line-height: 1.9; padding-top: 4px; }
-  .logo-lat { font-family: var(--serif); font-size: .95rem; letter-spacing: .02em; opacity: .85; }
-  .site-nav { display: flex; flex-wrap: wrap; gap: 2px 4px; align-items: center; }
-  .site-nav a { color: #e4f3ef; text-decoration: none; padding: 8px 10px; border-radius: 6px; font-size: .97rem; }
-  .site-nav a:hover { background: rgba(255,255,255,.12); color: #fff; }
-  .site-nav a[aria-current='page'] { color: #fff; box-shadow: inset 0 -2px 0 var(--sun); border-radius: 0; }
-  .site-nav .nav-login { border: 1px solid rgba(255,255,255,.55); margin-left: 6px; }
-  .menu-btn { display: none; background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.6); border-radius: 6px; min-height: 44px; padding: 0 14px; font: 600 1rem var(--sans); }
-  @media (max-width: 900px) {
-    .menu-btn { display: block; }
-    .site-nav { display: none; position: absolute; left: 0; right: 0; top: 67px; background: var(--teal); padding: 8px 16px 16px; flex-direction: column; align-items: stretch; z-index: 5; }
-    .site-nav.open { display: flex; }
-    .site-nav a { padding: 12px 8px; font-size: 1.05rem; }
-    .site-nav .nav-login { margin: 8px 0 0; text-align: center; }
-    .site-head { position: relative; }
+  .site-head { background: var(--head-bg); color: var(--head-ink); border-bottom: 3px solid var(--head-line); position: relative; z-index: 10; }
+  .head-row { display: flex; align-items: center; gap: 12px; min-height: 64px; }
+  .logo { display: flex; align-items: baseline; gap: 10px; color: var(--head-ink); text-decoration: none; margin-right: auto; min-width: 0; }
+  .logo:hover { color: var(--head-ink); }
+  .logo-ar { font-family: var(--ar); font-size: 1.8rem; line-height: 1.9; padding-top: 4px; white-space: nowrap; }
+  .logo-lat { font-family: var(--serif); font-size: .95rem; letter-spacing: .02em; color: var(--head-ink-soft); }
+  .site-nav { display: flex; align-items: center; gap: 4px; }
+  .nav-top { list-style: none; margin: 0; padding: 0; display: flex; gap: 2px; }
+  .grp { position: relative; }
+  .grp-btn, .top-link, .nav-login, .tool, .menu-btn {
+    display: inline-flex; align-items: center; gap: 4px; min-height: 44px; padding: 0 12px; border-radius: 6px;
+    font: 500 1rem var(--sans); color: var(--head-ink-soft); background: transparent; border: 0; cursor: pointer; text-decoration: none;
   }
-  .site-foot { background: var(--ink); color: #d9e9e4; margin-top: 64px; padding: 40px 0 32px; font-size: .97rem; }
-  .site-foot a { color: #fff; }
-  .foot-grid { display: grid; grid-template-columns: 1.2fr 1.2fr 1fr; gap: 28px; }
-  .foot-logo { font-family: var(--ar); font-size: 2.2rem; margin: 0; color: #fff; text-align: left; }
+  .grp-btn:hover, .top-link:hover, .nav-login:hover, .tool:hover, .menu-btn:hover { background: color-mix(in srgb, var(--head-ink) 14%, transparent); color: var(--head-ink); }
+  .grp-btn.current, .top-link.current { color: var(--head-ink); box-shadow: inset 0 -3px 0 var(--sun); border-radius: 6px 6px 0 0; }
+  .caret { font-size: .8em; transition: transform .15s; }
+  .grp-btn[aria-expanded='true'] .caret { transform: rotate(180deg); }
+  .sub { list-style: none; margin: 0; padding: 6px; position: absolute; top: calc(100% + 6px); left: 0; min-width: 270px; background: var(--sheet); border: 1px solid var(--line); border-radius: var(--r-m); box-shadow: var(--shadow); display: none; }
+  .grp-btn[aria-expanded='true'] + .sub { display: block; }
+  .sub a { display: flex; flex-direction: column; padding: 8px 12px; border-radius: var(--r-s); color: var(--ink); text-decoration: none; font-weight: 600; }
+  .sub a small { font-weight: 400; color: var(--ink-soft); font-size: .85rem; }
+  .sub a:hover, .sub a[aria-current='page'] { background: var(--hover); }
+  .sub a[aria-current='page'] { box-shadow: inset 3px 0 0 var(--accent); }
+  .nav-login { border: 1px solid color-mix(in srgb, var(--head-ink) 55%, transparent); margin-left: 6px; color: var(--head-ink); }
+  .tools { display: flex; align-items: center; gap: 2px; }
+  .tool { width: 44px; justify-content: center; padding: 0; color: var(--head-ink); }
+  .aa { font: 700 1.05rem var(--serif); }
+  .menu-btn { display: none; border: 1px solid color-mix(in srgb, var(--head-ink) 60%, transparent); color: var(--head-ink); font-weight: 600; }
+  .site-head :focus-visible { outline-color: var(--sun); }
+  @media (max-width: 900px) {
+    .menu-btn { display: inline-flex; }
+    .site-nav { display: none; position: absolute; left: 0; right: 0; top: 100%; background: var(--head-bg); padding: 8px 16px 18px; flex-direction: column; align-items: stretch; border-bottom: 3px solid var(--head-line); max-height: calc(100vh - 70px); overflow: auto; }
+    .site-nav.open { display: flex; }
+    .nav-top { flex-direction: column; gap: 0; }
+    .grp-btn { pointer-events: none; font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; min-height: 32px; padding: 12px 8px 2px; color: var(--head-ink-soft); box-shadow: none !important; }
+    .caret { display: none; }
+    .sub { display: block; position: static; background: transparent; border: 0; box-shadow: none; padding: 0; min-width: 0; }
+    .sub a { color: var(--head-ink); padding: 10px 8px; }
+    .sub a small { color: var(--head-ink-soft); }
+    .sub a:hover, .sub a[aria-current='page'] { background: color-mix(in srgb, var(--head-ink) 14%, transparent); }
+    .sub a[aria-current='page'] { box-shadow: inset 3px 0 0 var(--sun); }
+    .top-link { padding: 12px 8px; font-weight: 600; color: var(--head-ink); }
+    .top-link.current { box-shadow: inset 3px 0 0 var(--sun); border-radius: 0; }
+    .nav-login { margin: 12px 0 0; justify-content: center; }
+  }
+  @media (max-width: 480px) { .logo-lat { display: none; } .head-row { gap: 4px; } }
+  .site-foot { background: var(--foot-bg); color: var(--foot-ink); margin-top: 64px; padding: 40px 0 28px; font-size: .97rem; }
+  .site-foot a { color: var(--foot-link); }
+  .site-foot :focus-visible { outline-color: var(--sun); }
+  .foot-grid { display: grid; grid-template-columns: 1fr 1.6fr; gap: 28px 40px; }
+  .foot-map { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px 24px; }
+  .foot-logo { font-family: var(--ar); font-size: 2.2rem; margin: 0; color: var(--foot-link); text-align: left; }
   .foot-motto { font-family: var(--serif); font-style: italic; }
-  .foot-h { font-weight: 700; color: #fff; margin-bottom: 6px; }
+  .foot-h { font-weight: 700; color: var(--foot-link); margin-bottom: 6px; }
   .foot-list { list-style: none; padding: 0; margin: 0 0 12px; }
   .foot-list li { padding: 3px 0; }
-  .site-foot .muted { color: #9fbbb4; }
-  @media (max-width: 760px) { .foot-grid { grid-template-columns: 1fr; } .foot-logo { text-align: left; } }
+  .foot-list a { display: inline-block; padding: 4px 0; }
+  .foot-muted { color: var(--foot-muted); }
+  .foot-note { grid-column: 1 / -1; margin: 0; }
+  @media (max-width: 760px) { .foot-grid { grid-template-columns: 1fr; } }
 </style>

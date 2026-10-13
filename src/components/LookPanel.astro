@@ -1,0 +1,110 @@
+---
+// Меню «Оформление»: режим, палитра, размер текста и арабского шрифта. Открывается кнопкой «Aa» в шапке.
+import { t } from '../i18n/ru';
+const L = t.look;
+const palettes = ['turquoise', 'lapis', 'parchment', 'contrast'] as const;
+const modes = ['light', 'dark', 'auto'] as const;
+const sizes = [-1, 0, 1, 2];
+---
+<dialog id="lookDlg" class="look" aria-labelledby="lookTitle">
+  <div class="lk-head">
+    <h2 id="lookTitle">{L.title}</h2>
+    <button type="button" class="lk-x" data-close aria-label={t.nav.close}>✕</button>
+  </div>
+  <form class="lk-body" method="dialog">
+    <fieldset>
+      <legend>{L.mode}</legend>
+      <div class="seg">
+        {modes.map(m => <label><input type="radio" name="mode" value={m} /><span>{L.modes[m]}</span></label>)}
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>{L.palette}</legend>
+      <div class="pals">
+        {palettes.map(p => (
+          <label class="pal">
+            <input type="radio" name="palette" value={p} />
+            <span class={`sw sw-${p}`} aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="pal-t"><b>{L.palettes[p]}</b><small>{L.paletteHint[p]}</small></span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>{L.fontSize}</legend>
+      <div class="seg sz">
+        {sizes.map((v, i) => <label><input type="radio" name="fs" value={v} /><span aria-label={L.sizeNames[i]} style={`font-size:${[.85, 1, 1.15, 1.3][i]}em`}>{L.sizes[i]}</span></label>)}
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>{L.arSize}</legend>
+      <div class="seg sz">
+        {sizes.map((v, i) => <label><input type="radio" name="ar" value={v} /><span aria-label={L.sizeNames[i]} style={`font-size:${[.85, 1, 1.15, 1.3][i]}em`}>{L.sizes[i]}</span></label>)}
+      </div>
+      <p class="sample">{L.sample} <span lang="ar" dir="rtl">كِتَابٌ – كُتُبٌ</span></p>
+    </fieldset>
+    <div class="lk-foot">
+      <p class="muted small">{L.saved}</p>
+      <button type="button" class="btn ghost" id="lookReset">{L.reset}</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+  import { getLook, setLook, resetLook, type Look } from '../lib/look';
+  const dlg = document.getElementById('lookDlg') as HTMLDialogElement;
+  const form = dlg.querySelector('form')!;
+  function fill(l: Look) {
+    for (const [k, v] of Object.entries(l)) {
+      const r = form.querySelector<HTMLInputElement>(`input[name="${k}"][value="${v}"]`);
+      if (r) r.checked = true;
+    }
+  }
+  form.addEventListener('change', e => {
+    const i = e.target as HTMLInputElement;
+    setLook({ [i.name]: i.name === 'fs' || i.name === 'ar' ? +i.value : i.value } as Partial<Look>);
+  });
+  document.getElementById('lookReset')!.addEventListener('click', () => fill(resetLook()));
+  dlg.querySelector('[data-close]')!.addEventListener('click', () => dlg.close());
+  dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+  document.querySelectorAll<HTMLButtonElement>('[data-open-look]').forEach(b => b.addEventListener('click', () => {
+    fill(getLook()); dlg.showModal(); b.setAttribute('aria-expanded', 'true');
+    dlg.addEventListener('close', () => { b.setAttribute('aria-expanded', 'false'); b.focus(); }, { once: true });
+  }));
+</script>
+
+<style>
+  .look { border: 1px solid var(--line); border-radius: var(--r-l); padding: 0; width: min(440px, calc(100vw - 24px)); max-height: calc(100vh - 24px); box-shadow: var(--shadow); }
+  .look::backdrop { background: rgba(0, 0, 0, .45); }
+  .lk-head { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--sheet); }
+  .lk-head h2 { margin: 0; font-size: 1.25rem; }
+  .lk-x { border: 0; background: transparent; color: var(--ink); font-size: 1.3rem; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; }
+  .lk-x:hover { background: var(--hover); }
+  .lk-body { padding: 4px 16px 16px; }
+  fieldset { border: 0; padding: 0; margin: 14px 0 0; }
+  legend { font-weight: 700; margin-bottom: 8px; padding: 0; }
+  .seg { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); gap: 6px; }
+  .seg label, .pal { margin: 0; font-weight: 600; cursor: pointer; }
+  .seg input, .pal input { position: absolute; opacity: 0; pointer-events: none; }
+  .seg span { display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 6px; border: 2px solid var(--line); border-radius: var(--r-s); text-align: center; font-size: .95rem; line-height: 1.1; }
+  .seg input:checked + span, .pal input:checked ~ .sw { border-color: var(--accent); background: var(--tag-bg); color: var(--tag-ink); }
+  .pal input:checked ~ .pal-t b { text-decoration: underline; text-decoration-thickness: 2px; }
+  .seg input:focus-visible + span, .pal input:focus-visible ~ .sw { outline: var(--focus-w) solid var(--focus); outline-offset: 2px; }
+  .pals { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .pal { display: flex; gap: 10px; align-items: center; min-height: 44px; }
+  .sw { display: flex; flex: none; border: 2px solid var(--line); border-radius: 10px; overflow: hidden; width: 54px; height: 36px; }
+  .sw i { flex: 1; }
+  /* образцы палитр — фиксированные цвета самих палитр (это картинка-превью, а не оформление страницы) */
+  .sw-turquoise i:nth-child(1) { background: #1d5c63; } .sw-turquoise i:nth-child(2) { background: #2a9d8f; } .sw-turquoise i:nth-child(3) { background: #ffd54f; }
+  .sw-lapis i:nth-child(1) { background: #22407a; } .sw-lapis i:nth-child(2) { background: #5b83c9; } .sw-lapis i:nth-child(3) { background: #ffd54f; }
+  .sw-parchment i:nth-child(1) { background: #5a3a22; } .sw-parchment i:nth-child(2) { background: #f6efe2; } .sw-parchment i:nth-child(3) { background: #c0502f; }
+  .sw-contrast i:nth-child(1) { background: #000; } .sw-contrast i:nth-child(2) { background: #fff; } .sw-contrast i:nth-child(3) { background: #ffe600; }
+  .pal-t { display: flex; flex-direction: column; line-height: 1.25; }
+  .pal-t small { color: var(--ink-soft); font-weight: 400; }
+  .sz span { font-family: var(--serif); }
+  .sample { margin: 10px 0 0; }
+  .sample [lang='ar'] { font-size: calc(1.6rem * var(--ar-scale)); }
+  .lk-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+  .lk-foot p { margin: 0; flex: 1 1 180px; }
+  @media (max-width: 380px) { .pals { grid-template-columns: 1fr; } }
+</style>

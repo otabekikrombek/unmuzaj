@@ -9,7 +9,7 @@ export async function getStaticPaths() {
 }
 const { e } = Astro.props;
 ---
-<Base title={e.title} description={e.description}>
+<Base title={e.title} description={e.description} group="tasks">
   <PageHead title={e.title} ar={t.sectionsAr.exercises} lead={e.description} />
   <div class="wrap narrow">
     {e.legacy && <><p><a class="btn" href={u(e.legacy)}>Начать</a></p><p class="notice">{t.common.oldVersion}</p></>}
