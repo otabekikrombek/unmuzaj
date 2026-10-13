@@ -4,6 +4,10 @@ import { getCollection } from 'astro:content';
 import { u } from '../../lib/url';
 import { SITE } from '../../config/site';
 const decks = await getCollection('decks');
+const quizzes = (await getCollection('quizzes')).map(q => q.data).sort((a, b) => b.added.localeCompare(a.added));
+// данные викторин для разбора: названия частей и пояснения к вопросам
+const quizMeta = Object.fromEntries(quizzes.map(q => [q.key, { title: q.title, kind: q.kind, plan: q.plan, sections: q.sections,
+  explain: Object.fromEntries(q.pool.map(p => [p.id, p.e])) }]));
 const dict: Record<string, string> = {};
 const deckNames: Record<string, string> = {};
 decks.forEach(d => { deckNames[d.data.key] = d.data.title; d.data.items.forEach(i => (dict[d.data.key + '|' + i.a] = i.r)); });
@@ -35,6 +39,7 @@ const siteUrl = new URL(u(''), Astro.site).href;
 
       <div class="tabs" role="tablist">
         <button data-tab="stats" aria-selected="true">Статистика</button>
+        <button data-tab="quizzes" aria-selected="false">Викторины</button>
         <button data-tab="people" aria-selected="false">Ученики и ПИН</button>
         <button data-tab="admin" aria-selected="false" id="adminTab" hidden>Администратор</button>
       </div>
@@ -53,6 +58,17 @@ const siteUrl = new URL(u(''), Astro.site).href;
           <button class="btn ghost sm" onclick="print()">Печать</button>
         </div>
         <div id="report"><p class="muted">Выберите класс.</p></div>
+      </section>
+
+      <section data-panel="quizzes" hidden>
+        <div class="filters">
+          <label for="qzSel">Викторина</label>
+          <select id="qzSel"></select>
+          <a class="btn ghost sm" id="qzBoard" target="_blank" rel="noopener">Табло для проектора ↗</a>
+          <button class="btn ghost sm" id="qzCsv">Все ответы (CSV)</button>
+        </div>
+        <p class="muted small">Период — тот же, что во вкладке «Статистика». Табло показывает только псевдонимы и лучший результат каждого за 3 часа; откройте его на компьютере у проектора.</p>
+        <div id="qzRep"><p class="muted">Выберите класс.</p></div>
       </section>
 
       <section data-panel="people" hidden>
@@ -97,13 +113,15 @@ const siteUrl = new URL(u(''), Astro.site).href;
     <div class="db"><p><b>Распечатайте или перепишите сейчас:</b> после закрытия окна ПИН больше не будет видно (в базе хранится только зашифрованный вариант). Если потеряете — выдайте новый ПИН.</p>
     <div id="pinList"></div><p><button class="btn" id="pprint">Печать листа с ПИН</button></p></div></dialog>
 
-  <script type="application/json" id="tp-data" set:html={JSON.stringify({ dict, deckNames, login: u('login/') + '?next=' + u('teacher/'), site: siteUrl, siteName: SITE.name, home: u('') })} />
+  <script type="application/json" id="tp-data" set:html={JSON.stringify({ dict, deckNames, quizMeta, login: u('login/') + '?next=' + u('teacher/'), site: siteUrl, siteName: SITE.name, home: u('') })} />
   <script>
     import { getWho, rpc, logout, sb } from '../../lib/api';
+    import { secBars, reviewHTML, wrapAr, fmtTime } from '../../lib/quizView';
+    import { t } from '../../i18n/ru';
     const D = JSON.parse(document.getElementById('tp-data')!.textContent!);
     const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
     const esc = (s: unknown) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
-    let classes: any[] = [], cur: any = null, R: any = null, sortK = 'known', sortD = -1;
+    let classes: any[] = [], cur: any = null, R: any = null, QR: any = null, sortK = 'known', sortD = -1;
 
     // ---------- вход ----------
     const who = getWho();
@@ -160,7 +178,7 @@ const siteUrl = new URL(u(''), Astro.site).href;
       const m: Record<string, string> = {};
       $<HTMLTextAreaElement>('namesTxt').value.split('\n').forEach(line => { const [c, ...rest] = line.split(/[;,\t]/); const code = (c || '').replace(/\D/g, '').padStart(2, '0'); const nm = rest.join(' ').trim(); if (code !== '00' && nm) m[code] = nm; });
       try { localStorage.setItem(namesKey(), JSON.stringify(m)); } catch {}
-      $('namesForm').hidden = true; people(); if (R) renderReport();
+      $('namesForm').hidden = true; people(); if (R) { renderReport(); quizPart(); }
     });
 
     // ---------- ученики ----------
@@ -212,10 +230,13 @@ const siteUrl = new URL(u(''), Astro.site).href;
       return new Date(Date.now() - +v * 864e5).toISOString();
     }
     async function loadReport() {
-      if (!cur) { $('report').innerHTML = '<p class="muted">Создайте класс.</p>'; return; }
+      if (!cur) { $('report').innerHTML = '<p class="muted">Создайте класс.</p>'; $('qzRep').innerHTML = ''; return; }
       $('report').innerHTML = '<p class="muted">Загрузка…</p>';
-      try { R = await rpc<any>('teacher_report', { p_class: cur.id, p_from: periodFrom() }); renderReport(); }
-      catch { $('report').innerHTML = '<p>Не удалось загрузить отчёт. Проверьте интернет.</p>'; }
+      try {
+        [R, QR] = await Promise.all([rpc<any>('teacher_report', { p_class: cur.id, p_from: periodFrom() }), rpc<any>('teacher_quiz_report', { p_class: cur.id, p_from: periodFrom() })]);
+        renderReport(); renderQuizzes();
+      }
+      catch { $('report').innerHTML = '<p>Не удалось загрузить отчёт. Проверьте интернет.</p>'; $('qzRep').innerHTML = ''; }
     }
     $('period').addEventListener('change', loadReport); $('reload').addEventListener('click', loadReport);
 
@@ -226,7 +247,7 @@ const siteUrl = new URL(u(''), Astro.site).href;
     const COLS: [string, string, (s: any) => any][] = [
       ['name', 'Имя', s => label(s)], ['sex', 'Пол', s => s.sex || ''], ['sessions', 'Входов', s => s.sessions], ['minutes', 'Минут', s => +s.minutes],
       ['days', 'Дней', s => s.days], ['known', 'Знает слов', known], ['answers', 'Ответов', s => s.answers], ['acc', 'Верно %', acc],
-      ['bad', 'Ошибок', s => s.bad], ['ct', 'Тесты %', s => s.ct?.avg ?? null], ['qz', 'Викторины %', s => s.qz?.avg ?? null], ['last', 'Последний вход', s => s.last],
+      ['bad', 'Ошибок', s => s.bad], ['ct', 'Тесты %', s => s.ct?.avg ?? null], ['qz', 'Викторины %', s => s.qz?.avg ?? null], ['qn', 'Попыток викторин', s => s.qz?.n || 0], ['last', 'Последний вход', s => s.last],
     ];
     function bars(items: { l: string; v: number; s?: string }[], max: number, coral = false) {
       return `<div class="bars">${items.map(x => `<span>${x.l}</span><span class="t"><i class="${coral ? 'c' : ''}" style="width:${max ? Math.max(1, 100 * x.v / max) : 0}%"></i></span><span class="v">${x.s ?? x.v}</span>`).join('')}</div>`;
@@ -246,6 +267,7 @@ const siteUrl = new URL(u(''), Astro.site).href;
         ['⏱ Больше всех времени', top(s => +s.minutes, 'мин.')], ['📚 Выучил больше слов', top(known, 'сл.')],
         ['🎯 Самый точный (от 50 ответов)', top(acc, '%', s => s.answers >= 50)], ['📅 Больше всех дней занятий', top(s => s.days, 'дн.')],
         ['🔁 Чаще всех заходил', top(s => s.sessions, 'раз')], ['🧪 Лучший в тестах по словам', top(s => s.ct?.avg ?? 0, '%')],
+        ['🏆 Лучший в викторинах (средний %)', top(s => s.qz?.avg ?? 0, '%')],
         ['⚠ Нужна помощь: низкая точность', top(s => (s.answers >= 30 ? 100 - (acc(s) ?? 100) : 0), '% ошибок', s => s.answers >= 30), 'warn'],
         ['💤 Не занимались', S.filter(s => !+s.minutes && !s.answers).map(s => `<li class="none">${esc(label(s))}</li>`).join('') || '<li class="none">все занимались</li>', 'warn'],
       ];
@@ -271,7 +293,7 @@ const siteUrl = new URL(u(''), Astro.site).href;
             ${S.some(s => !s.sex) ? '<p class="note">Не у всех указан пол: заполните его во вкладке «Ученики и ПИН».</p>' : ''}
             <p class="note">В группе около 20 человек, поэтому разница даже в 10–15% может быть случайной. Это описание группы, а не вывод о юношах и девушках.</p></div>
         </div>
-        <p class="muted small">Отчёт на ${new Date(R.generated).toLocaleString('ru-RU')}. Результаты викторин появятся здесь, когда викторины переедут на сайт.</p>`;
+        <p class="muted small">Отчёт на ${new Date(R.generated).toLocaleString('ru-RU')}. Подробно о викторинах — во вкладке «Викторины».</p>`;
       table(); words(); themes();
       $('wdeck').addEventListener('change', words); $('tdeck').addEventListener('change', themes);
     }
@@ -303,10 +325,81 @@ const siteUrl = new URL(u(''), Astro.site).href;
         <h3>Тесты по словам</h3><p>${s.ct.n ? `${s.ct.n} · средний ${s.ct.avg}% · лучший ${s.ct.best}%` : 'Тестов нет.'}</p>
         <h3>Темы: доля ошибок</h3>${th.length ? bars(th.map(t => ({ l: esc(t.t), v: Math.round(100 * t.bad / t.n), s: `${Math.round(100 * t.bad / t.n)}% из ${t.n}` })), 100, true) : '<p>Нет ответов.</p>'}
         <h3>Самые трудные слова</h3>${s.hard.length ? `<table class="rep"><tbody>${s.hard.map((h: any) => `<tr><td class="ar" lang="ar" dir="rtl">${esc(h.w)}</td><td>${esc(tr(h.deck, h.w))}</td><td class="n">ошибок: ${h.bad}</td></tr>`).join('')}</tbody></table>` : '<p>Ошибок нет.</p>'}
-        <h3>Минуты по дням</h3>${days.length ? cols(days.map(d => +s.daily[d]), days.map(d => d.slice(8) + '.' + d.slice(5, 7))) : '<p>Нет занятий.</p>'}`;
+        <h3>Минуты по дням</h3>${days.length ? cols(days.map(d => +s.daily[d]), days.map(d => d.slice(8) + '.' + d.slice(5, 7))) : '<p>Нет занятий.</p>'}
+        <h3>Викторины</h3>${attemptsTable((QR?.attempts || []).filter((a: any) => a.learner === s.id), false)}`;
+      bindAttempts($('dbody'));
       $<HTMLDialogElement>('dlg').showModal();
     }
     $('dclose').addEventListener('click', () => $<HTMLDialogElement>('dlg').close());
+
+    // ---------- викторины ----------
+    const QM: Record<string, any> = D.quizMeta;
+    const qTitle = (k: string) => QM[k]?.title || k;
+    const pct = (a: any) => (a.total ? Math.round(100 * a.correct / a.total) : 0);
+    const learnerById = (id: number) => (R?.learners as any[] || []).find(l => l.id === id);
+    function attemptsTable(list: any[], withName: boolean) {
+      if (!list.length) return '<p class="muted">Попыток нет.</p>';
+      return `<div class="tw"><table class="rep att"><thead><tr><th>Когда</th>${withName ? '<th>Ученик</th>' : '<th>Викторина</th>'}<th>Верно</th><th>%</th><th>Очки</th><th>Время</th><th>Уровень</th><th></th></tr></thead><tbody>` +
+        list.map(a => `<tr><td>${fmtD(a.at)}</td><td>${withName ? esc(label(learnerById(a.learner) || { code: '', nickname: '?' })) : esc(qTitle(a.quiz))}</td><td class="n">${a.correct}/${a.total}</td><td class="n">${pct(a)}%</td><td class="n">${a.points}</td><td class="n">${fmtTime(a.time || 0)}</td><td>${esc(a.level || '')}</td>` +
+          `<td><button class="btn ghost sm rvBtn" data-att="${esc(a.id)}">Разбор</button></td></tr>`).join('') + '</tbody></table></div>';
+    }
+    function bindAttempts(root: HTMLElement) {
+      root.querySelectorAll<HTMLButtonElement>('.rvBtn').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); review(b.dataset.att!); }));
+    }
+    async function review(id: string) {
+      const a0 = (QR.attempts as any[]).find(a => a.id === id), L = learnerById(a0?.learner);
+      $('dt').textContent = `${L ? label(L) : ''} · ${qTitle(a0?.quiz)}`;
+      $('dbody').innerHTML = '<p>Загрузка…</p>'; const dlg = $<HTMLDialogElement>('dlg'); if (!dlg.open) dlg.showModal();
+      try {
+        const r = await rpc<any>('teacher_quiz_attempt', { p_attempt: id }); if (!r.ok) throw 0;
+        const a = r.attempt, m = QM[a.quiz] || { sections: {}, plan: [], explain: {} };
+        const secRows = (m.plan as [string, number][]).map(([k]) => { const x = (a.answers as any[]).filter(y => y.s === k); return { s: k, ok: x.filter(y => y.ok).length, n: x.length }; }).filter(x => x.n);
+        $('dbody').innerHTML = `<p>${fmtD(a.at)} · верно <b>${a.correct} из ${a.total}</b> (${pct(a)}%) · ${a.points} очков · ${fmtTime(a.time || 0)} · ${esc(a.level || '')}</p>` +
+          (secRows.length > 1 ? secBars(m.sections, secRows) : '') + reviewHTML(a.answers, m.sections, t.quiz, m.explain);
+      } catch { $('dbody').innerHTML = '<p>Не удалось загрузить разбор.</p>'; }
+    }
+    function renderQuizzes() {
+      if (!QR?.ok) { $('qzRep').innerHTML = '<p>Нет данных.</p>'; return; }
+      const sel = $<HTMLSelectElement>('qzSel'), prev = sel.value;
+      const cnt = (k: string) => (QR.attempts as any[]).filter(a => a.quiz === k).length;
+      const keys = Object.keys(QM).sort((a, b) => cnt(b) - cnt(a));
+      sel.innerHTML = keys.map(k => `<option value="${esc(k)}">${esc(QM[k].title)}${QM[k].kind === 'test' ? ' (тест)' : ''} — попыток: ${cnt(k)}</option>`).join('');
+      if (prev && keys.includes(prev)) sel.value = prev;
+      quizPart();
+    }
+    function quizPart() {
+      if (!QR || !cur) return;
+      const k = $<HTMLSelectElement>('qzSel').value, m = QM[k], A = (QR.attempts as any[]).filter(a => a.quiz === k);
+      $<HTMLAnchorElement>('qzBoard').href = `${D.site}board/${k}/?class=${encodeURIComponent(cur.join)}&hours=3`;
+      const S = R.learners as any[];
+      const per = S.map(s => { const my = A.filter(a => a.learner === s.id); const best = my.slice().sort((x, y) => y.points - x.points)[0]; return { s, n: my.length, best, last: my[0] }; });
+      const done = per.filter(p => p.n);
+      const avgBest = done.length ? Math.round(done.reduce((x, p) => x + pct(p.best), 0) / done.length) : null;
+      const secRows = (m.plan as [string, number][]).map(([s]) => { const x = (QR.sections as any[]).find(y => y.quiz === k && y.s === s); return { s, ok: x?.ok || 0, n: x?.n || 0 }; }).filter(x => x.n);
+      const hard = (QR.hard as any[]).filter(h => h.quiz === k).slice(0, 15);
+      $('qzRep').innerHTML = `<div class="kpis">${[[`${done.length} из ${S.length}`, 'прошли'], [A.length, 'попыток'], [avgBest == null ? '—' : avgBest + '%', 'средний лучший результат']].map(x => `<div class="kpi"><b>${x[0]}</b><span>${x[1]}</span></div>`).join('')}</div>
+        <h2>Ученики</h2><div class="tw"><table class="rep"><thead><tr><th>Имя</th><th>Попыток</th><th>Лучший</th><th>%</th><th>Очки</th><th>Последняя</th><th></th></tr></thead><tbody>` +
+        per.sort((a, b) => (b.best?.points ?? -1) - (a.best?.points ?? -1)).map(p => `<tr><td>${esc(label(p.s))}</td><td class="n">${p.n || '—'}</td><td class="n">${p.best ? `${p.best.correct}/${p.best.total}` : '—'}</td><td class="n">${p.best ? pct(p.best) + '%' : '—'}</td><td class="n">${p.best?.points ?? '—'}</td><td>${p.last ? fmtD(p.last.at) : '—'}</td>` +
+          `<td>${p.best ? `<button class="btn ghost sm rvBtn" data-att="${esc(p.best.id)}">Разбор лучшей</button>` : ''}</td></tr>`).join('') + `</tbody></table></div>
+        <div class="g2"><div><h2>Части викторины: доля верных</h2>${secRows.length ? secBars(m.sections, secRows) : '<p class="muted">Пока нет ответов.</p>'}</div>
+        <div><h2>Все попытки</h2>${attemptsTable(A, true)}</div></div>
+        <h2>Трудные вопросы</h2><p class="muted small">Сверху — вопросы, в которых ошиблось больше всего учеников.</p>` +
+        (hard.length ? `<div class="tw"><table class="rep hardq"><thead><tr><th>Вопрос</th><th>Правильный ответ</th><th>Ошиблись</th><th>Ошибок %</th></tr></thead><tbody>${hard.map(h => `<tr><td>${wrapAr(h.q)}</td><td>${wrapAr(h.c)}</td><td class="n">${h.studs} чел.</td><td class="n">${h.pct}%</td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">Ошибок пока нет.</p>');
+      bindAttempts($('qzRep'));
+    }
+    $('qzSel').addEventListener('change', quizPart);
+    $('qzCsv').addEventListener('click', async () => {
+      if (!cur) return; const k = $<HTMLSelectElement>('qzSel').value;
+      const r = await rpc<any>('teacher_quiz_answers', { p_class: cur.id, p_quiz: k, p_from: periodFrom() });
+      if (!r.ok) return alert('Не удалось выгрузить.');
+      const head = ['Код', 'Имя', 'Когда', 'Попытка', '№', 'Часть', 'Вопрос', 'Ответ', 'Правильный', 'Верно', 'Секунд'];
+      const rows = (r.rows as any[]).map(x => { const L = learnerById(x.learner); return [L?.code || '', L ? label(L) : '', new Date(x.at).toLocaleString('ru-RU'), x.attempt, x.no, x.s, x.q, x.a, x.c, x.ok ? 'да' : 'нет', x.sec]; });
+      download([head, ...rows], `unmuzaj_${cur.join}_${k}.csv`);
+    });
+    function download(rows: unknown[][], name: string) {
+      const csv = '\ufeff' + rows.map(r => r.map(v => '"' + String(v ?? '').replace(/"/g, '""') + '"').join(';')).join('\r\n');
+      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = name; a.click();
+    }
     $('csv').addEventListener('click', () => {
       if (!R) return;
       const head = ['Код', ...COLS.map(c => c[1])];
@@ -354,11 +447,11 @@ const siteUrl = new URL(u(''), Astro.site).href;
   .tp :global(th), dialog :global(th) { background: var(--teal); color: #fff; font-size: .85rem; }
   .tp :global(table.words td:nth-child(2)) { white-space: normal; min-width: 140px; }
   #people input[type=text], #people select { min-height: 38px; padding: 4px 8px; }
-  #report :global(.kpis) { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 20px; }
-  #report :global(.kpi) { background: #e3efeb; border-radius: 10px; padding: 10px 12px; }
-  #report :global(.kpi b) { display: block; font: 700 1.5rem var(--serif); color: var(--teal); }
-  #report :global(.kpi span) { font-size: .88rem; color: var(--ink-soft); }
-  #report :global(h2) { font-size: 1.3rem; margin-top: 26px; }
+  #qzRep :global(.kpis), #report :global(.kpis) { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 20px; }
+  #qzRep :global(.kpi), #report :global(.kpi) { background: #e3efeb; border-radius: 10px; padding: 10px 12px; }
+  #qzRep :global(.kpi b), #report :global(.kpi b) { display: block; font: 700 1.5rem var(--serif); color: var(--teal); }
+  #qzRep :global(.kpi span), #report :global(.kpi span) { font-size: .88rem; color: var(--ink-soft); }
+  #qzRep :global(h2), #report :global(h2) { font-size: 1.3rem; margin-top: 26px; }
   #report :global(h3) { font-size: 1rem; margin: 14px 0 6px; }
   #report :global(.noms) { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; }
   #report :global(.nom) { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: #fff; }
@@ -373,8 +466,8 @@ const siteUrl = new URL(u(''), Astro.site).href;
   :global(td.n) { text-align: right; }
   .tp :global(th.n) { text-align: right; }
   :global(td.ar) { font-family: var(--ar); font-size: 1.3rem; text-align: right; }
-  #report :global(.g2) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; }
-  #report :global(.g2 > div) { min-width: 0; }
+  #qzRep :global(.g2), #report :global(.g2) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; }
+  #qzRep :global(.g2 > div), #report :global(.g2 > div) { min-width: 0; }
   #report :global(select) { width: auto; margin-bottom: 8px; }
   :global(.bars) { display: grid; grid-template-columns: minmax(90px, max-content) minmax(40px, 1fr) 80px; gap: 4px 8px; align-items: center; font-size: .9rem; }
   :global(.bars .t) { height: 14px; background: #e3efeb; border-radius: 7px; overflow: hidden; }
@@ -395,7 +488,9 @@ const siteUrl = new URL(u(''), Astro.site).href;
   :global(.pins td.pin) { font: 700 1.3rem var(--serif); letter-spacing: .1em; }
   .msg { min-height: 1.4em; color: var(--lapis); }
   #print { display: none; }
-  @media (max-width: 760px) { .grid3, #report :global(.g2) { grid-template-columns: 1fr; } }
+  .tp :global(table.hardq td) { white-space: normal; min-width: 160px; }
+  .tp :global(table.hardq .ar), dialog :global(.rv .ar) { font-family: var(--ar); font-size: 1.25rem; }
+  @media (max-width: 760px) { .grid3, #report :global(.g2), #qzRep :global(.g2) { grid-template-columns: 1fr; } }
   @media print {
     :global(header), :global(footer) { display: none !important; }
     :global(body.printing-pins) > :global(*:not(#print)) { display: none !important; }
