@@ -220,7 +220,27 @@ const siteUrl = new URL(u(''), Astro.site).href;
       $<HTMLDialogElement>('pins').showModal();
     }
     $('pclose').addEventListener('click', () => { if (confirm('Вы распечатали или записали ПИН? После закрытия их не будет видно.')) { $<HTMLDialogElement>('pins').close(); $('print').innerHTML = ''; } });
-    $('pprint').addEventListener('click', () => { document.body.classList.add('printing-pins'); print(); document.body.classList.remove('printing-pins'); });
+    // Печать в отдельном окне: в нём только полоски с ПИН, без интерфейса панели
+    $('pprint').addEventListener('click', () => {
+      const html = `<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>ПИН учеников — ${esc(cur?.name || '')}</title><style>
+        @page { size: A4 portrait; margin: 10mm; }
+        body { margin: 0; font-family: Georgia, 'Times New Roman', serif; color: #111; }
+        .hint { font: 13px Arial, sans-serif; margin: 0 0 8px; }
+        .strips { display: grid; grid-template-columns: 1fr 1fr; }
+        .strip { border: 1px dashed #777; padding: 10px 12px; break-inside: avoid; page-break-inside: avoid; min-height: 50mm; box-sizing: border-box; }
+        .strip p { margin: 0 0 4px; }
+        .s-site { font: 9pt Arial, sans-serif; color: #333; }
+        .s-name { font-weight: 700; font-size: 14pt; }
+        .s-row { display: flex; gap: 18px; margin-top: 10px !important; }
+        .s-row span { font: 9pt Arial, sans-serif; display: flex; flex-direction: column; }
+        .s-row b { font: 700 18pt Georgia, serif; letter-spacing: .05em; }
+        @media print { .hint { display: none; } }
+      </style></head><body><p class="hint">Если печать не открылась сама — нажмите Ctrl+P (на телефоне: «Поделиться» → «Печать» или «Сохранить в Файлы»).</p>${$('print').innerHTML}</body></html>`;
+      const w = window.open('', '_blank');
+      if (!w) { alert('Браузер заблокировал новое окно. Разрешите всплывающие окна для этого сайта и нажмите кнопку ещё раз.'); return; }
+      w.document.open(); w.document.write(html); w.document.close();
+      w.focus(); setTimeout(() => w.print(), 400);
+    });
 
     // ---------- отчёт ----------
     function periodFrom() {
@@ -493,8 +513,6 @@ const siteUrl = new URL(u(''), Astro.site).href;
   @media (max-width: 760px) { .grid3, #report :global(.g2), #qzRep :global(.g2) { grid-template-columns: 1fr; } }
   @media print {
     :global(header), :global(footer) { display: none !important; }
-    :global(body.printing-pins) > :global(*:not(#print)) { display: none !important; }
-    :global(body.printing-pins) #print { display: block; }
     :global(.strips) { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
     :global(.strip) { border: 1px dashed #777; padding: 10px 12px; break-inside: avoid; height: 52mm; }
     :global(.strip p) { margin: 0 0 4px; }
