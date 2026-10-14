@@ -1,0 +1,17 @@
+---
+// Источники раздела «Спряжение» (GPL: код Qutrub и Arramooz в репозиторий не копируется — см. CLAUDE.md, «Лицензии»).
+import { t } from '../i18n/ru';
+interface Props { engine?: string; pyodide?: boolean }
+const { engine, pyodide = false } = Astro.props;
+const C = t.conj;
+---
+<footer class="credits small muted">
+  <p>{C.creditQutrub}{engine && <> ({engine})</>} — <a href="https://github.com/linuxscout/qutrub">{C.creditCode}</a>.</p>
+  <p>{C.creditArramooz} — <a href="https://github.com/linuxscout/arramooz">{C.creditCode}</a>.</p>
+  {pyodide && <p>{C.creditPyodide} — <a href="https://pyodide.org">pyodide.org</a>.</p>}
+</footer>
+<style>
+  .credits { border-top: 1px solid var(--line); margin-top: 24px; padding-top: 12px; }
+  .credits p { margin: 0 0 4px; }
+  .credits a { display: inline-block; padding: 4px 0; }
+</style>

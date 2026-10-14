@@ -12,13 +12,13 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 AXE = os.path.join(ROOT, 'node_modules', 'axe-core', 'axe.min.js')
 OUT = os.path.join(ROOT, 'test-results', 'design'); os.makedirs(OUT, exist_ok=True)
 QUICK = '--quick' in sys.argv
-PAGES = ['', 'words/', 'words/w100/', 'dictionary/', 'quizzes/', 'quizzes/matn-10/', 'quizzes/mock-ekzamen/', 'tests/', 'exercises/',
+PAGES = ['', 'words/', 'words/w100/', 'dictionary/', 'conjugation/', 'conjugation/kataba/', 'conjugation/jalasa/', 'quizzes/', 'quizzes/matn-10/', 'quizzes/mock-ekzamen/', 'tests/', 'exercises/',
          'exercises/predlogi/', 'grammar/', 'texts/', 'courses/', 'courses/tsu-2-sem1/', 'login/', 'me/', 'teacher/', 'about/', 'privacy/',
          'board/matn-10/?class=XXXXXX', '404.html']
 PALETTES = ['turquoise', 'lapis', 'parchment', 'contrast']
 MODES = ['light', 'dark']
 WIDTHS = [360, 1280]
-if QUICK: PAGES = ['', 'words/w100/', 'quizzes/matn-10/', 'dictionary/', 'teacher/']
+if QUICK: PAGES = ['', 'words/w100/', 'quizzes/matn-10/', 'dictionary/', 'conjugation/kataba/', 'teacher/']
 
 errs, fails = [], []
 def check(name, cond, info=''):
@@ -100,7 +100,7 @@ with sync_playwright() as p:
     ar2 = pg.evaluate("parseFloat(getComputedStyle(document.querySelector('td.ar')).fontSize)")
     check('А++ увеличивает текст', big > base * 1.2, f'{base} → {big}')
     check('арабский А++ увеличивает арабский сильнее', ar2 / ar0 > 1.6, f'{ar0} → {ar2}')
-    for path in ['', 'words/w100/', 'quizzes/matn-10/', 'dictionary/']:
+    for path in ['', 'words/w100/', 'quizzes/matn-10/', 'dictionary/', 'conjugation/kataba/']:
         pg.goto(B + path); pg.wait_for_timeout(200); check(f'крупный шрифт без прокрутки на 360 px: {path or "/"}', noscroll(pg))
     pg.screenshot(path=os.path.join(OUT, 'big-font_360.png'), full_page=True)
     pg.goto(B + 'dictionary/?q=дом'); pg.wait_for_timeout(300)

@@ -1,0 +1,5 @@
+# Ставятся при запуске скриптов в .venv-conjugate/ (в репозиторий не копируются: GPL, см. CLAUDE.md, «Лицензии»).
+libqutrub==1.2.4.1          # Qutrub — спряжение, © Taha Zerrouki, GPL — https://github.com/linuxscout/qutrub
+pyarabic==0.6.15
+six==1.17.0
+arramooz-pysqlite==0.4.2    # Arramooz — словарь (огласовка настоящего времени, переходность), © Taha Zerrouki, GPL — https://github.com/linuxscout/arramooz

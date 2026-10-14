@@ -50,3 +50,10 @@ psql -d t1 -f supabase/tests/20_quiz_test.sql   # викторины; в кон�
 - `node tests/contrast.mjs src/styles/tokens.css` — быстрая проверка: все пары цветов (текст/фон) в 4 палитрах × 2 режимах проходят AA. Запускать после любой правки `tokens.css`.
 - `python3 tests/e2e/design.py` — каждая страница × 4 палитры × 2 режима × ширина 360 и 1280: контраст AA через axe-core, нет горизонтальной прокрутки, нет ошибок в консоли; плюс окна «Оформление» и «Поиск», вопрос викторины, тест карточек; тема до отрисовки, «как в системе», сохранение выбора; размер текста; поиск (/, Ctrl+K, русский и арабский с огласовками и без); меню и «хлебные крошки». Скриншоты — в `test-results/design/`. `--quick` — 5 страниц вместо 21.
 - Сайт для этого теста: `npm run build` (с поиском Pagefind) и раздать `dist` как `/unmuzaj/` на `:4322` (база не нужна).
+
+## Спряжение глаголов (§13.2)
+
+- `npm run conjugate -- --check` — таблицы `src/content/conjugations/` совпадают с `src/data/verbs.json` (нужен Python 3; пакеты Qutrub ставятся сами в `.venv-conjugate/`).
+- `npm run conjugate:lookup` — сверка `verbs.json` со словарём Arramooz: расхождения и неоднозначные глаголы (все они должны быть с пометкой `doubt`).
+- `python3 tests/e2e/conjugation.py` — страница глагола на 360 px (13 лиц, переключатель колонок, печать, предупреждение, ссылка на Qutrub), 11 контрольных глаголов задания (огласовка настоящего-будущего), непереходный глагол, крупный шрифт без прокрутки, поиск и фильтр в списке, переход с главной, ссылки из словаря, поиск по сайту.
+- Режим «Любой глагол» (Pyodide) этот же тест проверяет, если задан `PYODIDE_DIR` — папка с файлами Pyodide 314.0.7: `npm i --no-save pyodide@314.0.7`, затем положить в `node_modules/pyodide/` колёса `micropip-0.11.1-py3-none-any.whl` и `six-1.17.0-py2.py3-none-any.whl` (`pip download --no-deps micropip==0.11.1 six==1.17.0 -d node_modules/pyodide`) и запустить `PYODIDE_DIR=node_modules/pyodide python3 tests/e2e/conjugation.py`. Запросы к cdn.jsdelivr.net тест отдаёт из этой папки, пакеты Qutrub скачивает с PyPI.

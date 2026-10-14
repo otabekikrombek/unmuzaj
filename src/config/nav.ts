@@ -1,11 +1,11 @@
 // Навигация сайта — одно место для шапки, мобильного меню, подвала и «хлебных крошек».
 // Ключи разделов совпадают с t.nav, t.sectionsAr, t.sectionsDesc (src/i18n/ru.ts).
-export type SectionKey = 'words' | 'dictionary' | 'quizzes' | 'tests' | 'exercises' | 'grammar' | 'texts' | 'courses';
+export type SectionKey = 'words' | 'dictionary' | 'conjugation' | 'quizzes' | 'tests' | 'exercises' | 'grammar' | 'texts' | 'courses';
 export type GroupKey = 'learn' | 'tasks' | 'read' | 'courses';
 
 /** группы меню по смыслу: учить → делать задания → читать → курсы */
 export const NAV: { group: GroupKey; items: { key: SectionKey; href: string }[] }[] = [
-  { group: 'learn', items: [{ key: 'words', href: 'words/' }, { key: 'dictionary', href: 'dictionary/' }] },
+  { group: 'learn', items: [{ key: 'words', href: 'words/' }, { key: 'dictionary', href: 'dictionary/' }, { key: 'conjugation', href: 'conjugation/' }] },
   { group: 'tasks', items: [{ key: 'quizzes', href: 'quizzes/' }, { key: 'tests', href: 'tests/' }, { key: 'exercises', href: 'exercises/' }] },
   { group: 'read', items: [{ key: 'grammar', href: 'grammar/' }, { key: 'texts', href: 'texts/' }] },
   { group: 'courses', items: [{ key: 'courses', href: 'courses/' }] },

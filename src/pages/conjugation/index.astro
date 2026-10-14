@@ -1,0 +1,210 @@
+---
+// Раздел «Спряжение»: список глаголов с поиском и режим «Любой глагол» (Qutrub в браузере). CLAUDE.md §13.2.
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import ConjCredits from '../../components/ConjCredits.astro';
+import { getVerbs } from '../../lib/verbs';
+import { TYPES, mixed } from '../../lib/conjugation';
+import { norm, normAr } from '../../lib/normalize';
+import { u } from '../../lib/url';
+import { t } from '../../i18n/ru';
+import '../../styles/conjugation.css';
+
+const C = t.conj;
+const verbs = await getVerbs();
+const used = TYPES.filter(x => verbs.some(v => v.types.includes(x)));
+const data = { t: C, base: u(''), found: C.found(0).replace('0', '{n}') }; // функции из ru.ts в JSON не попадают
+---
+<Base title={C.title} description={C.description}>
+  <PageHead title={C.title} ar={t.sectionsAr.conjugation} lead={C.lead(verbs.length)} />
+  <div class="wrap">
+    <label for="vq">{C.searchLabel}</label>
+    <input id="vq" type="search" placeholder={C.searchPh} autocomplete="off" spellcheck="false" />
+    <div class="types" role="group" aria-label={C.type}>
+      <button type="button" data-type="" aria-pressed="true">{C.allTypes} <span class="n">{verbs.length}</span></button>
+      {used.map(x => <button type="button" data-type={x} aria-pressed="false">{C.types[x]} <span class="n">{verbs.filter(v => v.types.includes(x)).length}</span></button>)}
+    </div>
+    <p class="muted small" id="vcnt" aria-live="polite"></p>
+    <ul class="verbs" id="verbs">
+      {verbs.map(v => (
+        <li data-types={v.types.join(' ')} data-n={norm(`${v.verb} ${v.present} ${v.imperative} ${v.root} ${v.ru}`)} data-v={normAr(v.verb)}>
+          <a href={u(`conjugation/${v.key}/`)}>
+            <span class="v-ar" lang="ar" dir="rtl">{v.verb} – {v.present}</span>
+            <span class="v-ru" set:html={mixed(v.ru)} />
+            <span class="v-t">{v.types.map(x => C.typesOne[x]).join(', ')}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <p class="notice" id="vnone" hidden>{C.notFound}</p>
+
+    <section class="any" id="any" aria-labelledby="anyH">
+      <h2 id="anyH">{C.any}</h2>
+      <p>{C.anyLead}</p>
+      <div id="anyStart">
+        <button type="button" class="btn" id="anyLoad">{C.anyLoad}</button>
+        <p class="muted small">{C.anySize}</p>
+      </div>
+      <p class="muted" id="anyStatus" role="status" aria-live="polite"></p>
+      <form id="anyForm" hidden novalidate>
+        <label for="anyVerb">{C.anyVerb}</label>
+        <input id="anyVerb" type="text" lang="ar" dir="rtl" placeholder={C.anyVerbPh} autocomplete="off" spellcheck="false" />
+        <div id="anyDict" class="any-dict" aria-live="polite"></div>
+        <fieldset>
+          <legend>{C.anyBab}</legend>
+          {['فتحة', 'ضمة', 'كسرة'].map(b => (
+            <label class="opt"><input type="radio" name="bab" value={b} /> {C.bab[b]} <span lang="ar" dir="rtl">{C.babPattern[b]}</span></label>
+          ))}
+        </fieldset>
+        <fieldset>
+          <legend>{C.anyTrans}</legend>
+          <label class="opt"><input type="radio" name="tr" value="1" checked /> {C.transitive}</label>
+          <label class="opt"><input type="radio" name="tr" value="0" /> {C.intransitive}</label>
+        </fieldset>
+        <p class="muted small" set:html={mixed(C.anyHint)} />
+        <button type="submit" class="btn">{C.anyGo}</button>
+        <p class="any-err" id="anyErr" role="alert"></p>
+      </form>
+      <div id="anyOut"></div>
+    </section>
+    <ConjCredits engine={verbs[0]?.engine} pyodide />
+  </div>
+  <script type="application/json" id="conj-data" set:html={JSON.stringify(data)} />
+  <script>
+    import { norm, normAr, hasAr } from '../../lib/normalize';
+    import { renderConjugation, initConjugation } from '../../lib/conjugation';
+    import { loadEngine, type Engine } from '../../lib/qutrubWeb';
+    const D = JSON.parse(document.getElementById('conj-data')!.textContent!);
+    const C = D.t;
+    const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
+    const esc = (s: unknown) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
+
+    // ---------- список: поиск и типы ----------
+    const items = [...document.querySelectorAll<HTMLLIElement>('#verbs li')];
+    const q = $<HTMLInputElement>('vq'), cnt = $('vcnt'), none = $('vnone');
+    const typeBtns = [...document.querySelectorAll<HTMLButtonElement>('.types button')];
+    let type = '';
+    function filter() {
+      const v = norm(q.value);
+      let n = 0;
+      for (const li of items) {
+        const ok = (!v || li.dataset.n!.includes(v)) && (!type || li.dataset.types!.split(' ').includes(type));
+        li.hidden = !ok; if (ok) n++;
+      }
+      cnt.textContent = v || type ? D.found.replace('{n}', String(n)) : '';
+      none.hidden = n > 0;
+      return n;
+    }
+    q.addEventListener('input', filter);
+    typeBtns.forEach(b => b.addEventListener('click', () => {
+      type = b.dataset.type || '';
+      typeBtns.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      filter();
+    }));
+
+    // ---------- «Любой глагол» ----------
+    const form = $<HTMLFormElement>('anyForm'), status = $('anyStatus'), err = $('anyErr'), out = $('anyOut'), dict = $('anyDict');
+    const verbIn = $<HTMLInputElement>('anyVerb');
+    let eng: Engine | null = null;
+    const HARAKAT = /[ً-ْ]/;
+    const clean = (s: string) => s.replace(/[ـ\s]/g, '').normalize('NFC');
+    const radio = (name: string) => form.querySelector<HTMLInputElement>(`input[name=${name}]:checked`)?.value;
+    const setRadio = (name: string, value: string) => { const r = form.querySelector<HTMLInputElement>(`input[name=${name}][value="${value}"]`); if (r) r.checked = true; };
+
+    async function start() {
+      $<HTMLButtonElement>('anyLoad').disabled = true;
+      status.textContent = C.anySteps[0];
+      try {
+        eng = await loadEngine(i => { status.textContent = C.anySteps[i]; });
+        $('anyStart').hidden = true;
+        form.hidden = false;
+        verbIn.focus();
+        if (verbIn.value) suggest();
+      } catch {
+        status.textContent = C.anyFail;
+        $<HTMLButtonElement>('anyLoad').disabled = false;
+      }
+    }
+    $('anyLoad').addEventListener('click', start);
+
+    // подсказки из таблицы глаголов Qutrub: огласовка и переходность
+    function suggest() {
+      if (!eng) return;
+      const w = clean(verbIn.value);
+      if (!hasAr(w)) { dict.innerHTML = ''; return; }
+      const found = eng.lookup(w);
+      const trLabel = (x: string) => x === 'ل' ? C.intransitive : x === 'م' ? C.transitive : C.transBoth;
+      dict.innerHTML = found.length
+        ? `<p class="small">${esc(C.anyDict)}</p><div class="any-sug">${found.map(f =>
+            `<button type="button" data-verb="${esc(f.verb)}" data-bab="${esc(f.future_type)}" data-tr="${f.transitive === 'ل' ? 0 : 1}">` +
+            `<span lang="ar" dir="rtl">${esc(f.verb)}</span> · ${esc(C.bab[f.future_type] || f.future_type)} · ${esc(trLabel(f.transitive))}</button>`).join('')}</div>`
+        : (w.replace(HARAKAT, '').length <= 3 && !HARAKAT.test(w) ? '' : `<p class="small muted">${esc(C.anyNoDict)}</p>`);
+    }
+    let timer = 0;
+    verbIn.addEventListener('input', () => { clearTimeout(timer); timer = window.setTimeout(suggest, 250); });
+    dict.addEventListener('click', e => {
+      const b = (e.target as HTMLElement).closest<HTMLButtonElement>('button[data-verb]');
+      if (!b) return;
+      verbIn.value = b.dataset.verb!;
+      setRadio('bab', b.dataset.bab!); setRadio('tr', b.dataset.tr!);
+    });
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      err.textContent = ''; out.innerHTML = '';
+      if (!eng) return;
+      const w = clean(verbIn.value);
+      const letters = w.replace(/[ً-ْٰ]/g, '');
+      if (!hasAr(w)) { err.textContent = C.anyNeedAr; return; }
+      const tri = letters.replace(/ّ/g, '').length <= 3;
+      if (tri && !HARAKAT.test(w)) { err.textContent = C.anyNeedVowels; suggest(); return; }
+      const bab = radio('bab');
+      if (tri && !bab) { err.textContent = C.anyNeedBab; return; }
+      const tr = radio('tr') !== '0';
+      let forms = null;
+      try { forms = eng.conjugate(w, bab || 'فتحة', tr); } catch { forms = null; }
+      if (!forms || !forms.past.some(Boolean)) { err.textContent = C.anyBad; return; }
+      const inList = items.find(li => li.dataset.v === normAr(w));
+      const link = inList ? `<p class="notice">${esc(C.inList)} <a href="${esc(inList.querySelector('a')!.getAttribute('href'))}"><span lang="ar" dir="rtl">${esc(inList.querySelector('.v-ar')!.textContent)}</span></a></p>` : '';
+      out.innerHTML = `<h3 class="any-h"><span lang="ar" dir="rtl">${esc(forms.past[3])} – ${esc(forms.present[3])}</span></h3>` +
+        `<p class="notice">${esc(C.auto)} ${esc(C.anyNote)}</p>${link}` + renderConjugation(forms, { transitive: tr, level: 4 });
+      initConjugation(out);
+      out.querySelector('h3')?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    });
+
+    // ---------- переход с главной: /conjugation/?v=كتب ----------
+    const pre = new URLSearchParams(location.search).get('v');
+    if (pre) {
+      q.value = pre;
+      if (!filter() && hasAr(pre)) { verbIn.value = pre.trim(); $('any').scrollIntoView({ block: 'start' }); }
+    }
+  </script>
+</Base>
+
+<style>
+  .types { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 4px; }
+  .types button { min-height: 44px; padding: 0 14px; border-radius: 99px; border: 1px solid var(--input-border); background: var(--sheet); color: var(--ink); font: 600 .95rem var(--sans); cursor: pointer; }
+  .types button[aria-pressed='true'] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .types .n { font-weight: 400; opacity: .85; }
+  .verbs { list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr)); gap: 10px; }
+  .verbs a { display: flex; flex-direction: column; gap: 2px; height: 100%; padding: 10px 14px; border: 1px solid var(--line); border-radius: var(--r-m); background: var(--sheet); text-decoration: none; color: var(--ink); }
+  .verbs a:hover { background: var(--hover); border-color: var(--line-strong); }
+  .v-ar { font-size: calc(1.55rem * var(--ar-scale)); line-height: 1.6; color: var(--accent); text-align: right; }
+  .v-ru { font-weight: 600; }
+  .v-t { font-size: .85rem; color: var(--ink-soft); }
+  [hidden] { display: none !important; }
+  .any { margin-top: 40px; padding-top: 20px; border-top: 2px solid var(--accent-2); }
+  .any fieldset { border: 1px solid var(--line); border-radius: var(--r-s); margin: 14px 0 6px; padding: 6px 12px 8px; }
+  .any legend { font-weight: 600; padding: 0 4px; }
+  .opt { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin: 0 18px 0 0; font-weight: 400; cursor: pointer; }
+  .opt input { width: 20px; height: 20px; accent-color: var(--accent); }
+  .opt [lang='ar'] { font-size: calc(1.3rem * var(--ar-scale)); }
+  #anyVerb { font-family: var(--ar); font-size: calc(1.5rem * var(--ar-scale)); max-width: 420px; }
+  .any-err { color: var(--bad-ink); font-weight: 600; margin-top: 10px; min-height: 1.5em; }
+  .any-dict :global(.any-sug) { display: flex; flex-wrap: wrap; gap: 6px; }
+  .any-dict :global(button) { min-height: 44px; padding: 0 12px; border-radius: var(--r-s); border: 1px solid var(--input-border); background: var(--sheet); color: var(--ink); font: .95rem var(--sans); cursor: pointer; }
+  .any-dict :global(button:hover) { background: var(--hover); }
+  .any-dict :global([lang='ar']) { font-size: calc(1.3rem * var(--ar-scale)); }
+  #anyOut :global(.any-h) { margin-top: 28px; }
+  #anyOut :global(.any-h [lang='ar']) { font-size: calc(2rem * var(--ar-scale)); color: var(--accent); font-weight: 400; }
+</style>
