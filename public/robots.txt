@@ -1,6 +1,6 @@
 User-agent: *
-Disallow: /unmuzaj/teacher/
-Disallow: /unmuzaj/me/
-Disallow: /unmuzaj/login/
-Disallow: /unmuzaj/board/
-Sitemap: https://otabekikrombek.github.io/unmuzaj/sitemap-index.xml
+Disallow: /teacher/
+Disallow: /me/
+Disallow: /login/
+Disallow: /board/
+Sitemap: https://allimni.net/sitemap-index.xml
