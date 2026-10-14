@@ -48,6 +48,31 @@
   {
    "kind": "quiz",
    "key": "matn-10"
+  },
+  {
+   "kind": "deck",
+   "key": "matn-10-slova",
+   "note": "урок 10"
+  },
+  {
+   "kind": "deck",
+   "key": "izafa-itog-slova",
+   "note": "итог по изафе"
+  },
+  {
+   "kind": "quiz",
+   "key": "izafa-itog",
+   "note": "итог по изафе"
+  },
+  {
+   "kind": "deck",
+   "key": "slitnye-2-slova",
+   "note": "слитные местоимения (2)"
+  },
+  {
+   "kind": "quiz",
+   "key": "slitnye-2",
+   "note": "слитные местоимения (2)"
   }
  ]
 }
