@@ -1,0 +1,19 @@
+---
+// Кнопка «Сообщить об ошибке» рядом с заданием. Открывает окно Feedback.astro.
+// item — ключ задания или слова (quiz:matn-10, words:w100#كِتَابٌ), label — то же словами.
+// Страница может менять data-feedback / data-feedback-label на ходу (текущее слово, вопрос).
+import { t } from '../i18n/ru';
+interface Props { item?: string; label?: string; text?: string; tone?: 'page' | 'study'; id?: string }
+const { item = '', label = '', text = t.feedback.button, tone = 'page', id } = Astro.props;
+---
+<button type="button" class={`fbb ${tone}`} id={id} data-feedback={item} data-feedback-label={label} data-pagefind-ignore>
+  <span aria-hidden="true">⚑</span> <span>{text}</span>
+</button>
+<style>
+  .fbb { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border-radius: var(--r-s); cursor: pointer;
+    border: 1px solid var(--line-strong); background: transparent; color: var(--ink-soft); font: 500 .95rem var(--sans); }
+  .fbb:hover { background: var(--hover); color: var(--ink); }
+  .fbb.study { border-color: var(--study-line); color: var(--study-muted); }
+  .fbb.study:hover { background: var(--study-chip); color: var(--study-ink); }
+  .fbb[hidden] { display: none; }
+</style>

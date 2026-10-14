@@ -3,6 +3,8 @@ import Base from '../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
 import { u } from '../../lib/url';
 import { SITE } from '../../config/site';
+import { t } from '../../i18n/ru';
+const FA = t.feedbackAdmin;
 const decks = await getCollection('decks');
 const quizzes = (await getCollection('quizzes')).map(q => q.data).sort((a, b) => b.added.localeCompare(a.added));
 // данные викторин для разбора: названия частей и пояснения к вопросам
@@ -41,6 +43,7 @@ const siteUrl = new URL(u(''), Astro.site).href;
         <button data-tab="stats" aria-selected="true">Статистика</button>
         <button data-tab="quizzes" aria-selected="false">Викторины</button>
         <button data-tab="people" aria-selected="false">Ученики и ПИН</button>
+        <button data-tab="messages" aria-selected="false" id="msgTab" hidden>{FA.tab} <span class="badge" id="msgBadge" hidden></span></button>
         <button data-tab="admin" aria-selected="false" id="adminTab" hidden>Администратор</button>
       </div>
 
@@ -92,6 +95,21 @@ const siteUrl = new URL(u(''), Astro.site).href;
         </form>
       </section>
 
+      <section data-panel="messages" hidden>
+        <div class="filters">
+          <label for="msgFilter">{FA.show}</label>
+          <select id="msgFilter">
+            <option value="new">{FA.filters.new}</option>
+            <option value="read">{FA.filters.read}</option>
+            <option value="fixed">{FA.filters.fixed}</option>
+            <option value="">{FA.filters.all}</option>
+          </select>
+          <button class="btn ghost sm" id="msgReload">{FA.reload}</button>
+        </div>
+        <p class="muted small">{FA.hint}</p>
+        <div id="msgList"></div>
+      </section>
+
       <section data-panel="admin" hidden>
         <form id="roleForm" class="box">
           <h2>Сделать пользователя учителем</h2>
@@ -132,7 +150,8 @@ const siteUrl = new URL(u(''), Astro.site).href;
         if (!s.data.session) throw new Error('no session');
         const r = await rpc<any>('teacher_classes');
         if (!r.ok) { $('gate').innerHTML = `<h1>Панель учителя</h1><p>У аккаунта ${esc(who.email)} нет прав учителя. Обратитесь к администратору сайта.</p>`; return; }
-        classes = r.classes; $('adminTab').hidden = !r.admin;
+        classes = r.classes; $('adminTab').hidden = !r.admin; $('msgTab').hidden = !r.admin;
+        if (r.admin) loadMsgs();
         $('gate').hidden = true; $('app').hidden = false; $('me').textContent = who.email;
         fillClasses();
       } catch { $('gate').innerHTML = `<h1>Панель учителя</h1><p>Вход устарел или нет связи.</p><p><a class="btn" href="${D.login}">Войти снова</a></p>`; }
@@ -376,7 +395,7 @@ const siteUrl = new URL(u(''), Astro.site).href;
         const a = r.attempt, m = QM[a.quiz] || { sections: {}, plan: [], explain: {} };
         const secRows = (m.plan as [string, number][]).map(([k]) => { const x = (a.answers as any[]).filter(y => y.s === k); return { s: k, ok: x.filter(y => y.ok).length, n: x.length }; }).filter(x => x.n);
         $('dbody').innerHTML = `<p>${fmtD(a.at)} · верно <b>${a.correct} из ${a.total}</b> (${pct(a)}%) · ${a.points} очков · ${fmtTime(a.time || 0)} · ${esc(a.level || '')}</p>` +
-          (secRows.length > 1 ? secBars(m.sections, secRows) : '') + reviewHTML(a.answers, m.sections, t.quiz, m.explain);
+          (secRows.length > 1 ? secBars(m.sections, secRows) : '') + reviewHTML(a.answers, m.sections, t.quiz, m.explain, { quiz: a.quiz, text: t.feedback.inQuestion });
       } catch { $('dbody').innerHTML = '<p>Не удалось загрузить разбор.</p>'; }
     }
     function renderQuizzes() {
@@ -428,6 +447,50 @@ const siteUrl = new URL(u(''), Astro.site).href;
       const csv = '﻿' + [head, ...rows].map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(';')).join('\r\n');
       const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = `unmuzaj_${cur?.join || 'class'}.csv`; a.click();
     });
+
+    // ---------- сообщения посетителей «Сообщить об ошибке» (только администратор) ----------
+    const FA = t.feedbackAdmin;
+    let msgs: any[] = [];
+    const httpUrl = (s: string) => (/^https?:\/\//i.test(s || '') ? s : ''); // ссылка только на обычный адрес сайта
+    const decoded = (s: string) => { try { return decodeURI(s); } catch { return s; } };
+    async function loadMsgs() {
+      $('msgList').innerHTML = `<p class="muted">${FA.loading}</p>`;
+      try {
+        const r = await rpc<any>('admin_feedback', { p_status: $<HTMLSelectElement>('msgFilter').value || null });
+        if (!r.ok) throw 0;
+        msgs = r.rows; $('msgBadge').textContent = String(r.counts.new); $('msgBadge').hidden = !r.counts.new;
+        renderMsgs();
+      } catch { $('msgList').innerHTML = `<p>${FA.fail}</p>`; }
+    }
+    function renderMsgs() {
+      const act = (st: string, text: string) => `<button class="btn ghost sm" data-st="${st}">${text}</button>`;
+      $('msgList').innerHTML = msgs.length ? msgs.map(m => {
+        const who = m.nickname ? `${esc(m.nickname)}${m.class ? ` · «${esc(m.class)}»` : ''}` : FA.guest;
+        const url = httpUrl(m.page);
+        const meta: [string, string][] = [];
+        if (m.page) meta.push([FA.page, url ? `<a href="${esc(url)}" target="_blank" rel="noopener">${esc(decoded(m.page))}</a>` : esc(m.page)]);
+        if (m.item_label || m.item) meta.push([FA.item, `${m.item_label ? wrapAr(m.item_label) : ''} <small class="muted">${esc(m.item || '')}</small>`]);
+        if (m.contact) meta.push([FA.contact, esc(m.contact)]);
+        if (m.device) meta.push([FA.device, `<small>${esc(m.device)}</small>`]);
+        return `<article class="fbm st-${esc(m.status)}" data-id="${m.id}">
+          <p class="fbm-h"><b>№${m.id}</b> · ${fmtD(m.at)} · <span class="fbm-st">${esc((FA.status as Record<string, string>)[m.status] || m.status)}</span> · ${who} · <span class="muted">${m.sent ? FA.sent : FA.notSent}</span></p>
+          <p class="fbm-t" dir="auto">${esc(m.message)}</p>
+          <dl class="fbm-meta">${meta.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl>
+          <div class="fbm-a">${m.status === 'new' ? act('read', FA.markRead) : ''}${m.status !== 'fixed' ? act('fixed', FA.markFixed) : ''}${m.status !== 'new' ? act('new', FA.markNew) : ''}${act('delete', FA.del)}</div>
+        </article>`;
+      }).join('') : `<p class="muted">${FA.empty}</p>`;
+    }
+    $('msgList').addEventListener('click', async e => {
+      const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-st]');
+      if (!b) return;
+      const id = +b.closest<HTMLElement>('.fbm')!.dataset.id!, st = b.dataset.st!;
+      if (st === 'delete' && !confirm(FA.confirmDel)) return;
+      b.disabled = true;
+      try { const r = await rpc<any>('admin_feedback_set', { p_ids: [id], p_status: st }); if (!r.ok) throw 0; }
+      catch { alert(FA.fail); }
+      loadMsgs();
+    });
+    $('msgFilter').addEventListener('change', loadMsgs); $('msgReload').addEventListener('click', loadMsgs);
 
     // ---------- вкладки, администратор ----------
     document.querySelectorAll<HTMLElement>('[data-tab]').forEach(b => b.addEventListener('click', () => {
@@ -508,6 +571,20 @@ const siteUrl = new URL(u(''), Astro.site).href;
   .db { padding: 14px 16px; max-height: 75vh; overflow: auto; }
   :global(.pins td.pin) { font: 700 1.3rem var(--serif); letter-spacing: .1em; }
   .msg { min-height: 1.4em; color: var(--lapis); }
+  .badge { display: inline-block; min-width: 1.5em; padding: 0 6px; border-radius: 99px; background: var(--sun); color: var(--on-sun); font-size: .8rem; line-height: 1.5; text-align: center; }
+  .badge[hidden] { display: none; }
+  #msgList :global(.fbm) { background: var(--sheet); border: 1px solid var(--line); border-left: 4px solid var(--line-strong); border-radius: var(--r-m); padding: 12px 14px; margin-bottom: 12px; }
+  #msgList :global(.fbm.st-new) { border-left-color: var(--accent); }
+  #msgList :global(.fbm-h) { font-size: .92rem; color: var(--ink-soft); margin: 0 0 6px; overflow-wrap: anywhere; }
+  #msgList :global(.fbm-h b) { color: var(--ink); }
+  #msgList :global(.fbm.st-new .fbm-st) { font-weight: 700; color: var(--accent); }
+  #msgList :global(.fbm-t) { white-space: pre-wrap; overflow-wrap: anywhere; font-size: 1.02rem; margin: 0 0 8px; }
+  #msgList :global(.fbm-meta) { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 2px 12px; margin: 0 0 8px; font-size: .92rem; }
+  #msgList :global(.fbm-meta dt) { color: var(--ink-soft); }
+  #msgList :global(.fbm-meta dd) { margin: 0; overflow-wrap: anywhere; }
+  #msgList :global(.fbm-meta .ar) { font-size: calc(1.2rem * var(--ar-scale)); }
+  #msgList :global(.fbm-a) { display: flex; gap: 8px; flex-wrap: wrap; }
+  @media (max-width: 480px) { #msgList :global(.fbm-meta) { grid-template-columns: 1fr; } #msgList :global(.fbm-meta dd) { margin-bottom: 4px; } }
   #print { display: none; }
   .tp :global(table.hardq td) { white-space: normal; min-width: 160px; }
   .tp :global(table.hardq .ar), dialog :global(.rv .ar) { font-family: var(--ar); font-size: calc(1.25rem * var(--ar-scale)); }

@@ -90,6 +90,9 @@ dialog { background: var(--sheet); color: var(--ink); }
 .rvq { font-weight: 700; margin-bottom: 6px; }
 .rve { color: var(--ink-soft); margin-top: 6px; font-style: italic; }
 .rv .ar { font-size: calc(1.3em * var(--ar-scale)); line-height: 1.7; }
+.rv-fb { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-top: 6px; padding: 0 10px; border: 0; border-radius: var(--r-s);
+  background: transparent; color: var(--ink-soft); font: 500 .9rem var(--sans); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.rv-fb:hover { background: color-mix(in srgb, currentColor 10%, transparent); color: var(--ink); }
 .qsecs { display: grid; grid-template-columns: minmax(0, max-content) minmax(60px, 1fr) auto; gap: 6px 10px; align-items: center; margin: 12px 0; }
 .qsn { font-size: .95rem; }
 .qsn [lang='ar'] { font-size: calc(1.15rem * var(--ar-scale)); }

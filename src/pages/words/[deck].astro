@@ -4,6 +4,7 @@ import { getCollection } from 'astro:content';
 import { u } from '../../lib/url';
 import { t } from '../../i18n/ru';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FeedbackButton from '../../components/FeedbackButton.astro';
 export async function getStaticPaths() {
   return (await getCollection('decks')).map(d => ({ params: { deck: d.data.key }, props: { d: d.data } }));
 }
@@ -52,12 +53,13 @@ const themes = [...new Set(d.items.map(i => i.t))];
       <div data-panel="test" hidden><div id="test"></div></div>
       <div data-panel="hard" hidden><div id="hard" class="sheet"></div></div>
       <div data-panel="board" hidden><div id="board" class="sheet"></div></div>
+      <p class="fb-row"><FeedbackButton id="fbWord" tone="study" item={`words:${d.key}`} label={d.title} /></p>
     </div>
   </section>
   <div class="wrap below">
     <p class="muted small">Новые слова и слова с ошибками попадаются чаще, выученные — реже. Нажмите «Знаю», если вспомнили перевод сами; иначе — «Не знаю», и ответ покажется.</p>
   </div>
-  <script type="application/json" id="deck-data" set:html={JSON.stringify({ key: d.key, items: d.items, login: u('login/') })} />
+  <script type="application/json" id="deck-data" set:html={JSON.stringify({ key: d.key, title: d.title, items: d.items, login: u('login/') })} />
   <script>
     import { DeckStore, type NetState } from '../../lib/deckStore';
     import { getWho, rpc, token } from '../../lib/api';
@@ -68,6 +70,12 @@ const themes = [...new Set(d.items.map(i => i.t))];
     const $ = (id: string) => document.getElementById(id)!;
     const esc = (s: unknown) => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
     const store = new DeckStore(D.key);
+    // «Сообщить об ошибке» прикладывает слово, которое сейчас на экране
+    function fbWord(w: Word | null) {
+      const b = $('fbWord');
+      b.dataset.feedback = w ? `words:${D.key}#${w.a}` : `words:${D.key}`;
+      b.dataset.feedbackLabel = w ? `${w.a} — ${w.r} (${w.t})` : D.title;
+    }
     const who = getWho();
 
     const netText: Record<NetState, string> = {
@@ -103,6 +111,7 @@ const themes = [...new Set(d.items.map(i => i.t))];
       stats();
       const c = $('card'), A = pool();
       $('cnt').textContent = A.length ? `В этой подборке ${A.length} слов, из них новых: ${A.filter(w => !rec(store.S, w).n).length}` : '';
+      fbWord(cur);
       if (!cur) { c.innerHTML = `<span class="ru">${sel.value === '!' ? 'Трудных слов пока нет' : 'Здесь пусто'}</span>`; return; }
       const r = rec(store.S, cur);
       const tag = !r.n ? '<span class="tag new">новое слово</span>' : r.box <= 1 ? `<span class="tag err">ошибок: ${r.bad}</span>` : '<span class="tag rep">повторение</span>';
@@ -142,6 +151,7 @@ const themes = [...new Set(d.items.map(i => i.t))];
     function showQ() {
       stats();
       const T = $('test');
+      fbWord(qi < Qs.length ? Qs[qi].w : null);
       if (qi >= Qs.length) {
         store.recordTest(score, Qs.length, Math.round((Date.now() - t0) / 1000));
         const lvl = score >= 18 ? 'Отлично' : score >= 14 ? 'Хорошо' : score >= 10 ? 'Удовлетворительно' : 'Нужно повторить';
@@ -189,6 +199,7 @@ const themes = [...new Set(d.items.map(i => i.t))];
     function tab(name: string) {
       document.querySelectorAll<HTMLElement>('[data-tab]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
       document.querySelectorAll<HTMLElement>('[data-panel]').forEach(p => (p.hidden = p.dataset.panel !== name));
+      fbWord(null);
       if (name === 'test') startTest(); if (name === 'hard') hard(); if (name === 'board') board(); if (name === 'cards') next();
     }
     document.querySelectorAll<HTMLElement>('[data-tab]').forEach(b => b.addEventListener('click', () => tab(b.dataset.tab!)));
@@ -252,5 +263,6 @@ const themes = [...new Set(d.items.map(i => i.t))];
   .sheet :global(li.me) { font-weight: 700; color: var(--lapis); }
   .sheet :global(.hint) { color: var(--ink-soft); text-align: left; }
   .below { margin-top: 16px; }
+  .fb-row { margin: 16px 0 0; text-align: center; }
   @media (max-width: 640px) { .controls { grid-template-columns: 1fr; } .seg button { flex: 1; padding: 0 6px; font-size: .88rem; } }
 </style>

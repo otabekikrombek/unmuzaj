@@ -38,7 +38,7 @@ http.createServer(async (req, res) => {
     const c = await pool.connect();
     try {
       await c.query('begin');
-      await c.query(`set local role ${claims.role === 'authenticated' ? 'authenticated' : 'anon'}`);
+      await c.query(`set local role ${['authenticated', 'service_role'].includes(claims.role) ? claims.role : 'anon'}`);
       await c.query(`select set_config('request.jwt.claims', $1, true), set_config('request.jwt.claim.sub', $2, true)`, [JSON.stringify(claims), claims.sub || '']);
       const r = await c.query(sql, vals);
       await c.query('commit');
@@ -49,3 +49,4 @@ http.createServer(async (req, res) => {
   } catch (e) { send(res, 500, { message: String(e) }); }
 }).listen(8787, () => console.log('mock api :8787'));
 console.log('ANON=' + jwt.sign({ role: 'anon', iss: 'supabase' }, SECRET));
+console.log('SERVICE=' + jwt.sign({ role: 'service_role', iss: 'supabase' }, SECRET)); // для теста Edge Function (tests/feedback_telegram.mjs)

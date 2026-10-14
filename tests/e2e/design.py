@@ -70,6 +70,11 @@ with sync_playwright() as p:
                 pg.click('[data-open-search]'); pg.fill('#srchQ', 'книга'); pg.wait_for_selector('#srchRes li')
                 total += axe(pg, f'окно поиска [{pal}/{mode}/{w}]')
                 if w == 360: pg.screenshot(path=os.path.join(OUT, f'search_{pal}_{mode}_{w}.png'))
+                pg.keyboard.press('Escape')
+                # окно «Сообщить об ошибке» (поверх учебной страницы)
+                pg.goto(B + 'words/w100/'); pg.click('#fbWord'); pg.wait_for_selector('#fbDlg[open]'); pg.fill('#fbMsg', 'проверка')
+                total += axe(pg, f'окно «Сообщить об ошибке» [{pal}/{mode}/{w}]'); check(f'«Сообщить об ошибке» без прокрутки [{pal}/{mode}/{w}]', noscroll(pg))
+                if w == 360: pg.screenshot(path=os.path.join(OUT, f'feedback_{pal}_{mode}_{w}.png'))
                 ctx.close()
         print(f'палитра {pal}: готово ({int(time.time() - t0)} с)')
 

@@ -5,6 +5,7 @@ import { u } from '../../lib/url';
 import { t } from '../../i18n/ru';
 import { secName } from '../../lib/quizView';
 import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import FeedbackButton from '../../components/FeedbackButton.astro';
 export async function getStaticPaths() {
   return (await getCollection('quizzes')).map(q => ({ params: { quiz: q.data.key }, props: { q: q.data } }));
 }
@@ -14,7 +15,7 @@ const back = q.kind === 'test' ? ['tests/', t.nav.tests] : ['quizzes/', t.nav.qu
 const data = {
   quiz: { key: q.key, title: q.title, title_ar: q.title_ar, kind: q.kind, plan: q.plan, sections: q.sections, ins: q.ins, text_in: q.text_in,
     para: q.para, lis: q.lis, audio: q.audio ? u(q.audio) : undefined, levels: q.levels, pool: q.pool },
-  t: t.quiz, login: u('login/') + '#class', list: u(back[0]),
+  t: t.quiz, fbText: t.feedback.inQuestion, login: u('login/') + '#class', list: u(back[0]),
 };
 // Разметка для поисковиков: что это за задание (без вопросов и ответов)
 const ld = {
@@ -87,6 +88,7 @@ const ld = {
         <ol class="lb" id="board"></ol>
         <p class="note" id="bMine"></p>
       </div>
+      <p class="fb-row"><FeedbackButton id="fbQuiz" tone="study" item={`quiz:${q.key}`} label={q.title} /></p>
     </div>
   </section>
 
@@ -111,7 +113,10 @@ const ld = {
     const N = total(Q);
     const explain: Record<number, string> = {}; Q.pool.forEach(p => (explain[p.id] = p.e));
     const SCREENS = ['sStart', 'sCount', 'sIntro', 'sQ', 'sEnd', 'sBoard'];
-    const show = (...ids: string[]) => SCREENS.forEach(s => ($(s).hidden = !ids.includes(s)));
+    const show = (...ids: string[]) => {
+      SCREENS.forEach(s => ($(s).hidden = !ids.includes(s)));
+      $('fbQuiz').hidden = ids.includes('sQ') || ids.includes('sCount'); // во время вопроса идёт таймер; об ошибке в вопросе — в «Моих ответах»
+    };
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     // ---------- кто проходит ----------
@@ -255,7 +260,7 @@ const ld = {
       if (who?.kind === 'pin') { $('sBoard').hidden = false; loadBoard(); }
     }
     $('myAns').addEventListener('click', () => openModal(T.reviewTitle, `<p>${esc($('eLvl').textContent)}</p>` +
-      (Q.plan.length > 1 ? secBars(Q.sections, bySection(Q, log)) : '') + reviewHTML(log, Q.sections, T as any, explain)));
+      (Q.plan.length > 1 ? secBars(Q.sections, bySection(Q, log)) : '') + reviewHTML(log, Q.sections, T as any, explain, { quiz: Q.key, text: D.fbText })));
     $('again').addEventListener('click', () => { $('who').innerHTML = whoLine(); show('sStart'); scrollTo(0, 0); });
 
     // ---------- рейтинг класса (лучший результат каждого, только псевдонимы) ----------
@@ -356,6 +361,7 @@ const ld = {
   .mb :global(.mt) { font-family: var(--ar); font-size: calc(1.8rem * var(--ar-scale)); text-align: center; font-weight: 700; }
   .mb :global(.lab) { color: var(--accent); font-weight: 700; font-family: var(--ar); font-size: calc(1.1rem * var(--ar-scale)); margin: 14px 0 0; }
   .mb :global(.ptxt) { font-family: var(--ar); font-size: calc(1.5rem * var(--ar-scale)); line-height: 2; text-align: right; margin: 4px 0; }
+  .fb-row { margin: 0; text-align: center; }
   canvas#conf { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 30; }
   @media (max-width: 560px) { .tiles { grid-template-columns: 1fr; } .tiles :global(.tile) { min-height: 60px; } .card { padding: 16px; } }
   @media (prefers-reduced-motion: reduce) { .count { animation: none; } .tbar i { transition: none; } }

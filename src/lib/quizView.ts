@@ -28,14 +28,16 @@ export function secBars(sections: Record<string, Section>, rows: { s: string; ok
 
 type Row = { id?: number; s: string; q: string; a: string; c: string; ok: boolean; sec?: number | null };
 type L = { question: string; ok: string; bad: string; yourAnswer: string; rightAnswer: string; why: string; noAnswer: string };
-/** разбор ответов; explain — пояснения по id вопроса (из данных викторины) */
-export function reviewHTML(rows: Row[], sections: Record<string, Section>, l: L, explain: Record<number, string> = {}): string {
+/** разбор ответов; explain — пояснения по id вопроса (из данных викторины);
+ *  fb — кнопка «Ошибка в вопросе?» у каждого вопроса (открывает окно Feedback.astro) */
+export function reviewHTML(rows: Row[], sections: Record<string, Section>, l: L, explain: Record<number, string> = {}, fb?: { quiz: string; text: string }): string {
   return rows.map((x, i) => {
     const e = x.id != null ? explain[x.id] : '';
+    const report = fb ? `<button type="button" class="rv-fb" data-feedback="${esc(`quiz:${fb.quiz}${x.id != null ? '#' + x.id : ''}`)}" data-feedback-label="${esc(x.q)}"><span aria-hidden="true">⚑</span> ${esc(fb.text)}</button>` : '';
     return `<div class="rv ${x.ok ? 'ok' : 'bad'}"><div class="rvh"><span>${secName(sections[x.s])} · ${l.question.replace('{n}', String(i + 1))}</span>` +
       `<span>${x.ok ? l.ok : l.bad}${x.sec != null ? ` · ${Math.round(x.sec * 10) / 10} с` : ''}</span></div>` +
       `<div class="rvq">${wrapAr(x.q)}</div><div>${l.yourAnswer} <b>${x.a ? wrapAr(x.a) : esc(l.noAnswer)}</b></div>` +
       (x.ok ? '' : `<div>${l.rightAnswer} <b>${wrapAr(x.c)}</b></div>`) +
-      (e ? `<div class="rve">${l.why} ${wrapAr(e)}</div>` : '') + '</div>';
+      (e ? `<div class="rve">${l.why} ${wrapAr(e)}</div>` : '') + report + '</div>';
   }).join('');
 }

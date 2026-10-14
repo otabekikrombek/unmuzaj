@@ -1,0 +1,138 @@
+---
+// «Сообщить об ошибке» (CLAUDE.md §15.2): окно с формой, одно на страницу (подключено в Base.astro).
+// Открывается любой кнопкой с атрибутом data-feedback (см. FeedbackButton.astro):
+//   data-feedback="quiz:matn-10#12"          — ключ задания или слова (может быть пустым)
+//   data-feedback-label="Вопрос 12: …"       — то же словами, для автора сайта
+// Адрес страницы, язык и устройство подставляются сами. Запись — RPC submit_feedback (supabase/migrations/0003_feedback.sql).
+import { t } from '../i18n/ru';
+const F = t.feedback;
+---
+<dialog id="fbDlg" class="fbd" aria-labelledby="fbTitle" data-pagefind-ignore>
+  <div class="fb-head">
+    <h2 id="fbTitle">{F.title}</h2>
+    <button type="button" class="fb-x" data-close aria-label={t.nav.close}>✕</button>
+  </div>
+  <form id="fbForm" class="fb-body" novalidate>
+    <p class="muted small fb-lead">{F.lead}</p>
+    <label for="fbMsg">{F.what}</label>
+    <textarea id="fbMsg" rows="5" maxlength="2000" placeholder={F.whatPh} aria-describedby="fbCount fbOut"></textarea>
+    <p class="fb-count muted small" id="fbCount"></p>
+    <label for="fbContact">{F.contact} <span class="fb-opt">({F.optional})</span></label>
+    <input id="fbContact" type="text" maxlength="200" autocomplete="email" placeholder={F.contactPh} aria-describedby="fbContactHint" />
+    <p class="muted small fb-hint" id="fbContactHint">{F.contactHint}</p>
+    <!-- ловушка для программ-спамеров: человек это поле не видит и не заполняет -->
+    <div class="fb-hp" aria-hidden="true"><label for="fbSite">Website</label><input id="fbSite" type="text" tabindex="-1" autocomplete="off" /></div>
+    <div class="fb-ctx small">
+      <p>{F.attached}</p>
+      <ul id="fbCtx"></ul>
+      <p>{F.privacy}</p>
+    </div>
+    <p class="fb-out" id="fbOut" role="status" aria-live="polite"></p>
+    <div class="fb-foot">
+      <button class="btn" type="submit" id="fbSend">{F.send}</button>
+      <button class="btn ghost" type="button" data-close>{F.cancel}</button>
+    </div>
+  </form>
+  <div class="fb-body fb-done" id="fbDone" hidden>
+    <p class="fb-thanks" role="status">{F.thanks}</p>
+    <button class="btn" type="button" data-close>{F.close}</button>
+  </div>
+</dialog>
+<script type="application/json" id="fb-data" set:html={JSON.stringify(F)} />
+
+<script>
+  const T = JSON.parse(document.getElementById('fb-data')!.textContent!);
+  const MAX = 2000;
+  const $ = <E extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as E;
+  const dlg = $<HTMLDialogElement>('fbDlg'), form = $<HTMLFormElement>('fbForm'), done = $('fbDone');
+  const msg = $<HTMLTextAreaElement>('fbMsg'), contact = $<HTMLInputElement>('fbContact'), trap = $<HTMLInputElement>('fbSite');
+  const out = $('fbOut'), sendBtn = $<HTMLButtonElement>('fbSend');
+  const esc = (s: unknown) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
+  const f = (s: string, v: Record<string, unknown>) => s.replace(/\{(\w+)\}/g, (_, k) => String(v[k] ?? ''));
+  const rnd = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+  let item = '', label = '', busy = false, sessionDev = '';
+
+  /** случайный номер устройства: нужен только для лимита «5 сообщений за 10 минут» */
+  function deviceId() {
+    try {
+      let v = localStorage.getItem('unmuzaj:dev');
+      if (!v) { v = rnd(); localStorage.setItem('unmuzaj:dev', v); }
+      return v;
+    } catch { return (sessionDev ||= rnd()); }
+  }
+  const signedIn = () => { try { return !!(localStorage.getItem('unmuzaj:who') || sessionStorage.getItem('unmuzaj:who')); } catch { return false; } };
+  const page = () => location.href.split('#')[0];
+
+  function say(text: string, bad = false) { out.textContent = text; out.classList.toggle('bad', bad); }
+  function counter() { $('fbCount').textContent = f(T.count, { n: msg.value.length, max: MAX }); }
+
+  function open(it: string, lb: string) {
+    item = it; label = lb;
+    let path = location.pathname + location.search;
+    try { path = decodeURI(path); } catch {}
+    // dir="ltr": подпись — русская строка с арабскими словами, иначе тире «уезжает» влево
+    $('fbCtx').innerHTML = [`${T.page}: <bdi dir="ltr">${esc(path)}</bdi>`, label || item ? `${T.item}: <bdi dir="ltr">${esc(label || item)}</bdi>` : '', T.device, signedIn() ? T.who : '']
+      .filter(Boolean).map(x => `<li>${x}</li>`).join('');
+    form.hidden = false; done.hidden = true; say(''); counter();
+    if (!dlg.open) dlg.showModal();
+    msg.focus();
+  }
+  // кнопки создаются и меняются страницами (вопросы викторины, текущее слово), поэтому слушаем весь документ
+  let opener: HTMLElement | null = null;
+  document.addEventListener('click', e => {
+    const b = (e.target as HTMLElement).closest<HTMLElement>('[data-feedback]');
+    if (!b) return;
+    opener = b; open(b.dataset.feedback || '', b.dataset.feedbackLabel || '');
+  });
+  dlg.addEventListener('close', () => opener?.focus?.());
+  dlg.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => dlg.close()));
+  dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+  msg.addEventListener('input', counter);
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    if (busy) return;
+    const text = msg.value.trim();
+    if (!text) { say(T.errEmpty, true); msg.focus(); return; }
+    if (text.length > MAX) { say(f(T.errLong, { max: MAX }), true); msg.focus(); return; }
+    if (trap.value) { form.hidden = true; done.hidden = false; return; } // спам-программа: делаем вид, что отправлено
+    busy = true; sendBtn.disabled = true; sendBtn.textContent = T.sending; say('');
+    try {
+      // связь с базой подгружается только при отправке, чтобы не утяжелять каждую страницу
+      const { rpc, token, device } = await import('../lib/api');
+      const r = await rpc<{ ok: boolean; err?: string }>('submit_feedback', { p_token: token(), p: {
+        message: text, contact: contact.value.trim(), page: page(), item, item_label: label, lang: document.documentElement.lang,
+        device: `${device()} · ${innerWidth}×${innerHeight} · ${navigator.userAgent}`, device_id: deviceId(),
+      } });
+      if (r?.ok) { msg.value = ''; form.hidden = true; done.hidden = false; done.querySelector<HTMLElement>('.btn')?.focus(); }
+      else say(r?.err === 'rate' ? T.errRate : r?.err === 'too_long' ? f(T.errLong, { max: MAX }) : r?.err === 'empty' ? T.errEmpty : T.errNet, true);
+    } catch { say(T.errNet, true); }
+    finally { busy = false; sendBtn.disabled = false; sendBtn.textContent = T.send; }
+  });
+</script>
+
+<style>
+  .fbd { border: 1px solid var(--line); border-radius: var(--r-l); padding: 0; width: min(520px, calc(100vw - 24px)); max-height: calc(100vh - 24px); box-shadow: var(--shadow); }
+  .fbd::backdrop { background: rgba(0, 0, 0, .45); }
+  .fb-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--sheet); z-index: 1; }
+  .fb-head h2 { margin: 0; font-size: 1.25rem; }
+  .fb-x { border: 0; background: transparent; color: var(--ink); font-size: 1.3rem; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; flex: none; }
+  .fb-x:hover { background: var(--hover); }
+  .fb-body { padding: 4px 16px 16px; }
+  .fb-lead { margin: 10px 0 0; }
+  .fb-body label { margin-top: 14px; }
+  textarea { resize: vertical; min-height: 120px; line-height: 1.45; }
+  .fb-count { text-align: right; margin: 4px 0 0; }
+  .fb-opt { font-weight: 400; color: var(--ink-soft); }
+  .fb-hint { margin: 4px 0 0; }
+  .fb-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .fb-ctx { background: var(--surface-2); color: var(--ink); border-radius: var(--r-s); padding: 8px 12px; margin-top: 14px; }
+  .fb-ctx p { margin: 0; }
+  .fb-ctx ul { margin: 4px 0 6px; padding-left: 20px; overflow-wrap: anywhere; }
+  .fb-out { min-height: 1.4em; margin: 10px 0 0; }
+  .fb-out.bad { color: var(--bad-ink); font-weight: 600; }
+  .fb-foot { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+  .fb-done { padding-top: 16px; }
+  .fb-thanks { font-size: 1.1rem; font-weight: 600; color: var(--ink); }
+  .fb-body[hidden] { display: none; }
+</style>

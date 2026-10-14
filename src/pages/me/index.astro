@@ -45,7 +45,7 @@ const decks = (await getCollection('decks')).map(d => ({ key: d.data.key, title:
           const a = list.find(x => x.id === b.dataset.id), m = D.quizMeta[b.dataset.quiz!];
           if (!a || !m) throw 0;
           const secRows = (m.plan as [string, number][]).map(([k]) => { const x = (a.answers as any[]).filter(y => y.s === k); return { s: k, ok: x.filter(y => y.ok).length, n: x.length }; }).filter(x => x.n);
-          rv.innerHTML = `<h3>${esc(m.title)} · ${new Date(a.at).toLocaleString('ru-RU')}</h3>` + (secRows.length > 1 ? secBars(m.sections, secRows) : '') + reviewHTML(a.answers, m.sections, t.quiz, m.explain);
+          rv.innerHTML = `<h3>${esc(m.title)} · ${new Date(a.at).toLocaleString('ru-RU')}</h3>` + (secRows.length > 1 ? secBars(m.sections, secRows) : '') + reviewHTML(a.answers, m.sections, t.quiz, m.explain, { quiz: b.dataset.quiz!, text: t.feedback.inQuestion });
           rv.scrollIntoView({ behavior: 'smooth' });
         } catch { rv.innerHTML = '<p>Не удалось загрузить разбор.</p>'; }
       }));

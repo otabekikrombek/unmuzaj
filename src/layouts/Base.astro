@@ -6,6 +6,7 @@ import { u } from '../lib/url';
 import { t } from '../i18n/ru';
 import LookPanel from '../components/LookPanel.astro';
 import SearchPanel from '../components/SearchPanel.astro';
+import Feedback from '../components/Feedback.astro';
 
 interface Props {
   title?: string; description?: string; noindex?: boolean; wide?: boolean;
@@ -113,6 +114,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
             <li><a href={u('about/')}>{t.footer.about}</a></li>
             <li><a href={u('privacy/')}>{t.footer.privacy}</a></li>
             <li><a href={u('teacher/')}>{t.nav.teacher}</a></li>
+            <li><button type="button" class="foot-fb" data-feedback>{t.feedback.button}</button></li>
           </ul>
         </div>
       </nav>
@@ -121,6 +123,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
   </footer>}
   {!bare && <SearchPanel />}
   {!bare && <LookPanel />}
+  {!bare && <Feedback />}
   <script>
     import { getLook, applyLook } from '../lib/look';
     applyLook(getLook()); // цвет строки браузера и событие для страниц, которым нужна тема
@@ -225,6 +228,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
   .foot-list { list-style: none; padding: 0; margin: 0 0 12px; }
   .foot-list li { padding: 3px 0; }
   .foot-list a { display: inline-block; padding: 4px 0; }
+  .foot-fb { display: inline-block; padding: 4px 0; border: 0; background: transparent; color: var(--foot-link); font: inherit; text-align: left; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
   .foot-muted { color: var(--foot-muted); }
   .foot-note { grid-column: 1 / -1; margin: 0; }
   @media (max-width: 760px) { .foot-grid { grid-template-columns: 1fr; } }

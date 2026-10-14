@@ -4,6 +4,7 @@ import PageHead from '../../components/PageHead.astro';
 import { getCollection } from 'astro:content';
 import { u } from '../../lib/url';
 import { t } from '../../i18n/ru';
+import FeedbackButton from '../../components/FeedbackButton.astro';
 export async function getStaticPaths() {
   return (await getCollection('exercises')).map(e => ({ params: { ex: e.data.key }, props: { e: e.data } }));
 }
@@ -13,5 +14,6 @@ const { e } = Astro.props;
   <PageHead title={e.title} ar={t.sectionsAr.exercises} lead={e.description} />
   <div class="wrap narrow">
     {e.legacy && <><p><a class="btn" href={u(e.legacy)}>Начать</a></p><p class="notice">{t.common.oldVersion}</p></>}
+    <p><FeedbackButton item={`exercises:${e.key}`} label={e.title} /></p>
   </div>
 </Base>

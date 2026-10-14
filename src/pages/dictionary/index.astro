@@ -3,6 +3,7 @@ import Base from '../../layouts/Base.astro';
 import PageHead from '../../components/PageHead.astro';
 import dict from '../../data/dictionary.json';
 import { t } from '../../i18n/ru';
+import FeedbackButton from '../../components/FeedbackButton.astro';
 const total = dict.reduce((a, g) => a + g.items.length, 0);
 ---
 <Base title={t.nav.dictionary} description="Тематический арабско-русский словарь с поиском: огласовки, множественное число, пары антонимов.">
@@ -11,6 +12,7 @@ const total = dict.reduce((a, g) => a + g.items.length, 0);
     <label for="q">Поиск</label>
     <input id="q" type="search" placeholder="например: книга, كتاب" autocomplete="off" />
     <p class="muted small" id="cnt" aria-live="polite"></p>
+    <p><FeedbackButton id="fbDict" item="dictionary" label={t.nav.dictionary} /></p>
     <div id="dict">
       {dict.map(g => (
         <section class="theme" data-topic>
@@ -29,12 +31,17 @@ const total = dict.reduce((a, g) => a + g.items.length, 0);
     const rows = [...document.querySelectorAll<HTMLTableRowElement>('#dict tr')];
     const keys = rows.map(r => norm(r.dataset.s! + ' ' + r.dataset.a!));
     const q = document.getElementById('q') as HTMLInputElement, cnt = document.getElementById('cnt')!;
+    const fb = document.getElementById('fbDict')!, fbBase = fb.dataset.feedbackLabel!;
     function run() {
       const v = norm(q.value);
       let n = 0;
       rows.forEach((r, i) => { const ok = !v || keys[i].includes(v); r.hidden = !ok; if (ok) n++; });
       document.querySelectorAll<HTMLElement>("[data-topic]").forEach(s => { s.hidden = !s.querySelector('tr:not([hidden])'); });
       cnt.textContent = v ? `Найдено: ${n}` : '';
+      // «Сообщить об ошибке» прикладывает запрос, а если найдено 1–3 слова — сами слова
+      const shown = v ? rows.filter(r => !r.hidden) : [];
+      fb.dataset.feedback = v ? `dictionary?q=${q.value.trim()}` : 'dictionary';
+      fb.dataset.feedbackLabel = shown.length && shown.length <= 3 ? shown.map(r => `${r.dataset.a} — ${r.dataset.s}`).join('; ') : v ? `${fbBase}: «${q.value.trim()}»` : fbBase;
     }
     q.addEventListener('input', run);
     // переход из поиска по сайту: /dictionary/?q=книга
