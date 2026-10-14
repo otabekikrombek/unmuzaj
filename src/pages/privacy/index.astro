@@ -3,7 +3,7 @@ import Base from '../../layouts/Base.astro';
 import PageHead from '../../components/PageHead.astro';
 import { SITE } from '../../config/site';
 ---
-<Base title="Конфиденциальность" description="Какие данные собирает сайт Unmuzaj и как их удалить.">
+<Base title="Конфиденциальность" description={`Какие данные собирает сайт ${SITE.name} и как их удалить.`}>
   <PageHead title="Конфиденциальность" />
   <div class="wrap narrow prose">
     <p class="notice">Черновик. Текст будет уточнён.</p>

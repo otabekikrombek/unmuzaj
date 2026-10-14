@@ -1,9 +1,10 @@
 ---
+import { SITE } from '../../config/site';
 import Base from '../../layouts/Base.astro';
 import PageHead from '../../components/PageHead.astro';
 import { u } from '../../lib/url';
 ---
-<Base title="Вход" description="Вход на сайт Unmuzaj: для учеников класса и по email." noindex>
+<Base title="Вход" description={`Вход на сайт ${SITE.name}: для учеников класса и по email.`} noindex>
   <PageHead title="Вход" ar="الدُّخُولُ" lead="Заниматься можно и без входа. Вход нужен, чтобы прогресс сохранялся в облаке и был виден на любом устройстве." />
   <div class="wrap login">
     <section id="class" class="box">
