@@ -1,0 +1,15 @@
+{
+  "_note": "Глоссарий терминов для переводов (CLAUDE.md §15.1). Черновик: термины утверждает заказчик. ru → uz (латиница) / en.",
+  "terms": [
+    { "ru": "существительное (имя)", "uz": "ot", "en": "noun" },
+    { "ru": "прилагательное", "uz": "sifat", "en": "adjective" },
+    { "ru": "изафа", "uz": "izofa", "en": "iḍāfa (construct state)" },
+    { "ru": "личное местоимение", "uz": "kishilik olmoshi", "en": "personal pronoun" },
+    { "ru": "местоимение", "uz": "olmosh", "en": "pronoun" },
+    { "ru": "единственное число", "uz": "birlik", "en": "singular" },
+    { "ru": "множественное число", "uz": "koʻplik", "en": "plural" },
+    { "ru": "падеж", "uz": "kelishik", "en": "case" },
+    { "ru": "огласовки (харакаты)", "uz": "harakatlar", "en": "vowel marks (ḥarakāt)" },
+    { "ru": "нисба", "uz": "nisba", "en": "nisba" }
+  ]
+}

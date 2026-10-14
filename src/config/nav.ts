@@ -1,5 +1,5 @@
 // Навигация сайта — одно место для шапки, мобильного меню, подвала и «хлебных крошек».
-// Ключи разделов совпадают с t.nav, t.sectionsAr, t.sectionsDesc (src/i18n/ru.ts).
+// Ключи разделов совпадают с t.nav и t.sectionsDesc (src/i18n/ru.ts); арабские названия — SECTION_AR (не переводятся).
 export type SectionKey = 'words' | 'dictionary' | 'quizzes' | 'tests' | 'exercises' | 'grammar' | 'texts' | 'courses';
 export type GroupKey = 'learn' | 'tasks' | 'read' | 'courses';
 
@@ -11,7 +11,19 @@ export const NAV: { group: GroupKey; items: { key: SectionKey; href: string }[] 
   { group: 'courses', items: [{ key: 'courses', href: 'courses/' }] },
 ];
 
-/** раздел по первому сегменту адреса: /words/w100/ → words */
+/** арабские названия разделов: одинаковы на всех языках интерфейса */
+export const SECTION_AR: Record<SectionKey, string> = {
+  words: 'الْمُفْرَدَاتُ',
+  quizzes: 'الْمُسَابَقَاتُ',
+  tests: 'الِاخْتِبَارَاتُ',
+  exercises: 'التَّمَارِينُ',
+  grammar: 'النَّحْوُ وَالصَّرْفُ',
+  texts: 'النُّصُوصُ',
+  courses: 'الْمُقَرَّرَاتُ',
+  dictionary: 'الْمُعْجَمُ',
+};
+
+/** раздел по первому сегменту адреса (адрес — без base и без языка): /words/w100/ → words */
 export function sectionOf(path: string): { key: SectionKey; href: string; group: GroupKey } | null {
   const seg = path.replace(/^\/+/, '').split('/')[0];
   for (const g of NAV) for (const it of g.items) if (it.href === seg + '/') return { ...it, group: g.group };

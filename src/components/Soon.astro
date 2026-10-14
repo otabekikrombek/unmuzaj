@@ -1,7 +1,8 @@
 ---
-import { t } from '../i18n/ru';
+import { useI18n } from '../i18n';
 interface Props { text?: string }
 const { text } = Astro.props;
+const { t } = useI18n(Astro.url);
 ---
 <div class="soon">
   <p class="soon-h">{t.common.soon}</p>

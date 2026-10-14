@@ -1,11 +1,14 @@
 ---
-import { u } from '../lib/url';
-interface Item { title: string; href: string; meta?: string; side?: string }
+// Список материалов. href — путь внутри сайта без языка (ссылка строится на языке страницы).
+// ru: true — название и описание ещё не переведены (пометка «(rus tilida)»).
+import { useI18n } from '../i18n';
+interface Item { title: string; href: string; meta?: string; side?: string; ru?: boolean }
 interface Props { items: Item[] }
 const { items } = Astro.props;
+const { t, l } = useI18n(Astro.url);
 ---
 <ul class="list">
   {items.map(i => (
-    <li><a class="row" href={u(i.href)}><span class="row-title">{i.title}</span>{i.side && <span class="row-side">{i.side}</span>}{i.meta && <span class="row-meta">{i.meta}</span>}</a></li>
+    <li><a class="row" href={l(i.href)}><span class="row-title"><span lang={i.ru ? 'ru' : undefined}>{i.title}</span>{i.ru && <small class="ru-mark">{t.meta.inRussian}</small>}</span>{i.side && <span class="row-side">{i.side}</span>}{i.meta && <span class="row-meta" lang={i.ru ? 'ru' : undefined}>{i.meta}</span>}</a></li>
   ))}
 </ul>

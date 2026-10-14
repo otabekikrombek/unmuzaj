@@ -1,0 +1,67 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import { getCollection } from 'astro:content';
+import { useI18n, localeParams, tf } from '../../../i18n';
+import { localizeQuiz, explainOf } from '../../../lib/quizLocale';
+export const getStaticPaths = localeParams;
+const { locale, t, l, intl } = useI18n(Astro.url);
+const quizMeta = Object.fromEntries((await getCollection('quizzes')).map(q => { const L = localizeQuiz(q.data, locale);
+  return [q.data.key, { title: L.title.text, ru: L.title.ru, href: l(`quizzes/${q.data.key}/`), plan: q.data.plan, sections: L.sections, explain: explainOf(q.data, locale) }]; }));
+const decks = (await getCollection('decks')).map(d => { const ti = tf(d.data, 'title', locale); return { key: d.data.key, title: ti.text, ru: ti.ru, n: d.data.items.length, href: l(`words/${d.data.key}/`) }; });
+---
+<Base title={t.me.title} noindex>
+  <PageHead title={t.me.title} ar="تَقَدُّمِي" />
+  <div class="wrap narrow" id="me"><p>{t.common.loading}</p></div>
+  <script type="application/json" id="me-data" set:html={JSON.stringify({ decks, quizMeta, login: l('login/'), home: l(''), teacher: l('teacher/'), t: t.me, quiz: { ...t.quiz, mark: t.meta.inRussian }, intl, loading: t.common.loading })} />
+  <script>
+    import { getWho, rpc, token, logout, AuthError } from '../../../lib/api';
+    import { flushQuizzes } from '../../../lib/quizStore';
+    import { reviewHTML, secBars, fmtTime } from '../../../lib/quizView';
+    const D = JSON.parse(document.getElementById('me-data')!.textContent!), T = D.t;
+    const f = (s: string, v: Record<string, unknown> = {}) => s.replace(/\{(\w+)\}/g, (_, k) => String(v[k] ?? ''));
+    const date = (s: string) => new Date(s).toLocaleDateString(D.intl);
+    const tl = (x: { title: string; ru?: boolean }) => x.ru ? `<span lang="ru">${esc(x.title)}</span>` : esc(x.title); // название ещё по-русски
+    const box = document.getElementById('me')!;
+    const esc = (s: unknown) => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
+    const who = getWho();
+    if (!who) box.innerHTML = `<p>${T.guest}</p><p><a class="btn" href="${D.login}">${T.login}</a></p>`;
+    else load();
+    async function load() {
+      const head = who!.kind === 'pin' ? `<p>${f(T.headPin, { nick: esc(who!.nickname), cls: esc(who!.className), code: esc(who!.code) })}</p>` : `<p><b>${esc(who!.email)}</b></p>`;
+      try {
+        await flushQuizzes(); // сначала отправить неотправленные попытки
+        const o = await rpc<any>('my_overview', { p_token: token() });
+        const rows = D.decks.map((d: any) => { const s = o.decks[d.key] || {}; const known = (s.good || 0) + (s.done || 0);
+          return `<li><a class="row" href="${d.href}"><span class="row-title">${tl(d)}</span><span class="row-side">${f(T.know, { k: known, n: d.n })}</span><span class="row-meta">${f(T.deckMeta, { seen: s.seen || 0, learn: s.learn || 0, done: s.done || 0 })}</span></a></li>`; }).join('');
+        const tests = o.tests.length ? `<ul>${o.tests.map((x: any) => `<li>${f(T.testLine, { date: date(x.at), c: x.correct, t: x.total })}</li>`).join('')}</ul>` : `<p class="muted">${T.noTests}</p>`;
+        const QM = D.quizMeta;
+        const quizzes = o.quizzes?.length ? `<ul class="qlist">${o.quizzes.map((a: any) => `<li><a href="${QM[a.quiz]?.href || '#'}">${QM[a.quiz] ? tl(QM[a.quiz]) : esc(a.quiz)}</a> — ${f(T.quizLine, { date: date(a.at), c: a.correct, t: a.total, p: a.points, time: fmtTime(a.time || 0) })} <button class="btn ghost sm" data-quiz="${esc(a.quiz)}" data-id="${esc(a.id)}">${T.review}</button></li>`).join('')}</ul>` : `<p class="muted">${T.noQuizzes}</p>`;
+        box.innerHTML = head + `<p>${f(T.totals, { v: o.visits, m: o.minutes })}</p><h2>${T.words}</h2><ul class="list">${rows}</ul><h2 style="margin-top:28px">${T.lastTests}</h2>${tests}<h2 style="margin-top:28px">${T.quizzes}</h2>${quizzes}<div id="rvBox"></div>` +
+          (who!.kind === 'email' && /teacher|admin/.test((who as any).role) ? `<p><a class="btn" href="${D.teacher}">${T.teacher}</a></p>` : '') +
+          `<p style="margin-top:28px"><button class="btn ghost" id="out">${T.logout}</button></p>`;
+      } catch (e) {
+        box.innerHTML = head + (e instanceof AuthError ? `<p>${f(T.stale, { href: D.login })}</p>` : `<p>${T.offline}</p>`) + `<p><button class="btn ghost" id="out">${T.logout}</button></p>`;
+      }
+      box.querySelectorAll<HTMLButtonElement>('[data-quiz]').forEach(b => b.addEventListener('click', async () => {
+        const rv = document.getElementById('rvBox')!; rv.innerHTML = `<p>${D.loading}</p>`;
+        try {
+          const list = await rpc<any[]>('quiz_my_attempts', { p_token: token(), p_quiz: b.dataset.quiz });
+          const a = list.find(x => x.id === b.dataset.id), m = D.quizMeta[b.dataset.quiz!];
+          if (!a || !m) throw 0;
+          const secRows = (m.plan as [string, number][]).map(([k]) => { const x = (a.answers as any[]).filter(y => y.s === k); return { s: k, ok: x.filter(y => y.ok).length, n: x.length }; }).filter(x => x.n);
+          rv.innerHTML = `<h3>${tl(m)} · ${new Date(a.at).toLocaleString(D.intl)}</h3>` + (secRows.length > 1 ? secBars(m.sections, secRows) : '') + reviewHTML(a.answers, m.sections, D.quiz, m.explain);
+          rv.scrollIntoView({ behavior: 'smooth' });
+        } catch { rv.innerHTML = `<p>${T.reviewFail}</p>`; }
+      }));
+      document.getElementById('out')?.addEventListener('click', async () => { await logout(); location.href = D.home; });
+    }
+  </script>
+</Base>
+
+<style>
+  .qlist { padding-left: 20px; }
+  .qlist li { margin: 6px 0; }
+  .sm { min-height: 44px; padding: 0 12px; font-size: .92rem; margin-left: 6px; }
+  #rvBox :global(.ar) { font-family: var(--ar); }
+</style>

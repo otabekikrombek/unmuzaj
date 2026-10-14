@@ -8,7 +8,9 @@
     "preview": "astro preview",
     "check": "astro check",
     "test:e2e": "playwright test",
-    "make-quiz": "node scripts/make-quiz.mjs"
+    "make-quiz": "node scripts/make-quiz.mjs",
+    "test:i18n": "node tests/i18n.mjs",
+    "uz-review": "node scripts/uz-review.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",

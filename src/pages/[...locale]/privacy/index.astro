@@ -1,0 +1,30 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import { SITE } from '../../../config/site';
+import { useI18n, localeParams, fmt } from '../../../i18n';
+export const getStaticPaths = localeParams;
+const { t } = useI18n(Astro.url);
+const P = t.privacy;
+const links = {
+  email: `<a href="mailto:${SITE.contacts.email}">${SITE.contacts.email}</a>`,
+  telegram: `<a href="${SITE.contacts.telegramHref}">Telegram ${SITE.contacts.telegram}</a>`,
+};
+---
+<Base title={P.title} description={P.desc}>
+  <PageHead title={P.title} />
+  <div class="wrap narrow prose">
+    <p class="notice">{P.draft}</p>
+    <h2>{P.guestH}</h2>
+    <p>{P.guest}</p>
+    <h2>{P.classH}</h2>
+    <p>{P.class}</p>
+    <h2>{P.emailH}</h2>
+    <p>{P.email}</p>
+    <h2>{P.whereH}</h2>
+    <p>{P.where}</p>
+    <h2>{P.deleteH}</h2>
+    <p set:html={fmt(P.delete, links)} />
+  </div>
+</Base>
+<style>.prose h2 { margin-top: 1.4em; font-size: 1.3rem; }</style>

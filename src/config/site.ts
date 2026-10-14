@@ -2,10 +2,9 @@
 export const SITE = {
   name: 'Unmuzaj',
   nameAr: 'الأُنْمُوذَجُ',
-  motto: 'Barcha arab tili ixlosmandlari uchun',
-  mottoRu: 'Для всех, кто любит арабский язык',
-  author: 'Отабек Икромбеков',
-  authorRole: 'преподаватель арабского языка',
+  motto: 'Barcha arab tili ixlosmandlari uchun', // девиз всегда по-узбекски; перевод — t.meta.mottoTr
+  // имя автора на каждом языке интерфейса (должность — t.footer.authorRole)
+  author: { ru: 'Отабек Икромбеков', uz: 'Otabek Ikrombekov', en: 'Otabek Ikrombekov' } as Record<'ru' | 'uz' | 'en', string>,
   contacts: {
     email: 'otabek.ikrombek@gmail.com',
     phone: '+998 90 067 31 07',

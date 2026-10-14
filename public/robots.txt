@@ -3,4 +3,12 @@ Disallow: /unmuzaj/teacher/
 Disallow: /unmuzaj/me/
 Disallow: /unmuzaj/login/
 Disallow: /unmuzaj/board/
+Disallow: /unmuzaj/uz/teacher/
+Disallow: /unmuzaj/uz/me/
+Disallow: /unmuzaj/uz/login/
+Disallow: /unmuzaj/uz/board/
+Disallow: /unmuzaj/en/teacher/
+Disallow: /unmuzaj/en/me/
+Disallow: /unmuzaj/en/login/
+Disallow: /unmuzaj/en/board/
 Sitemap: https://otabekikrombek.github.io/unmuzaj/sitemap-index.xml

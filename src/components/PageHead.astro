@@ -1,15 +1,18 @@
 ---
 // Шапка страницы: крошки, название по-арабски, заголовок, пояснение.
+// titleRu / leadRu — текст материала ещё не переведён (показывается по-русски с пометкой «(rus tilida)»).
 import Breadcrumbs from './Breadcrumbs.astro';
-interface Props { title: string; ar?: string; lead?: string; parent?: { label: string; href: string }; crumbs?: boolean }
-const { title, ar, lead, parent, crumbs = true } = Astro.props;
+import { useI18n } from '../i18n';
+interface Props { title: string; ar?: string; lead?: string; parent?: { label: string; href: string }; crumbs?: boolean; titleRu?: boolean; leadRu?: boolean }
+const { title, ar, lead, parent, crumbs = true, titleRu = false, leadRu = false } = Astro.props;
+const { t } = useI18n(Astro.url);
 ---
 <div class="page-head">
   <div class="wrap">
-    {crumbs && <Breadcrumbs title={title} parent={parent} />}
+    {crumbs && <Breadcrumbs title={title} parent={parent} titleRu={titleRu} />}
     {ar && <span class="ar ph-ar" lang="ar" dir="rtl">{ar}</span>}
-    <h1>{title}</h1>
-    {lead && <p class="muted lead">{lead}</p>}
+    <h1><span lang={titleRu ? 'ru' : undefined}>{title}</span>{titleRu && <small class="ru-mark">{t.meta.inRussian}</small>}</h1>
+    {lead && <p class="muted lead"><span lang={leadRu ? 'ru' : undefined}>{lead}</span>{leadRu && !titleRu && <small class="ru-mark">{t.meta.inRussian}</small>}</p>}
     <slot />
   </div>
 </div>

@@ -3,23 +3,28 @@ import '../styles/global.css';
 import { SITE } from '../config/site';
 import { NAV, sectionOf } from '../config/nav';
 import { u } from '../lib/url';
-import { t } from '../i18n/ru';
+import { useI18n, splitPath, lu, LOCALES, LANG_NAMES, LANG_SHORT, LANG_KEY, fmt } from '../i18n';
 import LookPanel from '../components/LookPanel.astro';
 import SearchPanel from '../components/SearchPanel.astro';
 
 interface Props {
   title?: string; description?: string; noindex?: boolean; wide?: boolean;
   bare?: boolean;   // без шапки и подвала (табло для проектора)
+  alternates?: boolean; // есть ли у страницы версии на других языках (у 404 — нет)
   group?: 'sections' | 'tasks' | 'grammar' | 'texts' | 'articles'; // группа в результатах поиска по сайту
 }
-const { title, description = t.home.lead, noindex = false, bare = false, group = 'sections' } = Astro.props;
-const fullTitle = title ? `${title} — ${SITE.name}` : `${SITE.name} · ${SITE.nameAr} — арабский язык`;
-const path = Astro.url.pathname.replace(import.meta.env.BASE_URL.replace(/\/$/, ''), '') || '/';
+const { locale, t, l } = useI18n(Astro.url);
+const { title, description = t.home.lead, noindex = false, bare = false, alternates = true, group = 'sections' } = Astro.props;
+const fullTitle = title ? `${title} — ${SITE.name}` : `${SITE.name} · ${SITE.nameAr} — ${t.meta.siteSubtitle}`;
+const path = splitPath(Astro.url.pathname).rest; // адрес без base и без языка: words/w100/
 const cur = sectionOf(path);
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
+// версии этой страницы на всех языках (hreflang для Google, переключатель языка)
+const alts = LOCALES.map(x => ({ lang: x, href: lu(path, x), abs: new URL(lu(path, x), Astro.site).href }));
+const OG: Record<string, string> = { ru: 'ru_RU', uz: 'uz_UZ', en: 'en_US' };
 ---
 <!doctype html>
-<html lang="ru" data-palette="turquoise" data-theme="light">
+<html lang={t.meta.lang} data-palette="turquoise" data-theme="light">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -43,10 +48,20 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
   <title>{fullTitle}</title>
   <meta name="description" content={description} />
   <link rel="canonical" href={canonical} />
+  {alternates && alts.map(a => <link rel="alternate" hreflang={a.lang} href={a.abs} data-path={a.href} />)}
+  {alternates && <link rel="alternate" hreflang="x-default" href={alts[0].abs} />}
+  <!-- Язык, выбранный в переключателе, запоминается: открыли русскую ссылку, а выбран узбекский — переходим на /uz/… -->
+  <script is:inline define:vars={{ LANG_KEY }}>
+    try {
+      var want = localStorage.getItem(LANG_KEY), alt = want && want !== document.documentElement.lang && document.querySelector('link[hreflang="' + want + '"][data-path]');
+      if (alt) location.replace(alt.getAttribute('data-path') + location.search + location.hash);
+    } catch (e) {}
+  </script>
   {noindex && <meta name="robots" content="noindex" />}
   <meta property="og:title" content={fullTitle} />
   <meta property="og:description" content={description} />
   <meta property="og:type" content="website" />
+  <meta property="og:locale" content={OG[locale]} />
   <meta property="og:url" content={canonical} />
   <meta name="theme-color" content="#1d5c63" />
   <link rel="icon" href={u('favicon.svg')} type="image/svg+xml" />
@@ -56,7 +71,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
   {!bare && <a class="skip" href="#main">{t.nav.skip}</a>}
   {!bare && <header class="site-head" data-pagefind-ignore>
     <div class="wrap head-row">
-      <a class="logo" href={u('')} aria-label={`${SITE.name} — ${t.nav.home}`}>
+      <a class="logo" href={l('')} aria-label={`${SITE.name} — ${t.nav.home}`}>
         <span class="logo-ar" lang="ar" dir="rtl">{SITE.nameAr}</span>
         <span class="logo-lat">{SITE.name}</span>
       </a>
@@ -68,19 +83,28 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
                 {t.navGroups[g.group]}<span class="caret" aria-hidden="true">▾</span>
               </button>
               <ul class="sub" id={`g-${g.group}`}>
-                {g.items.map(it => <li><a href={u(it.href)} aria-current={cur?.key === it.key ? 'page' : undefined}>{t.nav[it.key]}<small>{t.sectionsDesc[it.key]}</small></a></li>)}
+                {g.items.map(it => <li><a href={l(it.href)} aria-current={cur?.key === it.key ? 'page' : undefined}>{t.nav[it.key]}<small>{t.sectionsDesc[it.key]}</small></a></li>)}
               </ul>
             </li>
           ) : (
-            <li><a class:list={['top-link', { current: cur?.group === g.group }]} href={u(g.items[0].href)} aria-current={cur?.key === g.items[0].key ? 'page' : undefined}>{t.nav[g.items[0].key]}</a></li>
+            <li><a class:list={['top-link', { current: cur?.group === g.group }]} href={l(g.items[0].href)} aria-current={cur?.key === g.items[0].key ? 'page' : undefined}>{t.nav[g.items[0].key]}</a></li>
           ))}
         </ul>
-        <a class="nav-login" href={u('login/')} data-auth-link data-me={t.nav.me}>{t.nav.login}</a>
+        <a class="nav-login" href={l('login/')} data-auth-link data-me={t.nav.me}>{t.nav.login}</a>
       </nav>
       <div class="tools">
         <button type="button" class="tool" data-open-search aria-label={t.search.hotkey} title={t.search.hotkey}>
           <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
         </button>
+        {alternates && <div class="lang-sw">
+          <button type="button" class="tool lang-btn" aria-expanded="false" aria-controls="langMenu" aria-label={fmt(t.lang.button, { lang: LANG_NAMES[locale] })} title={t.lang.label}>
+            <svg class="globe" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 12h18M12 3c2.6 2.6 3.8 5.6 3.8 9s-1.2 6.4-3.8 9c-2.6-2.6-3.8-5.6-3.8-9S9.4 5.6 12 3Z" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+            <span>{LANG_SHORT[locale]}</span>
+          </button>
+          <ul class="lang-menu" id="langMenu" hidden>
+            {alts.map(a => <li><a href={a.href} hreflang={a.lang} lang={a.lang} data-set-lang={a.lang} aria-current={a.lang === locale ? 'true' : undefined}><b>{LANG_SHORT[a.lang]}</b> {LANG_NAMES[a.lang]}</a></li>)}
+          </ul>
+        </div>}
         <button type="button" class="tool aa" data-open-look aria-haspopup="dialog" aria-expanded="false" aria-label={t.look.button} title={t.look.button}>Aa</button>
         <button type="button" class="menu-btn" aria-expanded="false" aria-controls="site-nav">{t.nav.menu}</button>
       </div>
@@ -91,9 +115,9 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
     <div class="wrap foot-grid">
       <div class="foot-about">
         <p class="foot-logo" lang="ar" dir="rtl">{SITE.nameAr}</p>
-        <p class="foot-motto">{SITE.motto}<br /><span class="foot-muted small">{SITE.mottoRu}</span></p>
+        <p class="foot-motto"><span lang="uz">{SITE.motto}</span>{t.meta.mottoTr && <><br /><span class="foot-muted small">{t.meta.mottoTr}</span></>}</p>
         <p class="foot-h">{t.footer.contacts}</p>
-        <p>{SITE.author}, {SITE.authorRole}</p>
+        <p>{SITE.author[locale]}, {t.footer.authorRole}</p>
         <ul class="foot-list">
           <li><a href={`mailto:${SITE.contacts.email}`}>{SITE.contacts.email}</a></li>
           <li><a href={SITE.contacts.phoneHref} class="nb">{SITE.contacts.phone}</a></li>
@@ -104,17 +128,21 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
         {NAV.map(g => (
           <div>
             <p class="foot-h">{t.navGroups[g.group]}</p>
-            <ul class="foot-list">{g.items.map(it => <li><a href={u(it.href)}>{t.nav[it.key]}</a></li>)}</ul>
+            <ul class="foot-list">{g.items.map(it => <li><a href={l(it.href)}>{t.nav[it.key]}</a></li>)}</ul>
           </div>
         ))}
         <div>
           <p class="foot-h">{t.nav.more}</p>
           <ul class="foot-list">
-            <li><a href={u('about/')}>{t.footer.about}</a></li>
-            <li><a href={u('privacy/')}>{t.footer.privacy}</a></li>
-            <li><a href={u('teacher/')}>{t.nav.teacher}</a></li>
+            <li><a href={l('about/')}>{t.footer.about}</a></li>
+            <li><a href={l('privacy/')}>{t.footer.privacy}</a></li>
+            <li><a href={l('teacher/')}>{t.nav.teacher}</a></li>
           </ul>
         </div>
+        {alternates && <div>
+          <p class="foot-h">{t.lang.label}</p>
+          <ul class="foot-list">{alts.map(a => <li><a href={a.href} hreflang={a.lang} lang={a.lang} data-set-lang={a.lang} aria-current={a.lang === locale ? 'true' : undefined}>{LANG_NAMES[a.lang]}</a></li>)}</ul>
+        </div>}
       </nav>
       <p class="foot-muted small foot-note">{t.common.gradually}</p>
     </div>
@@ -123,6 +151,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
   {!bare && <LookPanel />}
   <script>
     import { getLook, applyLook } from '../lib/look';
+    import { LANG_KEY } from '../i18n/format';
     applyLook(getLook()); // цвет строки браузера и событие для страниц, которым нужна тема
     const menuBtn = document.querySelector<HTMLButtonElement>('.menu-btn');
     const nav = document.getElementById('site-nav');
@@ -154,6 +183,17 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
     }));
     matchMedia('(max-width: 900px)').addEventListener('change', () => closeGroups());
     closeGroups();
+    // переключатель языка: запомнить выбор (его читает скрипт в <head>) и сохранить ?параметры адреса
+    const langBtn = document.querySelector<HTMLButtonElement>('.lang-btn');
+    const langMenu = document.getElementById('langMenu');
+    const langOpen = (v: boolean) => { if (langMenu) langMenu.hidden = !v; langBtn?.setAttribute('aria-expanded', String(v)); };
+    langBtn?.addEventListener('click', () => langOpen(langBtn.getAttribute('aria-expanded') !== 'true'));
+    document.addEventListener('click', e => { if (!(e.target as HTMLElement).closest('.lang-sw')) langOpen(false); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && langBtn?.getAttribute('aria-expanded') === 'true') { langOpen(false); langBtn.focus(); } });
+    document.querySelectorAll<HTMLAnchorElement>('[data-set-lang]').forEach(a => a.addEventListener('click', () => {
+      try { localStorage.setItem(LANG_KEY, a.dataset.setLang!); } catch {}
+      a.href = a.pathname + location.search + location.hash;
+    }));
     // «Войти» → «Мой прогресс», если пользователь уже вошёл
     try {
       if (localStorage.getItem('unmuzaj:who') || sessionStorage.getItem('unmuzaj:who')) {
@@ -195,6 +235,14 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
   .tools { display: flex; align-items: center; gap: 2px; }
   .tool { width: 44px; justify-content: center; padding: 0; color: var(--head-ink); }
   .aa { font: 700 1.05rem var(--serif); }
+  .lang-sw { position: relative; }
+  .lang-btn { width: auto; min-width: 44px; padding: 0 8px; gap: 5px; font: 600 .9rem var(--sans); letter-spacing: .03em; }
+  .lang-menu { list-style: none; margin: 0; padding: 6px; position: absolute; right: 0; top: calc(100% + 6px); min-width: 190px; background: var(--sheet); border: 1px solid var(--line); border-radius: var(--r-m); box-shadow: var(--shadow); z-index: 12; }
+  .lang-menu[hidden] { display: none; }
+  .lang-menu a { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-radius: var(--r-s); color: var(--ink); text-decoration: none; }
+  .lang-menu a b { font-size: .85rem; color: var(--ink-soft); min-width: 2.2em; }
+  .lang-menu a:hover { background: var(--hover); }
+  .lang-menu a[aria-current] { box-shadow: inset 3px 0 0 var(--accent); font-weight: 700; }
   .menu-btn { display: none; border: 1px solid color-mix(in srgb, var(--head-ink) 60%, transparent); color: var(--head-ink); font-weight: 600; }
   .site-head :focus-visible { outline-color: var(--sun); }
   @media (max-width: 900px) {
@@ -213,7 +261,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
     .top-link.current { box-shadow: inset 3px 0 0 var(--sun); border-radius: 0; }
     .nav-login { margin: 12px 0 0; justify-content: center; }
   }
-  @media (max-width: 480px) { .logo-lat { display: none; } .head-row { gap: 4px; } }
+  @media (max-width: 480px) { .logo-lat { display: none; } .head-row { gap: 4px; } .globe { display: none; } .lang-btn { padding: 0 6px; } }
   .site-foot { background: var(--foot-bg); color: var(--foot-ink); margin-top: 64px; padding: 40px 0 28px; font-size: .97rem; }
   .site-foot a { color: var(--foot-link); }
   .site-foot :focus-visible { outline-color: var(--sun); }

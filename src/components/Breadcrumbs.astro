@@ -1,19 +1,18 @@
 ---
 // «Хлебные крошки»: Главная › Раздел › Страница. Раздел берётся из адреса (src/config/nav.ts),
 // его можно заменить пропом parent (например, пробный экзамен лежит в /quizzes/, но относится к «Тестам»).
-import { u } from '../lib/url';
-import { t } from '../i18n/ru';
+import { useI18n, splitPath } from '../i18n';
 import { sectionOf } from '../config/nav';
-interface Props { title: string; parent?: { label: string; href: string }; tone?: 'page' | 'study' }
-const { title, parent, tone = 'page' } = Astro.props;
-const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-const path = Astro.url.pathname.replace(base, '') || '/';
+interface Props { title: string; parent?: { label: string; href: string }; tone?: 'page' | 'study'; titleRu?: boolean }
+const { title, parent, tone = 'page', titleRu = false } = Astro.props;
+const { t, l } = useI18n(Astro.url);
+const path = splitPath(Astro.url.pathname).rest;
 const sec = sectionOf(path);
-const isSectionIndex = !!sec && path.replace(/^\/+/, '') === sec.href;
-const items: { label: string; href?: string }[] = [{ label: t.nav.home, href: u('') }];
-if (parent) items.push({ label: parent.label, href: u(parent.href) });
-else if (sec && !isSectionIndex) items.push({ label: t.nav[sec.key], href: u(sec.href) });
-items.push({ label: title });
+const isSectionIndex = !!sec && path === sec.href;
+const items: { label: string; href?: string; ru?: boolean }[] = [{ label: t.nav.home, href: l('') }];
+if (parent) items.push({ label: parent.label, href: l(parent.href) });
+else if (sec && !isSectionIndex) items.push({ label: t.nav[sec.key], href: l(sec.href) });
+items.push({ label: title, ru: titleRu });
 const ld = {
   '@context': 'https://schema.org', '@type': 'BreadcrumbList',
   itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.label, ...(it.href ? { item: new URL(it.href, Astro.site).href } : {}) })),
@@ -22,7 +21,7 @@ const ld = {
 <nav class={`crumbs ${tone}`} aria-label={t.nav.youAreHere} data-pagefind-ignore>
   <ol>
     {items.map((it, i) => (
-      <li>{it.href ? <a href={it.href}>{it.label}</a> : <span aria-current="page">{it.label}</span>}{i < items.length - 1 && <span class="sep" aria-hidden="true">›</span>}</li>
+      <li>{it.href ? <a href={it.href}>{it.label}</a> : <span aria-current="page" lang={it.ru ? 'ru' : undefined}>{it.label}</span>}{i < items.length - 1 && <span class="sep" aria-hidden="true">›</span>}</li>
     ))}
   </ol>
 </nav>

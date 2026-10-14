@@ -1,0 +1,25 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import { SITE } from '../../../config/site';
+import { useI18n, localeParams, fmt } from '../../../i18n';
+export const getStaticPaths = localeParams;
+const { locale, t } = useI18n(Astro.url);
+const A = t.about;
+---
+<Base title={A.title} description={fmt(A.desc, { author: SITE.author[locale] })}>
+  <PageHead title={A.title} ar={SITE.nameAr} />
+  <div class="wrap narrow prose">
+    <p class="motto"><span lang="uz">{SITE.motto}</span>{t.meta.mottoTr && <><br /><span class="muted">{t.meta.mottoTr}</span></>}</p>
+    <p set:html={A.intro} />
+    <h2>{A.whyH}</h2>
+    <p set:html={A.why} />
+    <h2>{A.forWhomH}</h2>
+    <p>{A.forWhom}</p>
+    <h2>{A.authorH}</h2>
+    <p>{SITE.author[locale]}, {t.footer.authorRole}.<br />
+      <a href={`mailto:${SITE.contacts.email}`}>{SITE.contacts.email}</a> · <a href={SITE.contacts.phoneHref} class="nb">{SITE.contacts.phone}</a> · <a href={SITE.contacts.telegramHref}>Telegram {SITE.contacts.telegram}</a></p>
+    <p class="notice">{A.notice}</p>
+  </div>
+</Base>
+<style>.prose h2 { margin-top: 1.6em; } .motto { font-family: var(--serif); font-style: italic; font-size: 1.3rem; color: var(--accent); }</style>

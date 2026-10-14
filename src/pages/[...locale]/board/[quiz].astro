@@ -1,0 +1,87 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { useI18n, withLocales, tf } from '../../../i18n';
+export async function getStaticPaths() {
+  return withLocales((await getCollection('quizzes')).map(q => ({ params: { quiz: q.data.key }, props: { q: q.data } })));
+}
+const { q } = Astro.props;
+const { locale, t, l, intl } = useI18n(Astro.url);
+const B = t.board;
+const ti = tf(q, 'title', locale);
+const quizUrl = new URL(l(`quizzes/${q.key}/`), Astro.site).href;
+---
+<Base title={`${B.title}: ${ti.text}`} noindex bare>
+  <section class="bd">
+    <header class="bh">
+      <div>
+        <p class="logo" lang="ar" dir="rtl">الأُنْمُوذَجُ</p>
+        <h1>🏆 <span lang={ti.ru ? 'ru' : undefined}>{ti.text}</span></h1>
+        {q.title_ar && <p class="har" lang="ar" dir="rtl">{q.title_ar}</p>}
+      </div>
+      <div class="side"><p id="cls"></p><p class="small" id="upd" aria-live="polite"></p></div>
+    </header>
+    <form id="ask" hidden>
+      <label for="code">{B.classCode}</label>
+      <input id="code" autocomplete="off" autocapitalize="characters" required />
+      <button class="go" type="submit">{B.show}</button>
+    </form>
+    <ol class="lb" id="board"></ol>
+    <p class="msg" id="msg"></p>
+    <p class="foot">{quizUrl}</p>
+  </section>
+  <script type="application/json" id="bd-data" set:html={JSON.stringify({ quiz: q.key, t: B, intl })} />
+  <script>
+    import { rpc } from '../../../lib/api';
+    import { esc, fmtTime } from '../../../lib/quizView';
+    const D = JSON.parse(document.getElementById('bd-data')!.textContent!);
+    const T: Record<string, string> = D.t;
+    const $ = (id: string) => document.getElementById(id)!;
+    const p = new URLSearchParams(location.search);
+    const hours = Math.min(72, Math.max(1, parseInt(p.get('hours') || '3') || 3));
+    let code = (p.get('class') || '').trim();
+    let timer = 0;
+    async function load() {
+      clearTimeout(timer);
+      try {
+        const r = await rpc<any>('quiz_board', { p_join: code, p_quiz: D.quiz, p_hours: hours });
+        if (!r?.ok) { $('msg').textContent = T.noClass; $('ask').hidden = false; $('board').innerHTML = ''; return; }
+        $('cls').textContent = `${r.class} · ${T.hours.replace('{n}', String(hours))}`;
+        $('board').innerHTML = (r.rows as any[]).map((x, i) => `<li><span class="pl">${i < 3 ? ['🥇', '🥈', '🥉'][i] : i + 1}</span>` +
+          `<span class="nm">${esc(x.n)}<small>${esc(x.l || '')} · ${x.c}/${x.tot} · ${fmtTime(x.t)}</small></span><b>${x.p}</b></li>`).join('');
+        $('msg').textContent = r.rows.length ? '' : T.empty;
+        $('upd').textContent = T.updated.replace('{t}', new Date().toLocaleTimeString(D.intl));
+      } catch { $('msg').textContent = T.offline; }
+      timer = window.setTimeout(load, 5000);
+    }
+    $('ask').addEventListener('submit', e => {
+      e.preventDefault(); code = ($('code') as HTMLInputElement).value.trim(); if (!code) return;
+      p.set('class', code); history.replaceState(null, '', `?${p}`); $('ask').hidden = true; $('msg').textContent = ''; load();
+    });
+    if (code) load(); else $('ask').hidden = false;
+  </script>
+</Base>
+
+<style>
+  :global(body) { background: var(--study-to); }
+  .bd { min-height: 100vh; background: linear-gradient(160deg, var(--study-from) 0%, var(--study-mid) 55%, var(--study-to) 100%); color: var(--study-ink); padding: 20px clamp(16px, 4vw, 48px) 32px; }
+  .bh { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+  .logo { font-family: var(--ar); font-size: 1.6rem; margin: 0; color: var(--study-muted); text-align: left; }
+  h1 { color: var(--study-ink); font-size: clamp(1.8rem, 4.5vw, 3.2rem); margin: 0; }
+  .har { font-family: var(--ar); font-size: calc(clamp(1.4rem, 3vw, 2.2rem) * var(--ar-scale)); margin: 4px 0 0; text-align: left; }
+  .side { text-align: right; font-size: clamp(1rem, 2vw, 1.4rem); }
+  .side p { margin: 0; } .small { font-size: .8em; color: var(--study-muted); }
+  form { display: grid; gap: 8px; max-width: 360px; }
+  form[hidden] { display: none; }
+  label { color: var(--study-ink); font-weight: 700; }
+  input { font-size: 1.4rem; text-transform: uppercase; letter-spacing: .1em; }
+  .go { border: 0; border-radius: 14px; min-height: 52px; font: 800 1.2rem var(--sans); background: var(--sun); color: var(--on-sun); cursor: pointer; }
+  .lb { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .lb :global(li) { display: grid; grid-template-columns: 64px 1fr auto; gap: 14px; align-items: center; background: var(--study-chip); border-radius: 16px; padding: 10px 18px; font-size: clamp(1.1rem, 2.6vw, 2rem); }
+  .lb :global(li:nth-child(-n+3)) { background: color-mix(in srgb, var(--sun) 22%, transparent); }
+  .lb :global(.pl) { font-weight: 800; text-align: center; font-size: 1.2em; }
+  .lb :global(.nm small) { display: block; font-size: .6em; opacity: .85; }
+  .lb :global(b) { font-size: 1.15em; color: var(--study-link); }
+  .msg { font-size: 1.3rem; color: var(--study-muted); }
+  .foot { overflow-wrap: anywhere; margin-top: 24px; color: var(--study-muted); font-size: clamp(.95rem, 2vw, 1.3rem); }
+</style>

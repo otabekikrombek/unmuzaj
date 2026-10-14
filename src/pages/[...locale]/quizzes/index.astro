@@ -1,0 +1,18 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import ItemList from '../../../components/ItemList.astro';
+import { getCollection } from 'astro:content';
+import { SECTION_AR } from '../../../config/nav';
+import { useI18n, localeParams, tf } from '../../../i18n';
+export const getStaticPaths = localeParams;
+const { locale, t } = useI18n(Astro.url);
+const q = (await getCollection('quizzes')).filter(x => x.data.kind === 'quiz').sort((a, b) => a.data.key.localeCompare(b.data.key));
+---
+<Base title={t.nav.quizzes} description={t.pages.quizzes.desc}>
+  <PageHead title={t.nav.quizzes} ar={SECTION_AR.quizzes} lead={t.sectionsDesc.quizzes} />
+  <div class="wrap">
+    <ItemList items={q.map(x => { const ti = tf(x.data, 'title', locale), de = tf(x.data, 'description', locale);
+      return { title: ti.text, href: `quizzes/${x.data.key}/`, side: x.data.level, meta: de.text, ru: ti.ru || de.ru }; })} />
+  </div>
+</Base>

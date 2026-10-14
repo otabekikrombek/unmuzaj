@@ -12,10 +12,15 @@ export default defineConfig({
   base: BASE,
   trailingSlash: 'always',
   output: 'static',
-  integrations: [sitemap({ filter: (p) => !/\/(teacher|me|login|board)\//.test(p) })],
+  // В sitemap — у каждой страницы ссылки на её версии на других языках (xhtml:link hreflang).
+  integrations: [sitemap({
+    filter: (p) => !/\/(teacher|me|login|board)\//.test(p),
+    i18n: { defaultLocale: 'ru', locales: { ru: 'ru', uz: 'uz', en: 'en' } },
+  })],
+  // Языки интерфейса (src/i18n): русский без префикса, /uz/…, /en/…. Страницы — src/pages/[...locale]/.
   i18n: {
     defaultLocale: 'ru',
-    locales: ['ru'], // позже: ['ru', 'uz', 'en']
+    locales: ['ru', 'uz', 'en'],
     routing: { prefixDefaultLocale: false },
   },
 });
