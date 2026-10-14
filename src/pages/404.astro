@@ -1,12 +1,27 @@
 ---
+// GitHub Pages показывает один файл 404.html для любого неверного адреса. Текст — на языке из адреса
+// (/uz/…, /en/…): все три варианта в странице, нужный открывает маленький скрипт; без JavaScript — русский.
 import Base from '../layouts/Base.astro';
-import { u } from '../lib/url';
+import { SITE } from '../config/site';
+import { LOCALES, dict, lu, fmt } from '../i18n';
+const ru = dict('ru').pages.notFound;
 ---
-<Base title="Страница не найдена" noindex>
+<Base title={ru.title} noindex alternates={false}>
   <div class="wrap narrow" style="padding:60px 16px">
     <p lang="ar" dir="rtl" class="e404">٤٠٤</p>
-    <h1>Такой страницы нет</h1>
-    <p>Возможно, адрес изменился. Начните с <a href={u('')}>главной страницы</a> или откройте <a href={u('words/')}>слова</a>.</p>
+    {LOCALES.map(x => { const T = dict(x).pages.notFound; return (
+      <div data-nf={x} lang={dict(x).meta.lang} hidden={x !== 'ru'}>
+        <h1>{T.h1}</h1>
+        <p set:html={fmt(T.text, { home: lu('', x), words: lu('words/', x) })} />
+      </div>
+    ); })}
   </div>
+  <script is:inline define:vars={{ titles: Object.fromEntries(LOCALES.map(x => [x, `${dict(x).pages.notFound.title} — ${SITE.name}`])) }}>
+    var m = location.pathname.match(/\/(uz|en)\//), x = m ? m[1] : null;
+    if (x) {
+      document.querySelectorAll('[data-nf]').forEach(function (d) { d.hidden = d.getAttribute('data-nf') !== x; });
+      document.documentElement.lang = x; document.title = titles[x];
+    }
+  </script>
 </Base>
 <style>.e404 { font-family: var(--ar); font-size: calc(3rem * var(--ar-scale)); color: var(--accent-2); text-align: left; margin: 0; }</style>

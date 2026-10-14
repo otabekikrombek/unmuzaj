@@ -1,6 +1,7 @@
 ---
 // Меню «Оформление»: режим, палитра, размер текста и арабского шрифта. Открывается кнопкой «Aa» в шапке.
-import { t } from '../i18n/ru';
+import { useI18n } from '../i18n';
+const { t } = useI18n(Astro.url);
 const L = t.look;
 const palettes = ['turquoise', 'lapis', 'parchment', 'contrast'] as const;
 const modes = ['light', 'dark', 'auto'] as const;

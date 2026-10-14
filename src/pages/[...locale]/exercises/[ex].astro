@@ -1,0 +1,20 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import { getCollection } from 'astro:content';
+import { u } from '../../../lib/url';
+import { SECTION_AR } from '../../../config/nav';
+import { useI18n, withLocales, tf } from '../../../i18n';
+export async function getStaticPaths() {
+  return withLocales((await getCollection('exercises')).map(e => ({ params: { ex: e.data.key }, props: { e: e.data } })));
+}
+const { e } = Astro.props;
+const { locale, t } = useI18n(Astro.url);
+const ti = tf(e, 'title', locale), de = tf(e, 'description', locale);
+---
+<Base title={ti.text} description={de.text} group="tasks">
+  <PageHead title={ti.text} titleRu={ti.ru} ar={SECTION_AR.exercises} lead={de.text} leadRu={de.ru} />
+  <div class="wrap narrow">
+    {e.legacy && <><p><a class="btn" href={u(e.legacy)}>{t.common.start}</a></p><p class="notice">{t.common.oldVersion}</p></>}
+  </div>
+</Base>

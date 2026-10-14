@@ -1,0 +1,577 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { SITE } from '../../../config/site';
+import { useI18n, localeParams, tf } from '../../../i18n';
+import { localizeQuiz, explainOf } from '../../../lib/quizLocale';
+export const getStaticPaths = localeParams;
+const { locale, t, l, intl } = useI18n(Astro.url);
+const T = t.teacher;
+const decks = await getCollection('decks');
+const quizzes = (await getCollection('quizzes')).map(q => q.data).sort((a, b) => b.added.localeCompare(a.added));
+// данные викторин для разбора: названия частей и пояснения к вопросам (на языке страницы, если есть перевод)
+const quizMeta = Object.fromEntries(quizzes.map(q => { const L = localizeQuiz(q, locale);
+  return [q.key, { title: L.title.text, kind: q.kind, plan: q.plan, sections: L.sections, explain: explainOf(q, locale) }]; }));
+const dict: Record<string, string> = {};
+const deckNames: Record<string, string> = {};
+decks.forEach(d => { deckNames[d.data.key] = tf(d.data, 'title', locale).text; d.data.items.forEach(i => (dict[d.data.key + '|' + i.a] = tf(i, 'r', locale).text)); });
+const siteUrl = new URL(l(''), Astro.site).href;
+---
+<Base title={T.title} noindex>
+  <div class="wrap tp">
+    <div id="gate"><p>{t.common.loading}</p></div>
+    <div id="app" hidden>
+      <div class="bar">
+        <h1>{T.title}</h1>
+        <div class="bar-r"><span id="me" class="muted small"></span> <button class="btn ghost sm" id="logout">{T.logout}</button></div>
+      </div>
+      <div class="classrow">
+        <label for="cls" class="sr">{T.classLabel}</label>
+        <select id="cls"></select>
+        <button class="btn ghost sm" id="newClsBtn">{T.newClassBtn}</button>
+      </div>
+      <form id="newCls" class="box" hidden>
+        <h2>{T.newClass}</h2>
+        <div class="grid3">
+          <div><label for="ncName">{T.ncName}</label><input id="ncName" type="text" placeholder={T.ncNamePh} required /></div>
+          <div><label for="ncYear">{T.ncYear}</label><input id="ncYear" type="text" placeholder={T.ncYearPh} /></div>
+          <div><label for="ncCount">{T.ncCount}</label><input id="ncCount" type="text" inputmode="numeric" value="19" /></div>
+        </div>
+        <p class="muted small" set:html={T.ncNote} />
+        <button class="btn" type="submit">{T.ncCreate}</button>
+      </form>
+
+      <div class="tabs" role="tablist">
+        <button data-tab="stats" aria-selected="true">{T.tabs.stats}</button>
+        <button data-tab="quizzes" aria-selected="false">{T.tabs.quizzes}</button>
+        <button data-tab="people" aria-selected="false">{T.tabs.people}</button>
+        <button data-tab="admin" aria-selected="false" id="adminTab" hidden>{T.tabs.admin}</button>
+      </div>
+
+      <section data-panel="stats">
+        <div class="filters">
+          <label for="period">{T.period}</label>
+          <select id="period">
+            <option value="7">{T.periods.d7}</option>
+            <option value="30">{T.periods.d30}</option>
+            <option value="sem" selected>{T.periods.sem}</option>
+            <option value="all">{T.periods.all}</option>
+          </select>
+          <button class="btn ghost sm" id="reload">{T.reload}</button>
+          <button class="btn ghost sm" id="csv">{T.csv}</button>
+          <button class="btn ghost sm" onclick="print()">{T.print}</button>
+        </div>
+        <div id="report"><p class="muted">{T.pickClass}</p></div>
+      </section>
+
+      <section data-panel="quizzes" hidden>
+        <div class="filters">
+          <label for="qzSel">{T.quiz}</label>
+          <select id="qzSel"></select>
+          <a class="btn ghost sm" id="qzBoard" target="_blank" rel="noopener">{T.boardLink}</a>
+          <button class="btn ghost sm" id="qzCsv">{T.allAnswersCsv}</button>
+        </div>
+        <p class="muted small">{T.quizNote}</p>
+        <div id="qzRep"><p class="muted">{T.pickClass}</p></div>
+      </section>
+
+      <section data-panel="people" hidden>
+        <div class="box">
+          <p class="classinfo" id="classInfo"></p>
+          <div class="acts">
+            <label for="addN" class="sr">{T.addN}</label>
+            <input id="addN" type="text" inputmode="numeric" value="1" class="num" />
+            <button class="btn ghost sm" id="addBtn">{T.addBtn}</button>
+            <button class="btn ghost sm" id="resetSel">{T.resetSel}</button>
+            <button class="btn ghost sm" id="namesBtn">{T.namesBtn}</button>
+          </div>
+          <p class="muted small">{T.namesNote}</p>
+          <div class="acts">
+            <button class="btn ghost sm" id="expBtn" type="button">{T.expBtn}</button>
+            <button class="btn ghost sm" id="impBtn" type="button">{T.impBtn}</button>
+            <input id="impFile" type="file" accept="application/json,.json" hidden />
+          </div>
+        </div>
+        <div class="tw"><table id="people"></table></div>
+        <form id="namesForm" class="box" hidden>
+          <h2>{T.namesTitle}</h2>
+          <p class="muted small" set:html={T.namesHelp} />
+          <textarea id="namesTxt" rows="10"></textarea>
+          <button class="btn" type="submit">{T.save}</button>
+        </form>
+      </section>
+
+      <section data-panel="admin" hidden>
+        <form id="roleForm" class="box">
+          <h2>{T.roleTitle}</h2>
+          <p class="muted small">{T.roleNote}</p>
+          <div class="grid3">
+            <div><label for="rEmail">{T.email}</label><input id="rEmail" type="email" required /></div>
+            <div><label for="rRole">{T.role}</label><select id="rRole"><option value="teacher">{T.roles.teacher}</option><option value="user">{T.roles.user}</option><option value="admin">{T.roles.admin}</option></select></div>
+            <div style="align-self:end"><button class="btn" type="submit">{T.save}</button></div>
+          </div>
+          <p class="msg" id="rMsg"></p>
+        </form>
+      </section>
+    </div>
+  </div>
+
+  <div id="print" aria-hidden="true"></div>
+  <dialog id="dlg"><div class="dh"><h2 id="dt"></h2><button class="btn ghost sm" id="dclose">{T.close}</button></div><div class="db" id="dbody"></div></dialog>
+  <dialog id="pins"><div class="dh"><h2>{T.pinsTitle}</h2><button class="btn ghost sm" id="pclose">{T.close}</button></div>
+    <div class="db"><p set:html={T.pinsWarn} />
+    <div id="pinList"></div><p><button class="btn" id="pprint">{T.pinsPrint}</button></p></div></dialog>
+
+  <script type="application/json" id="tp-data" set:html={JSON.stringify({ dict, deckNames, quizMeta, login: l('login/') + '?next=' + l('teacher/'), site: siteUrl, siteName: SITE.name, home: l(''), t: T, quiz: { ...t.quiz, mark: t.meta.inRussian }, intl, lang: t.meta.lang, loading: t.common.loading })} />
+  <script>
+    import { getWho, rpc, logout, sb } from '../../../lib/api';
+    import { secBars, reviewHTML, wrapAr, fmtTime } from '../../../lib/quizView';
+    const D = JSON.parse(document.getElementById('tp-data')!.textContent!), T = D.t;
+    const f = (s: string, v: Record<string, unknown> = {}) => s.replace(/\{(\w+)\}/g, (_, k) => String(v[k] ?? ''));
+    const SEX: Record<string, string> = { 'м': T.sex.m, 'ж': T.sex.f }; // в базе — «м»/«ж», на экране — подпись на языке страницы
+    const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
+    const esc = (s: unknown) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
+    let classes: any[] = [], cur: any = null, R: any = null, QR: any = null, sortK = 'known', sortD = -1;
+
+    // ---------- вход ----------
+    const who = getWho();
+    async function boot() {
+      if (!who || who.kind !== 'email') { $('gate').innerHTML = `<h1>${T.title}</h1><p>${T.gateLogin}</p><p><a class="btn" href="${D.login}">${T.login}</a></p>`; return; }
+      try {
+        const s = await sb().auth.getSession();
+        if (!s.data.session) throw new Error('no session');
+        const r = await rpc<any>('teacher_classes');
+        if (!r.ok) { $('gate').innerHTML = `<h1>${T.title}</h1><p>${f(T.noRights, { email: esc(who.email) })}</p>`; return; }
+        classes = r.classes; $('adminTab').hidden = !r.admin;
+        $('gate').hidden = true; $('app').hidden = false; $('me').textContent = who.email;
+        fillClasses();
+      } catch { $('gate').innerHTML = `<h1>${T.title}</h1><p>${T.stale}</p><p><a class="btn" href="${D.login}">${T.loginAgain}</a></p>`; }
+    }
+    $('logout').addEventListener('click', async () => { await logout(); location.href = D.home; });
+
+    // ---------- классы ----------
+    function fillClasses(selectId?: number) {
+      const s = $<HTMLSelectElement>('cls');
+      s.innerHTML = classes.length ? classes.map(c => `<option value="${c.id}">${esc(c.name)}${c.year ? ' · ' + esc(c.year) : ''}${c.archived ? T.archived : ''}</option>`).join('') : `<option value="">${T.noClasses}</option>`;
+      if (selectId) s.value = String(selectId);
+      if (!classes.length) { $('newCls').hidden = false; }
+      pick();
+    }
+    function pick() {
+      cur = classes.find(c => String(c.id) === $<HTMLSelectElement>('cls').value) || null;
+      people(); loadReport();
+    }
+    $('cls').addEventListener('change', pick);
+    $('newClsBtn').addEventListener('click', () => { $('newCls').hidden = !$('newCls').hidden; });
+    $('newCls').addEventListener('submit', async e => {
+      e.preventDefault();
+      const name = $<HTMLInputElement>('ncName').value.trim(), year = $<HTMLInputElement>('ncYear').value.trim(), n = parseInt($<HTMLInputElement>('ncCount').value) || 0;
+      if (!name) return;
+      const r = await rpc<any>('teacher_create_class', { p_name: name, p_year: year || null });
+      if (!r.ok) return alert(T.createFail);
+      let pins: any[] = [];
+      if (n > 0) { const a = await rpc<any>('teacher_add_learners', { p_class: r.id, p_count: Math.min(60, n) }); pins = a.learners || []; }
+      classes = (await rpc<any>('teacher_classes')).classes; $('newCls').hidden = true; fillClasses(r.id);
+      if (pins.length) showPins(pins);
+    });
+
+    // ---------- имена (только локально) ----------
+    const namesKey = () => `unmuzaj:names:${cur?.id}`;
+    function names(): Record<string, string> { try { return JSON.parse(localStorage.getItem(namesKey()) || '{}'); } catch { return {}; } }
+    const label = (l: { code: string; nickname: string }) => names()[l.code] || l.nickname;
+    $('namesBtn').addEventListener('click', () => {
+      const n = names(); $<HTMLTextAreaElement>('namesTxt').value = (cur?.learners || []).map((l: any) => `${l.code}; ${n[l.code] || ''}`).join('\n');
+      $('namesForm').hidden = false; $('namesTxt').focus();
+    });
+    $('namesForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const m: Record<string, string> = {};
+      $<HTMLTextAreaElement>('namesTxt').value.split('\n').forEach(line => { const [c, ...rest] = line.split(/[;,\t]/); const code = (c || '').replace(/\D/g, '').padStart(2, '0'); const nm = rest.join(' ').trim(); if (code !== '00' && nm) m[code] = nm; });
+      try { localStorage.setItem(namesKey(), JSON.stringify(m)); } catch {}
+      $('namesForm').hidden = true; people(); if (R) { renderReport(); quizPart(); }
+    });
+
+    // ---------- экспорт / импорт имён (только локально, без сервера) ----------
+    // Ключи localStorage с префиксом unmuzaj: оставлены намеренно (см. CLAUDE.md §0.1).
+    const LOCAL_KEY = /^unmuzaj:(names:\d+|look)$/;
+    $('expBtn').addEventListener('click', () => {
+      const d: Record<string, string> = {};
+      try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i) || ''; if (LOCAL_KEY.test(k)) d[k] = localStorage.getItem(k) || ''; } } catch {}
+      const classesWithNames = Object.keys(d).filter(k => k.startsWith('unmuzaj:names:')).length;
+      if (!classesWithNames) return alert(T.expNone);
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([JSON.stringify({ app: 'allimni', saved: new Date().toISOString(), data: d }, null, 1)], { type: 'application/json' }));
+      a.download = `allimni_imena_${new Date().toISOString().slice(0, 10)}.json`; a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    });
+    $('impBtn').addEventListener('click', () => $<HTMLInputElement>('impFile').click());
+    $<HTMLInputElement>('impFile').addEventListener('change', async e => {
+      const file = (e.target as HTMLInputElement).files?.[0]; (e.target as HTMLInputElement).value = '';
+      if (!file) return;
+      let raw: any; try { raw = JSON.parse(await file.text()); } catch { return alert(T.impReadFail); }
+      const src: Record<string, unknown> = raw && typeof raw === 'object' ? (raw.data && typeof raw.data === 'object' ? raw.data : raw) : {};
+      const items = Object.entries(src).filter(([k, v]) => LOCAL_KEY.test(k) && typeof v === 'string') as [string, string][];
+      const nameItems = items.filter(([k]) => k.startsWith('unmuzaj:names:'));
+      if (!nameItems.length) return alert(T.impNoNames);
+      let people_n = 0; nameItems.forEach(([, v]) => { try { people_n += Object.keys(JSON.parse(v)).length; } catch {} });
+      const clash = nameItems.filter(([k, v]) => { const old = localStorage.getItem(k); return old && old !== v && old !== '{}'; }).length;
+      let msg = f(T.impConfirm, { c: nameItems.length, n: people_n });
+      if (clash) msg += '\n\n' + f(T.impClash, { n: clash });
+      if (!confirm(msg)) return;
+      try { items.forEach(([k, v]) => { if (k === 'unmuzaj:look' && localStorage.getItem(k)) return; localStorage.setItem(k, v); }); } catch { return alert(T.impStoreFail); }
+      people(); if (R) { renderReport(); quizPart(); }
+      alert(T.impDone);
+    });
+
+    // ---------- ученики ----------
+    function people() {
+      if (!cur) { $('people').innerHTML = ''; $('classInfo').textContent = ''; return; }
+      $('classInfo').innerHTML = f(T.joinInfo, { join: esc(cur.join), url: esc(D.site + 'login/') });
+      const n = names();
+      const H = T.th;
+      $('people').innerHTML = `<thead><tr><th><input type="checkbox" id="allChk" aria-label="${H.all}"></th><th>${H.code}</th><th>${H.nameLocal}</th><th>${H.nick}</th><th>${H.sex}</th><th>${H.active}</th><th></th></tr></thead><tbody>` +
+        cur.learners.map((l: any) => `<tr data-id="${l.id}"><td><input type="checkbox" class="chk" aria-label="${f(T.markOne, { code: esc(l.code) })}"></td><td>${esc(l.code)}</td><td>${esc(n[l.code] || '—')}</td>
+          <td><input type="text" class="nick" value="${esc(l.nickname)}" maxlength="40" aria-label="${f(T.nickOf, { code: esc(l.code) })}"></td>
+          <td><select class="sex" aria-label="${f(T.sexOf, { code: esc(l.code) })}"><option value="">—</option><option value="м" ${l.sex === 'м' ? 'selected' : ''}>${SEX['м']}</option><option value="ж" ${l.sex === 'ж' ? 'selected' : ''}>${SEX['ж']}</option></select></td>
+          <td><input type="checkbox" class="act" ${l.active ? 'checked' : ''} aria-label="${f(T.activeOf, { code: esc(l.code) })}"></td><td><button class="btn ghost sm save">${T.save}</button></td></tr>`).join('') + '</tbody>';
+      $('allChk')?.addEventListener('change', e => document.querySelectorAll<HTMLInputElement>('.chk').forEach(c => (c.checked = (e.target as HTMLInputElement).checked)));
+      document.querySelectorAll<HTMLButtonElement>('#people .save').forEach(b => b.addEventListener('click', async () => {
+        const tr = b.closest('tr')!, id = +tr.dataset.id!;
+        const r = await rpc<any>('teacher_update_learner', { p_id: id, p_nickname: (tr.querySelector('.nick') as HTMLInputElement).value, p_sex: (tr.querySelector('.sex') as HTMLSelectElement).value || null, p_active: (tr.querySelector('.act') as HTMLInputElement).checked });
+        b.textContent = r.ok ? T.saved : T.error; setTimeout(() => (b.textContent = T.save), 1500);
+        classes = (await rpc<any>('teacher_classes')).classes; cur = classes.find(c => c.id === cur.id);
+      }));
+    }
+    $('addBtn').addEventListener('click', async () => {
+      if (!cur) return; const n = Math.min(60, parseInt($<HTMLInputElement>('addN').value) || 0); if (!n) return;
+      const a = await rpc<any>('teacher_add_learners', { p_class: cur.id, p_count: n });
+      classes = (await rpc<any>('teacher_classes')).classes; cur = classes.find(c => c.id === cur.id); people();
+      if (a.ok) showPins(a.learners);
+    });
+    $('resetSel').addEventListener('click', async () => {
+      const ids = [...document.querySelectorAll<HTMLInputElement>('.chk:checked')].map(c => +c.closest('tr')!.dataset.id!);
+      if (!ids.length) return alert(T.markFirst);
+      if (!confirm(f(T.resetConfirm, { n: ids.length }))) return;
+      const a = await rpc<any>('teacher_reset_pins', { p_ids: ids });
+      if (a.ok) showPins(a.learners);
+    });
+    function showPins(list: any[]) {
+      const n = names();
+      $('pinList').innerHTML = `<table class="pins"><thead><tr><th>${T.th.code}</th><th>${T.th.name}</th><th>${T.th.pin}</th></tr></thead><tbody>${list.map(l => `<tr><td>${esc(l.code)}</td><td>${esc(n[l.code] || l.nickname)}</td><td class="pin">${esc(l.pin)}</td></tr>`).join('')}</tbody></table>`;
+      $('print').innerHTML = `<div class="strips">${list.map(l => `<div class="strip"><p class="s-site">${esc(D.siteName)} · ${esc(D.site)}login/</p><p class="s-name">${esc(n[l.code] || l.nickname)}</p>
+        <p class="s-row"><span>${T.strip.classCode}<b>${esc(cur.join)}</b></span><span>${T.strip.myCode}<b>${esc(l.code)}</b></span><span>${T.strip.pin}<b>${esc(l.pin)}</b></span></p></div>`).join('')}</div>`;
+      $<HTMLDialogElement>('pins').showModal();
+    }
+    $('pclose').addEventListener('click', () => { if (confirm(T.closePinsConfirm)) { $<HTMLDialogElement>('pins').close(); $('print').innerHTML = ''; } });
+    // Печать в отдельном окне: в нём только полоски с ПИН, без интерфейса панели.
+    // Цвета здесь намеренно постоянные (лист печатается чёрным по белому при любой теме сайта).
+    $('pprint').addEventListener('click', () => {
+      const html = `<!doctype html><html lang="${D.lang}"><head><meta charset="utf-8"><title>${f(T.printTitle, { name: esc(cur?.name || '') })}</title><style>
+        @page { size: A4 portrait; margin: 10mm; }
+        body { margin: 0; font-family: Georgia, 'Times New Roman', serif; color: #111; }
+        .hint { font: 13px Arial, sans-serif; margin: 0 0 8px; }
+        .strips { display: grid; grid-template-columns: 1fr 1fr; }
+        .strip { border: 1px dashed #777; padding: 10px 12px; break-inside: avoid; page-break-inside: avoid; min-height: 50mm; box-sizing: border-box; }
+        .strip p { margin: 0 0 4px; }
+        .s-site { font: 9pt Arial, sans-serif; color: #333; }
+        .s-name { font-weight: 700; font-size: 14pt; }
+        .s-row { display: flex; gap: 18px; margin-top: 10px !important; }
+        .s-row span { font: 9pt Arial, sans-serif; display: flex; flex-direction: column; }
+        .s-row b { font: 700 18pt Georgia, serif; letter-spacing: .05em; }
+        @media print { .hint { display: none; } }
+      </style></head><body><p class="hint">${T.printHint}</p>${$('print').innerHTML}</body></html>`;
+      const w = window.open('', '_blank');
+      if (!w) { alert(T.popupBlocked); return; }
+      w.document.open(); w.document.write(html); w.document.close();
+      w.focus(); setTimeout(() => w.print(), 400);
+    });
+
+    // ---------- отчёт ----------
+    function periodFrom() {
+      const v = $<HTMLSelectElement>('period').value, now = new Date();
+      if (v === 'all') return '2000-01-01T00:00:00Z';
+      if (v === 'sem') { const y = now.getMonth() >= 8 ? now.getFullYear() : now.getFullYear() - 1; return `${y}-09-01T00:00:00+05:00`; }
+      return new Date(Date.now() - +v * 864e5).toISOString();
+    }
+    async function loadReport() {
+      if (!cur) { $('report').innerHTML = `<p class="muted">${T.createClass}</p>`; $('qzRep').innerHTML = ''; return; }
+      $('report').innerHTML = `<p class="muted">${D.loading}</p>`;
+      try {
+        [R, QR] = await Promise.all([rpc<any>('teacher_report', { p_class: cur.id, p_from: periodFrom() }), rpc<any>('teacher_quiz_report', { p_class: cur.id, p_from: periodFrom() })]);
+        renderReport(); renderQuizzes();
+      }
+      catch { $('report').innerHTML = `<p>${T.reportFail}</p>`; $('qzRep').innerHTML = ''; }
+    }
+    $('period').addEventListener('change', loadReport); $('reload').addEventListener('click', loadReport);
+
+    const known = (s: any) => Object.values(s.decks || {}).reduce((a: number, d: any) => a + (d.good || 0) + (d.done || 0), 0) as number;
+    const acc = (s: any) => (s.answers ? Math.round(1000 * s.ok / s.answers) / 10 : null);
+    const fmtD = (t: string | null) => (t ? new Date(t).toLocaleString(D.intl, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '—');
+    const tr = (deck: string, w: string) => D.dict[deck + '|' + w] || '';
+    const C = T.cols;
+    const COLS: [string, string, (s: any) => any][] = [
+      ['name', C.name, s => label(s)], ['sex', C.sex, s => SEX[s.sex] || ''], ['sessions', C.sessions, s => s.sessions], ['minutes', C.minutes, s => +s.minutes],
+      ['days', C.days, s => s.days], ['known', C.known, known], ['answers', C.answers, s => s.answers], ['acc', C.acc, acc],
+      ['bad', C.bad, s => s.bad], ['ct', C.ct, s => s.ct?.avg ?? null], ['qz', C.qz, s => s.qz?.avg ?? null], ['qn', C.qn, s => s.qz?.n || 0], ['last', C.last, s => s.last],
+    ];
+    function bars(items: { l: string; v: number; s?: string }[], max: number, coral = false) {
+      return `<div class="bars">${items.map(x => `<span>${x.l}</span><span class="t"><i class="${coral ? 'c' : ''}" style="width:${max ? Math.max(1, 100 * x.v / max) : 0}%"></i></span><span class="v">${x.s ?? x.v}</span>`).join('')}</div>`;
+    }
+    function cols(vals: number[], labels: string[]) {
+      const m = Math.max(1, ...vals);
+      return `<div class="cols">${vals.map((v, i) => `<div title="${f(T.colTitle, { l: labels[i] || i, v })}" style="height:${100 * v / m}%"></div>`).join('')}</div><div class="cl">${labels.map(l => `<span>${l}</span>`).join('')}</div>`;
+    }
+    function renderReport() {
+      const S = R.learners as any[], act = S.filter(s => +s.minutes > 0 || s.answers > 0);
+      const tm = S.reduce((a, s) => a + +s.minutes, 0), ta = S.reduce((a, s) => a + s.answers, 0), tok = S.reduce((a, s) => a + s.ok, 0);
+      const top = (k: (s: any) => number | null, unit: string, flt?: (s: any) => boolean, n = 3) => {
+        const L = S.filter(flt || (s => (k(s) ?? 0) > 0)).sort((a, b) => (k(b) ?? 0) - (k(a) ?? 0)).slice(0, n);
+        return L.length ? L.map(s => `<li>${esc(label(s))} — ${Math.round((k(s) ?? 0) * 10) / 10} ${unit}</li>`).join('') : `<li class="none">${T.noData}</li>`;
+      };
+      const U = T.units, NM = T.noms;
+      const noms: [string, string, string?][] = [
+        [NM.time, top(s => +s.minutes, U.min)], [NM.words, top(known, U.words)],
+        [NM.acc, top(acc, '%', s => s.answers >= 50)], [NM.days, top(s => s.days, U.days)],
+        [NM.sessions, top(s => s.sessions, U.times)], [NM.ct, top(s => s.ct?.avg ?? 0, '%')],
+        [NM.qz, top(s => s.qz?.avg ?? 0, '%')],
+        [NM.help, top(s => (s.answers >= 30 ? 100 - (acc(s) ?? 100) : 0), U.errPct, s => s.answers >= 30), 'warn'],
+        [NM.idle, S.filter(s => !+s.minutes && !s.answers).map(s => `<li class="none">${esc(label(s))}</li>`).join('') || `<li class="none">${T.allActive}</li>`, 'warn'],
+      ];
+      const decks = Object.keys(D.deckNames);
+      const daysArr: string[] = []; for (let i = 29; i >= 0; i--) { const d = new Date(Date.now() - i * 864e5); daysArr.push(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`); }
+      const grp = (x: string) => S.filter(s => s.sex === x);
+      const avg = (L: any[], f: (s: any) => number | null) => { const v = L.map(f).filter(v => v != null) as number[]; return v.length ? Math.round(10 * v.reduce((a, b) => a + b, 0) / v.length) / 10 : '—'; };
+      $('report').innerHTML = `
+        <div class="kpis">${[[f(T.ofN, { a: act.length, b: S.length }), T.kpi.active], [Math.round(tm), T.kpi.minutes], [act.length ? Math.round(tm / act.length) : 0, T.kpi.perLearner], [ta, T.kpi.answers], [ta ? Math.round(100 * tok / ta) + '%' : '—', T.kpi.correct], [S.reduce((a, s) => a + s.sessions, 0), T.kpi.sessions]].map(k => `<div class="kpi"><b>${k[0]}</b><span>${k[1]}</span></div>`).join('')}</div>
+        <h2>${T.nominations}</h2><div class="noms">${noms.map(n => `<div class="nom ${n[2] || ''}"><h3>${n[0]}</h3><ol>${n[1]}</ol></div>`).join('')}</div>
+        <p class="muted small">${T.nomsNote}</p>
+        <h2>${T.learners}</h2><p class="muted small">${T.learnersNote}</p>
+        <div class="tw"><table class="rep" id="rep"></table></div>
+        <div class="g2">
+          <div><h2>${T.hardWords}</h2><select id="wdeck">${decks.map(k => `<option value="${k}">${esc(D.deckNames[k])}</option>`).join('')}</select><div class="tw"><table class="words" id="words"></table></div></div>
+          <div><h2>${T.themes}</h2><select id="tdeck">${decks.map(k => `<option value="${k}">${esc(D.deckNames[k])}</option>`).join('')}</select><div id="themes"></div></div>
+        </div>
+        <div class="g2">
+          <div><h2>${T.when}</h2><h3>${T.byWeekday}</h3>${cols(R.weekday, T.weekdays)}<h3>${T.byHour}</h3>${cols(R.hour, R.hour.map((_: any, i: number) => (i % 3 === 0 ? String(i) : '')))}</div>
+          <div><h2>${T.last30}</h2>${cols(daysArr.map(d => +(R.daily[d] || 0)), daysArr.map((d, i) => (i % 5 === 0 ? d.slice(8) + '.' + d.slice(5, 7) : '')))}
+            <h2>${T.sexTitle}</h2><div class="tw"><table class="rep"><thead><tr>${[T.sexCols.group, T.sexCols.n, T.sexCols.minutes, T.sexCols.known, T.sexCols.acc, T.sexCols.ct].map(x => `<th>${x}</th>`).join('')}</tr></thead><tbody>
+            ${[['м', T.boys], ['ж', T.girls]].map(([k, l]) => { const L = grp(k); return `<tr><td>${l}</td><td>${L.length}</td><td>${avg(L, s => +s.minutes)}</td><td>${avg(L, known)}</td><td>${avg(L, s => (s.answers >= 20 ? acc(s) : null))}</td><td>${avg(L, s => s.ct?.avg ?? null)}</td></tr>`; }).join('')}</tbody></table></div>
+            ${S.some(s => !s.sex) ? `<p class="note">${T.sexMissing}</p>` : ''}
+            <p class="note">${f(T.sexNote, { n: S.length })}</p></div>
+        </div>
+        <p class="muted small">${f(T.reportAt, { t: new Date(R.generated).toLocaleString(D.intl) })}</p>`;
+      table(); words(); themes();
+      $('wdeck').addEventListener('change', words); $('tdeck').addEventListener('change', themes);
+    }
+    function table() {
+      const C = COLS.find(c => c[0] === sortK)!;
+      const L = (R.learners as any[]).slice().sort((a, b) => { const x = C[2](a), y = C[2](b); if (x == null) return 1; if (y == null) return -1; return (x > y ? 1 : x < y ? -1 : 0) * sortD; });
+      $('rep').innerHTML = `<thead><tr><th>№</th>${COLS.map(c => `<th data-k="${c[0]}" tabindex="0">${c[1]}${c[0] === sortK ? (sortD > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('')}</tr></thead><tbody>` +
+        L.map((s, i) => `<tr data-id="${s.id}" tabindex="0"><td>${i + 1}</td>${COLS.map(c => { const v = c[2](s); return `<td class="${c[0] === 'name' || c[0] === 'sex' ? '' : 'n'}">${c[0] === 'last' ? fmtD(v) : v == null ? '—' : esc(v)}</td>`; }).join('')}</tr>`).join('') + '</tbody>';
+      $('rep').querySelectorAll<HTMLElement>('th[data-k]').forEach(th => { const go = () => { const k = th.dataset.k!; sortD = k === sortK ? -sortD : k === 'name' ? 1 : -1; sortK = k; table(); }; th.addEventListener('click', go); th.addEventListener('keydown', e => { if (e.key === 'Enter') go(); }); });
+      $('rep').querySelectorAll<HTMLElement>('tbody tr').forEach(r => { const go = () => detail(+r.dataset.id!); r.addEventListener('click', go); r.addEventListener('keydown', e => { if (e.key === 'Enter') go(); }); });
+    }
+    function words() {
+      const d = $<HTMLSelectElement>('wdeck').value, L = (R.words as any[]).filter(w => w.deck === d).slice(0, 30);
+      const WC = T.wcols;
+      $('words').innerHTML = `<thead><tr><th>${WC.word}</th><th>${WC.tr}</th><th>${WC.studs}</th><th>${WC.pct}</th></tr></thead><tbody>` +
+        (L.length ? L.map(w => `<tr><td class="ar" lang="ar" dir="rtl">${esc(w.w)}</td><td>${esc(tr(w.deck, w.w))}<br><small class="muted">${esc(w.t || '')}</small></td><td class="n">${w.studs} ${T.units.people}</td><td class="n">${w.pct}%</td></tr>`).join('') : `<tr><td colspan="4">${T.noErrors}</td></tr>`) + '</tbody>';
+    }
+    function themes() {
+      const d = $<HTMLSelectElement>('tdeck').value, L = (R.themes as any[]).filter(t => t.deck === d).sort((a, b) => b.pct - a.pct);
+      $('themes').innerHTML = L.length ? bars(L.map(t => ({ l: esc(t.t), v: +t.pct, s: t.pct + '%' })), Math.max(1, ...L.map(t => +t.pct)), true) : `<p class="muted">${T.noDataYet}</p>`;
+    }
+    function detail(id: number) {
+      const s = (R.learners as any[]).find(x => x.id === id); if (!s) return;
+      const DT = T.detail;
+      $('dt').textContent = f(DT.head, { name: label(s), code: s.code });
+      const decks = Object.keys(D.deckNames).map(k => { const d = s.decks[k] || {}; return `<tr><td>${esc(D.deckNames[k])}</td><td class="n">${d.seen || 0}</td><td class="n">${d.learn || 0}</td><td class="n">${d.good || 0}</td><td class="n">${d.done || 0}</td></tr>`; }).join('');
+      const th = (s.themes as any[]).slice().sort((a, b) => b.bad / b.n - a.bad / a.n);
+      const days = Object.keys(s.daily).sort().slice(-20);
+      const DC = DT.deckCols;
+      $('dbody').innerHTML = `<p>${s.sex === 'м' ? DT.boy : s.sex === 'ж' ? DT.girl : ''}${f(DT.line, { nick: esc(s.nickname), s: s.sessions, m: s.minutes, d: s.days, a: s.answers, acc: acc(s) ?? '—', last: fmtD(s.last) })}</p>
+        <h3>${DT.decks}</h3><div class="tw"><table class="rep"><thead><tr><th>${DC.deck}</th><th>${DC.seen}</th><th>${DC.learn}</th><th>${DC.good}</th><th>${DC.done}</th></tr></thead><tbody>${decks}</tbody></table></div>
+        <h3>${DT.tests}</h3><p>${s.ct.n ? f(DT.testsLine, { n: s.ct.n, avg: s.ct.avg, best: s.ct.best }) : DT.noTests}</p>
+        <h3>${DT.themes}</h3>${th.length ? bars(th.map(t => ({ l: esc(t.t), v: Math.round(100 * t.bad / t.n), s: f(DT.pctOf, { p: Math.round(100 * t.bad / t.n), n: t.n }) })), 100, true) : `<p>${DT.noAnswers}</p>`}
+        <h3>${DT.hard}</h3>${s.hard.length ? `<table class="rep"><tbody>${s.hard.map((h: any) => `<tr><td class="ar" lang="ar" dir="rtl">${esc(h.w)}</td><td>${esc(tr(h.deck, h.w))}</td><td class="n">${f(DT.errors, { n: h.bad })}</td></tr>`).join('')}</tbody></table>` : `<p>${DT.noErr}</p>`}
+        <h3>${DT.daily}</h3>${days.length ? cols(days.map(d => +s.daily[d]), days.map(d => d.slice(8) + '.' + d.slice(5, 7))) : `<p>${DT.noDays}</p>`}
+        <h3>${DT.quizzes}</h3>${attemptsTable((QR?.attempts || []).filter((a: any) => a.learner === s.id), false)}`;
+      bindAttempts($('dbody'));
+      $<HTMLDialogElement>('dlg').showModal();
+    }
+    $('dclose').addEventListener('click', () => $<HTMLDialogElement>('dlg').close());
+
+    // ---------- викторины ----------
+    const QM: Record<string, any> = D.quizMeta;
+    const qTitle = (k: string) => QM[k]?.title || k;
+    const pct = (a: any) => (a.total ? Math.round(100 * a.correct / a.total) : 0);
+    const learnerById = (id: number) => (R?.learners as any[] || []).find(l => l.id === id);
+    function attemptsTable(list: any[], withName: boolean) {
+      const A = T.att;
+      if (!list.length) return `<p class="muted">${A.none}</p>`;
+      return `<div class="tw"><table class="rep att"><thead><tr><th>${A.when}</th><th>${withName ? A.learner : A.quiz}</th><th>${A.correct}</th><th>%</th><th>${A.points}</th><th>${A.time}</th><th>${A.level}</th><th></th></tr></thead><tbody>` +
+        list.map(a => `<tr><td>${fmtD(a.at)}</td><td>${withName ? esc(label(learnerById(a.learner) || { code: '', nickname: '?' })) : esc(qTitle(a.quiz))}</td><td class="n">${a.correct}/${a.total}</td><td class="n">${pct(a)}%</td><td class="n">${a.points}</td><td class="n">${fmtTime(a.time || 0)}</td><td>${esc(a.level || '')}</td>` +
+          `<td><button class="btn ghost sm rvBtn" data-att="${esc(a.id)}">${A.review}</button></td></tr>`).join('') + '</tbody></table></div>';
+    }
+    function bindAttempts(root: HTMLElement) {
+      root.querySelectorAll<HTMLButtonElement>('.rvBtn').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); review(b.dataset.att!); }));
+    }
+    async function review(id: string) {
+      const a0 = (QR.attempts as any[]).find(a => a.id === id), L = learnerById(a0?.learner);
+      $('dt').textContent = `${L ? label(L) : ''} · ${qTitle(a0?.quiz)}`;
+      $('dbody').innerHTML = `<p>${D.loading}</p>`; const dlg = $<HTMLDialogElement>('dlg'); if (!dlg.open) dlg.showModal();
+      try {
+        const r = await rpc<any>('teacher_quiz_attempt', { p_attempt: id }); if (!r.ok) throw 0;
+        const a = r.attempt, m = QM[a.quiz] || { sections: {}, plan: [], explain: {} };
+        const secRows = (m.plan as [string, number][]).map(([k]) => { const x = (a.answers as any[]).filter(y => y.s === k); return { s: k, ok: x.filter(y => y.ok).length, n: x.length }; }).filter(x => x.n);
+        $('dbody').innerHTML = `<p>${f(T.reviewLine, { at: fmtD(a.at), c: a.correct, t: a.total, pct: pct(a), p: a.points, time: fmtTime(a.time || 0), lvl: esc(a.level || '') })}</p>` +
+          (secRows.length > 1 ? secBars(m.sections, secRows) : '') + reviewHTML(a.answers, m.sections, D.quiz, m.explain);
+      } catch { $('dbody').innerHTML = `<p>${T.reviewFail}</p>`; }
+    }
+    function renderQuizzes() {
+      if (!QR?.ok) { $('qzRep').innerHTML = `<p>${T.noQData}</p>`; return; }
+      const sel = $<HTMLSelectElement>('qzSel'), prev = sel.value;
+      const cnt = (k: string) => (QR.attempts as any[]).filter(a => a.quiz === k).length;
+      const keys = Object.keys(QM).sort((a, b) => cnt(b) - cnt(a));
+      sel.innerHTML = keys.map(k => `<option value="${esc(k)}">${f(T.attemptsN, { title: esc(QM[k].title), test: QM[k].kind === 'test' ? T.testMark : '', n: cnt(k) })}</option>`).join('');
+      if (prev && keys.includes(prev)) sel.value = prev;
+      quizPart();
+    }
+    function quizPart() {
+      if (!QR || !cur) return;
+      const k = $<HTMLSelectElement>('qzSel').value, m = QM[k], A = (QR.attempts as any[]).filter(a => a.quiz === k);
+      $<HTMLAnchorElement>('qzBoard').href = `${D.site}board/${k}/?class=${encodeURIComponent(cur.join)}&hours=3`;
+      const S = R.learners as any[];
+      const per = S.map(s => { const my = A.filter(a => a.learner === s.id); const best = my.slice().sort((x, y) => y.points - x.points)[0]; return { s, n: my.length, best, last: my[0] }; });
+      const done = per.filter(p => p.n);
+      const avgBest = done.length ? Math.round(done.reduce((x, p) => x + pct(p.best), 0) / done.length) : null;
+      const secRows = (m.plan as [string, number][]).map(([s]) => { const x = (QR.sections as any[]).find(y => y.quiz === k && y.s === s); return { s, ok: x?.ok || 0, n: x?.n || 0 }; }).filter(x => x.n);
+      const hard = (QR.hard as any[]).filter(h => h.quiz === k).slice(0, 15);
+      const QC = T.qcols;
+      $('qzRep').innerHTML = `<div class="kpis">${[[f(T.ofN, { a: done.length, b: S.length }), T.qkpi.done], [A.length, T.qkpi.attempts], [avgBest == null ? '—' : avgBest + '%', T.qkpi.avgBest]].map(x => `<div class="kpi"><b>${x[0]}</b><span>${x[1]}</span></div>`).join('')}</div>
+        <h2>${T.learners}</h2><div class="tw"><table class="rep"><thead><tr><th>${QC.name}</th><th>${QC.n}</th><th>${QC.best}</th><th>%</th><th>${QC.points}</th><th>${QC.last}</th><th></th></tr></thead><tbody>` +
+        per.sort((a, b) => (b.best?.points ?? -1) - (a.best?.points ?? -1)).map(p => `<tr><td>${esc(label(p.s))}</td><td class="n">${p.n || '—'}</td><td class="n">${p.best ? `${p.best.correct}/${p.best.total}` : '—'}</td><td class="n">${p.best ? pct(p.best) + '%' : '—'}</td><td class="n">${p.best?.points ?? '—'}</td><td>${p.last ? fmtD(p.last.at) : '—'}</td>` +
+          `<td>${p.best ? `<button class="btn ghost sm rvBtn" data-att="${esc(p.best.id)}">${T.att.reviewBest}</button>` : ''}</td></tr>`).join('') + `</tbody></table></div>
+        <div class="g2"><div><h2>${T.qParts}</h2>${secRows.length ? secBars(m.sections, secRows) : `<p class="muted">${T.noAnswersYet}</p>`}</div>
+        <div><h2>${T.allAttempts}</h2>${attemptsTable(A, true)}</div></div>
+        <h2>${T.hardQ}</h2><p class="muted small">${T.hardQNote}</p>` +
+        (hard.length ? `<div class="tw"><table class="rep hardq"><thead><tr><th>${T.hq.q}</th><th>${T.hq.c}</th><th>${T.hq.studs}</th><th>${T.hq.pct}</th></tr></thead><tbody>${hard.map(h => `<tr><td>${wrapAr(h.q)}</td><td>${wrapAr(h.c)}</td><td class="n">${h.studs} ${T.units.people}</td><td class="n">${h.pct}%</td></tr>`).join('')}</tbody></table></div>` : `<p class="muted">${T.noErrors}</p>`);
+      bindAttempts($('qzRep'));
+    }
+    $('qzSel').addEventListener('change', quizPart);
+    $('qzCsv').addEventListener('click', async () => {
+      if (!cur) return; const k = $<HTMLSelectElement>('qzSel').value;
+      const r = await rpc<any>('teacher_quiz_answers', { p_class: cur.id, p_quiz: k, p_from: periodFrom() });
+      if (!r.ok) return alert(T.exportFail);
+      const head = T.csvQ;
+      const rows = (r.rows as any[]).map(x => { const L = learnerById(x.learner); return [L?.code || '', L ? label(L) : '', new Date(x.at).toLocaleString(D.intl), x.attempt, x.no, x.s, x.q, x.a, x.c, x.ok ? T.yes : T.no, x.sec]; });
+      download([head, ...rows], `allimni_${cur.join}_${k}.csv`);
+    });
+    function download(rows: unknown[][], name: string) {
+      const csv = '\ufeff' + rows.map(r => r.map(v => '"' + String(v ?? '').replace(/"/g, '""') + '"').join(';')).join('\r\n');
+      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = name; a.click();
+    }
+    $('csv').addEventListener('click', () => {
+      if (!R) return;
+      const head = [T.csvCode, ...COLS.map(c => c[1])];
+      const rows = (R.learners as any[]).map(s => [s.code, ...COLS.map(c => { const v = c[2](s); return c[0] === 'last' ? (v ? new Date(v).toLocaleString(D.intl) : '') : v ?? ''; })]);
+      const csv = '﻿' + [head, ...rows].map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(';')).join('\r\n');
+      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = `allimni_${cur?.join || 'class'}.csv`; a.click();
+    });
+
+    // ---------- вкладки, администратор ----------
+    document.querySelectorAll<HTMLElement>('[data-tab]').forEach(b => b.addEventListener('click', () => {
+      document.querySelectorAll('[data-tab]').forEach(x => x.setAttribute('aria-selected', String(x === b)));
+      document.querySelectorAll<HTMLElement>('[data-panel]').forEach(p => (p.hidden = p.dataset.panel !== b.dataset.tab));
+    }));
+    $('roleForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const r = await rpc<any>('admin_set_role', { p_email: $<HTMLInputElement>('rEmail').value, p_role: $<HTMLSelectElement>('rRole').value });
+      $('rMsg').textContent = r.ok ? T.roleSaved : r.err === 'no_user' ? T.noUser : T.roleFail;
+    });
+    boot();
+  </script>
+</Base>
+
+<style>
+  .tp { padding-top: 24px; }
+  .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .bar h1 { margin: 0; }
+  .sm { min-height: 40px; padding: 0 12px; font-size: .92rem; }
+  .sr { position: absolute; left: -9999px; }
+  .classrow { display: flex; gap: 10px; margin: 16px 0; align-items: center; }
+  .classrow select { max-width: 460px; }
+  .box { background: var(--sheet); border: 1px solid var(--line); border-radius: var(--r-m); padding: 16px 18px; margin-bottom: 16px; }
+  .box h2 { font-size: 1.2rem; }
+  .grid3 { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px; }
+  .tabs { display: flex; gap: 6px; border-bottom: 2px solid var(--accent); margin: 8px 0 18px; flex-wrap: wrap; }
+  .tabs button { border: 0; background: transparent; min-height: 44px; padding: 0 14px; font: 600 1rem var(--sans); color: var(--ink-soft); cursor: pointer; border-radius: 8px 8px 0 0; }
+  .tabs button[aria-selected='true'] { background: var(--accent); color: var(--on-accent); }
+  .filters { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+  .filters label { margin: 0; } .filters select { width: auto; }
+  .acts { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .num { width: 70px !important; }
+  .classinfo .join { font-size: 1.3rem; letter-spacing: .08em; color: var(--lapis); }
+  .tp :global(.tw), dialog :global(.tw) { overflow-x: auto; max-width: 100%; }
+  .tp :global(table), dialog :global(table) { border-collapse: collapse; width: 100%; font-size: .95rem; }
+  .tp :global(th), .tp :global(td), dialog :global(th), dialog :global(td) { padding: 7px 8px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+  .tp :global(th), dialog :global(th) { background: var(--accent); color: var(--on-accent); font-size: .85rem; }
+  .tp :global(table.words td:nth-child(2)) { white-space: normal; min-width: 140px; }
+  #people input[type=text], #people select { min-height: 38px; padding: 4px 8px; }
+  #qzRep :global(.kpis), #report :global(.kpis) { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 20px; }
+  #qzRep :global(.kpi), #report :global(.kpi) { background: var(--surface-2); border-radius: 10px; padding: 10px 12px; }
+  #qzRep :global(.kpi b), #report :global(.kpi b) { display: block; font: 700 1.5rem var(--serif); color: var(--accent); }
+  #qzRep :global(.kpi span), #report :global(.kpi span) { font-size: .88rem; color: var(--ink-soft); }
+  #qzRep :global(h2), #report :global(h2) { font-size: 1.3rem; margin-top: 26px; }
+  #report :global(h3) { font-size: 1rem; margin: 14px 0 6px; }
+  #report :global(.noms) { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; }
+  #report :global(.nom) { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--sheet); }
+  #report :global(.nom h3) { margin: 0 0 6px; font-family: var(--sans); font-size: .95rem; }
+  #report :global(.nom ol) { margin: 0; padding-left: 20px; font-size: .95rem; }
+  #report :global(.nom li:first-child) { font-weight: 700; }
+  #report :global(.nom li.none) { font-weight: 400; color: var(--ink-soft); }
+  #report :global(.nom.warn) { border-color: var(--bad); background: var(--bad-bg); }
+  #report :global(table.rep th) { cursor: pointer; }
+  #report :global(table.rep tbody tr) { cursor: pointer; }
+  #report :global(tbody tr:hover) { background: var(--hover); }
+  :global(td.n) { text-align: right; }
+  .tp :global(th.n) { text-align: right; }
+  :global(td.ar) { font-family: var(--ar); font-size: calc(1.3rem * var(--ar-scale)); text-align: right; }
+  #qzRep :global(.g2), #report :global(.g2) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; }
+  #qzRep :global(.g2 > div), #report :global(.g2 > div) { min-width: 0; }
+  #report :global(select) { width: auto; margin-bottom: 8px; }
+  :global(.bars) { display: grid; grid-template-columns: minmax(90px, max-content) minmax(40px, 1fr) 80px; gap: 4px 8px; align-items: center; font-size: .9rem; }
+  :global(.bars .t) { height: 14px; background: var(--surface-2); border-radius: 7px; overflow: hidden; }
+  :global(.bars .t i) { display: block; height: 100%; background: var(--chart); border-radius: 7px; }
+  :global(.bars .t i.c) { background: var(--chart-2); }
+  :global(.bars .v) { text-align: right; color: var(--ink-soft); }
+  :global(.cols) { display: flex; align-items: flex-end; gap: 3px; height: 110px; border-bottom: 1px solid var(--line); }
+  :global(.cols div) { flex: 1; background: var(--chart); border-radius: 3px 3px 0 0; min-height: 1px; }
+  :global(.cl) { display: flex; gap: 3px; font-size: .72rem; color: var(--ink-soft); }
+  :global(.cl span) { flex: 1; text-align: center; overflow: hidden; }
+  :global(.note) { font-size: .88rem; background: var(--notice-bg); color: var(--ink); border-left: 4px solid var(--gold); padding: 6px 10px; margin-top: 8px; }
+  dialog { border: 0; border-radius: 14px; width: min(860px, 95vw); padding: 0; }
+  dialog::backdrop { background: rgba(0,0,0,.45); }
+  .dh { background: var(--accent); color: var(--on-accent); display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; gap: 10px; }
+  .dh h2 { color: var(--on-accent); margin: 0; font-size: 1.2rem; }
+  .dh .btn { color: var(--on-accent); border-color: var(--on-accent); }
+  .db { padding: 14px 16px; max-height: 75vh; overflow: auto; }
+  :global(.pins td.pin) { font: 700 1.3rem var(--serif); letter-spacing: .1em; }
+  .msg { min-height: 1.4em; color: var(--lapis); }
+  #print { display: none; }
+  .tp :global(table.hardq td) { white-space: normal; min-width: 160px; }
+  .tp :global(table.hardq .ar), dialog :global(.rv .ar) { font-family: var(--ar); font-size: calc(1.25rem * var(--ar-scale)); }
+  @media (max-width: 760px) { .grid3, #report :global(.g2), #qzRep :global(.g2) { grid-template-columns: 1fr; } }
+  @media print {
+    :global(header), :global(footer) { display: none !important; }
+    :global(.strips) { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+    :global(.strip) { border: 1px dashed #777; padding: 10px 12px; break-inside: avoid; height: 52mm; }
+    :global(.strip p) { margin: 0 0 4px; }
+    :global(.s-site) { font-size: 9pt; color: #333; }
+    :global(.s-name) { font: 700 13pt var(--serif); }
+    :global(.s-row) { display: flex; gap: 18px; margin-top: 8px !important; }
+    :global(.s-row span) { font-size: 9pt; display: flex; flex-direction: column; }
+    :global(.s-row b) { font: 700 18pt var(--serif); letter-spacing: .05em; }
+    .tabs, .filters, .classrow, .bar-r { display: none; }
+  }
+</style>

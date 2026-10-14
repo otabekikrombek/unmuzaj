@@ -1,9 +1,9 @@
 ---
 // Источники раздела «Спряжение» (GPL: код Qutrub и Arramooz в репозиторий не копируется — см. CLAUDE.md, «Лицензии»).
-import { t } from '../i18n/ru';
+import { useI18n } from '../i18n';
 interface Props { engine?: string; pyodide?: boolean }
 const { engine, pyodide = false } = Astro.props;
-const C = t.conj;
+const C = useI18n(Astro.url).t.conj;
 ---
 <footer class="credits small muted">
   <p>{C.creditQutrub}{engine && <> ({engine})</>} — <a href="https://github.com/linuxscout/qutrub">{C.creditCode}</a>.</p>

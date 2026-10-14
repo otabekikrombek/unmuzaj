@@ -3,4 +3,12 @@ Disallow: /teacher/
 Disallow: /me/
 Disallow: /login/
 Disallow: /board/
+Disallow: /uz/teacher/
+Disallow: /uz/me/
+Disallow: /uz/login/
+Disallow: /uz/board/
+Disallow: /en/teacher/
+Disallow: /en/me/
+Disallow: /en/login/
+Disallow: /en/board/
 Sitemap: https://allimni.net/sitemap-index.xml

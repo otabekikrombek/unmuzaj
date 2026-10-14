@@ -100,3 +100,8 @@ dialog { background: var(--sheet); color: var(--ink); }
 @media print {
   :root { --paper: #fff; --sheet: #fff; --ink: #000; --ink-soft: #333; }
 }
+
+/* пометка «(rus tilida)» у материала, который ещё не переведён на язык интерфейса */
+.ru-mark { font-weight: 400; font-size: .75em; font-style: italic; font-family: var(--sans); margin-inline-start: .45em; white-space: nowrap; letter-spacing: 0; }
+.ru-mark:empty { display: none; }
+.ru-note { font-size: .92rem; font-style: italic; }

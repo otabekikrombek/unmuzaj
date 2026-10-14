@@ -1,10 +1,12 @@
 ---
 // Поиск по сайту: лупа в шапке, клавиши «/» и Ctrl+K.
 // Страницы — Pagefind (индекс строится после сборки: npm run build), слова — свой индекс /search/words.json.
-import { t } from '../i18n/ru';
+import { useI18n } from '../i18n';
 import { u } from '../lib/url';
+const { t, l } = useI18n(Astro.url);
 const S = t.search;
-const data = { t: S, base: u(''), groups: S.groups };
+// home — главная на языке страницы: ссылки результатов и индекс слов на этом языке (/uz/search/words.json)
+const data = { t: S, home: l(''), base: u(''), groups: S.groups };
 ---
 <dialog id="searchDlg" class="srch" aria-labelledby="srchLabel">
   <div class="sh">
@@ -24,17 +26,17 @@ const data = { t: S, base: u(''), groups: S.groups };
 <script>
   import { norm } from '../lib/normalize';
   const D = JSON.parse(document.getElementById('srch-data')!.textContent!);
-  const T = D.t, BASE: string = D.base;
+  const T = D.t, HOME: string = D.home, BASE: string = D.base; // главная на языке страницы; корень сайта (для Pagefind)
   const dlg = document.getElementById('searchDlg') as HTMLDialogElement;
   const q = document.getElementById('srchQ') as HTMLInputElement;
   const res = document.getElementById('srchRes')!, hint = document.getElementById('srchHint')!, status = document.getElementById('srchStatus')!;
   const esc = (s: unknown) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
 
-  type W = { a: string; r: string; t: string; h: string; n: string };
+  type W = { a: string; r: string; t: string; h: string; n: string; f?: 1 }; // f — перевод по-русски (нет перевода на язык страницы)
   let words: W[] | null = null, pf: any = null, pfFailed = false;
   async function loadWords() {
     if (words) return words;
-    try { words = await (await fetch(BASE + 'search/words.json')).json(); } catch { words = []; }
+    try { words = await (await fetch(HOME + 'search/words.json')).json(); } catch { words = []; }
     return words!;
   }
   async function loadPagefind() {
@@ -92,8 +94,8 @@ const data = { t: S, base: u(''), groups: S.groups };
     }
     let html = '';
     if (ws.length) {
-      html += `<h3>${esc(D.groups.words)}</h3><ul>${ws.map(w => `<li><a href="${esc(BASE + w.h)}"><span class="w-ar" lang="ar" dir="rtl">${esc(w.a)}</span><span class="w-ru">${esc(w.r)}</span><span class="ex">${esc(w.t)}</span></a></li>`).join('')}</ul>` +
-        `<p class="more"><a href="${esc(BASE + 'dictionary/?q=' + encodeURIComponent(raw))}">${esc(T.allInDict)}</a></p>`;
+      html += `<h3>${esc(D.groups.words)}</h3><ul>${ws.map(w => `<li><a href="${esc(HOME + w.h)}"><span class="w-ar" lang="ar" dir="rtl">${esc(w.a)}</span><span class="w-ru"${w.f ? ' lang="ru"' : ''}>${esc(w.r)}</span><span class="ex"${/[А-Яа-яЁё]/.test(w.t) ? ' lang="ru"' : ''}>${esc(w.t)}</span></a></li>`).join('')}</ul>` +
+        `<p class="more"><a href="${esc(HOME + 'dictionary/?q=' + encodeURIComponent(raw))}">${esc(T.allInDict)}</a></p>`;
     }
     for (const g of ['tasks', 'grammar', 'texts', 'articles', 'sections']) if (groups[g]) html += `<h3>${esc(D.groups[g] || g)}</h3><ul>${groups[g].join('')}</ul>`;
     if (!html) html = `<p class="empty">${esc(T.empty)}</p>`;

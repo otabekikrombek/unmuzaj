@@ -1,0 +1,91 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import { SITE } from '../../../config/site';
+import { useI18n, localeParams, fmt } from '../../../i18n';
+export const getStaticPaths = localeParams;
+const { t, l } = useI18n(Astro.url);
+const T = t.login;
+---
+<Base title={T.title} description={fmt(T.desc, { name: SITE.name })} noindex>
+  <PageHead title={T.title} ar="الدُّخُولُ" lead={T.lead} />
+  <div class="wrap login">
+    <section id="class" class="box">
+      <h2>{T.classH}</h2>
+      <p class="muted small">{T.classNote}</p>
+      <form id="fClass" novalidate>
+        <label for="join">{T.join}</label>
+        <input id="join" type="text" autocomplete="off" autocapitalize="characters" maxlength="12" placeholder={T.joinPh} required />
+        <div class="two">
+          <div><label for="code">{T.code}</label><input id="code" type="text" inputmode="numeric" maxlength="3" placeholder="07" required /></div>
+          <div><label for="pin">{T.pin}</label><input id="pin" type="password" inputmode="numeric" maxlength="6" placeholder="••••" autocomplete="off" required /></div>
+        </div>
+        <label class="check"><input type="checkbox" id="rem" checked /> {T.remember} <span class="muted small">{T.rememberNote}</span></label>
+        <button class="btn" type="submit">{T.enterClass}</button>
+        <p class="msg" id="mClass" role="alert"></p>
+      </form>
+    </section>
+    <section class="box">
+      <h2>{T.mailH}</h2>
+      <p class="muted small">{T.mailNote}</p>
+      <form id="fMail" novalidate>
+        <label for="email">{T.email}</label>
+        <input id="email" type="email" autocomplete="email" required />
+        <label for="pass">{T.pass}</label>
+        <input id="pass" type="password" autocomplete="current-password" required />
+        <button class="btn" type="submit">{T.enter}</button>
+        <p class="msg" id="mMail" role="alert"></p>
+      </form>
+      <p class="muted small">{T.regLater}</p>
+    </section>
+  </div>
+  <script type="application/json" id="paths" set:html={JSON.stringify({ words: l('words/'), me: l('me/'), teacher: l('teacher/'), t: T })} />
+  <script>
+    import { classLogin, emailLogin, getWho } from '../../../lib/api';
+    const P = JSON.parse(document.getElementById('paths')!.textContent!), T = P.t;
+    const $ = (id: string) => document.getElementById(id) as HTMLInputElement;
+    const back = new URLSearchParams(location.search).get('next');
+    const params = new URLSearchParams(location.search);
+    if (params.get('join')) $('join').value = params.get('join')!;
+    if (getWho()) { const m = document.createElement('p'); m.className = 'notice'; m.innerHTML = T.already.replace('{href}', P.me); document.querySelector('.login')!.before(m); }
+
+    $('fClass').addEventListener('submit', async e => {
+      e.preventDefault();
+      const m = $('mClass'), btn = (e.target as HTMLFormElement).querySelector('button')!;
+      const join = $('join').value.trim(), code = $('code').value.trim(), pin = $('pin').value.trim();
+      if (!join || !code || !/^\d{4,6}$/.test(pin)) { m.textContent = T.fill; return; }
+      btn.disabled = true; m.textContent = T.checking;
+      try {
+        const r = await classLogin(join, code, pin, ($('rem') as HTMLInputElement).checked);
+        if (r.ok) { location.href = back && back.startsWith('/') ? back : P.words; return; }
+        m.textContent = r.err === 'class' ? T.errClass : r.err === 'locked' ? T.errLocked : T.errPin;
+      } catch { m.textContent = T.offline; }
+      btn.disabled = false;
+    });
+
+    $('fMail').addEventListener('submit', async e => {
+      e.preventDefault();
+      const m = $('mMail'), btn = (e.target as HTMLFormElement).querySelector('button')!;
+      btn.disabled = true; m.textContent = T.checking;
+      try {
+        const r = await emailLogin($('email').value.trim(), $('pass').value);
+        if (r.ok) { location.href = r.role === 'teacher' || r.role === 'admin' ? P.teacher : P.me; return; }
+        m.textContent = /Invalid login/i.test(r.err ?? '') ? T.errMail : T.failMail.replace('{err}', r.err ?? '');
+      } catch { m.textContent = T.offline; }
+      btn.disabled = false;
+    });
+  </script>
+</Base>
+<style>
+  .login { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+  .box { background: var(--sheet); border: 1px solid var(--line); border-radius: var(--r-m); padding: 20px 20px 12px; }
+  .box h2 { font-size: 1.35rem; margin-bottom: 4px; }
+  #class { border-top: 4px solid var(--turq); }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .check { display: flex; gap: 8px; align-items: flex-start; font-weight: 400; margin: 14px 0; }
+  .check input { width: 20px; height: 20px; margin-top: 2px; flex: none; }
+  .btn { width: 100%; margin-top: 12px; }
+  .msg { min-height: 1.5em; color: var(--bad-ink); margin-top: 10px; }
+  .notice { margin: 0 auto 16px; max-width: 1048px; }
+  @media (max-width: 760px) { .login { grid-template-columns: 1fr; } }
+</style>

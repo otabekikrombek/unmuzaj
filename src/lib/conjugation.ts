@@ -1,6 +1,8 @@
 // Таблица спряжения (раздел «Спряжение», CLAUDE.md §13.2). Одна функция рисует таблицу и при сборке
-// (страницы /conjugation/<key>/), и в браузере (режим «Любой глагол»). Подписи — src/i18n/ru.ts (t.conj).
-import { t } from '../i18n/ru';
+// (страницы /conjugation/<key>/), и в браузере (режим «Любой глагол»). Подписи — раздел conj словаря языка страницы
+// (src/i18n/ru.ts, uz.ts, en.ts); его передают параметром C. Арабские подписи одинаковы на всех языках — CONJ_AR.
+import type { Dict } from '../i18n/ru';
+export type ConjLabels = Dict['conj'];
 
 export const TENSES = ['past', 'present', 'subjunctive', 'jussive', 'imperative', 'passive_past', 'passive_present'] as const;
 export type Tense = (typeof TENSES)[number];
@@ -13,6 +15,22 @@ export const PERSON_AR = ['أَنَا', 'أَنْتَ', 'أَنْتِ', 'هُو�
 /** лица повелительной формы: ты м., ты ж., вы двое, вы м., вы ж. */
 export const IMPERATIVE_PERSONS = [1, 2, 5, 9, 10];
 const HUWA = 3;
+
+/** арабские подписи раздела: не переводятся */
+export const CONJ_AR = {
+  types: {
+    sound: 'صَحِيحٌ سَالِمٌ', hamzated: 'مَهْمُوزٌ', assimilated: 'مِثَالٌ', hollow: 'أَجْوَفُ',
+    defective: 'نَاقِصٌ', doubled: 'مُضَعَّفٌ', lafif: 'لَفِيفٌ',
+  } as Record<string, string>,
+  // образец настоящего-будущего по огласовке второго корневого
+  babPattern: { 'فتحة': 'يَفْعَلُ', 'ضمة': 'يَفْعُلُ', 'كسرة': 'يَفْعِلُ' } as Record<string, string>,
+  active: 'الْمَبْنِيُّ لِلْمَعْلُومِ',
+  passive: 'الْمَبْنِيُّ لِلْمَجْهُولِ',
+  past: 'الْمَاضِي',
+  present: 'الْمُضَارِعُ',
+  moods: { present: 'الْمَرْفُوعُ', subjunctive: 'الْمَنْصُوبُ', jussive: 'الْمَجْزُومُ' },
+  imperative: 'الْأَمْرُ',
+};
 
 /** ключи ответа Qutrub (display_format='DICT') — те же, что в scripts/conjugate/build.py */
 export const QUTRUB_PERSONS = ['أنا', 'أنت', 'أنتِ', 'هو', 'هي', 'أنتما', 'هما', 'هما مؤ', 'نحن', 'أنتم', 'أنتن', 'هم', 'هن'];
@@ -50,9 +68,10 @@ export function mixed(text: string): string {
   return esc(text).replace(/[\u0600-\u06ff](?:[\u0600-\u06ff\s]*[\u0600-\u06ff])?/g, m => `<span lang="ar" dir="rtl">${m}</span>`);
 }
 const esc = (s: unknown) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
-const ar = (s: string, cls = '') => s ? `<span lang="ar" dir="rtl"${cls ? ` class="${cls}"` : ''}>${esc(s)}</span>` : `<span class="cj-none" aria-label="${esc(t.conj.noForm)}">—</span>`;
+let C0: ConjLabels; // подписи текущей отрисовки (задаёт renderConjugation)
+const ar = (s: string, cls = '') => s ? `<span lang="ar" dir="rtl"${cls ? ` class="${cls}"` : ''}>${esc(s)}</span>` : `<span class="cj-none" aria-label="${esc(C0.noForm)}">—</span>`;
 const head = (ru: string, arText: string) => `<span class="cj-h-ru" dir="ltr">${esc(ru)}</span> ${ar(arText, 'cj-h-ar')}`;
-const personCell = (i: number) => `<th scope="row" class="cj-p">${ar(PERSON_AR[i], 'cj-p-ar')}<span class="cj-p-ru" dir="ltr">${esc(t.conj.persons[i])}</span></th>`;
+const personCell = (i: number) => `<th scope="row" class="cj-p">${ar(PERSON_AR[i], 'cj-p-ar')}<span class="cj-p-ru" dir="ltr">${esc(C0.persons[i])}</span></th>`;
 
 /** таблица: строки — лица, колонки — формы. На телефоне видна одна колонка, переключатель — initConjugation() */
 function table(caption: string, cols: { key: Tense; label: string; group?: boolean }[], forms: Forms, rows: number[], group?: string) {
@@ -62,48 +81,48 @@ function table(caption: string, cols: { key: Tense; label: string; group?: boole
     const n = cols.filter(c => c.group).length;
     thead += `<tr class="cj-grouprow"><td></td>${cols.filter(c => !c.group).map(() => '<td></td>').join('')}<th scope="colgroup" colspan="${n}" class="cj-group">${group}</th></tr>`;
   }
-  const mob = group ? `<span class="cj-mob">${esc(t.conj.present)}:</span> ` : '';
-  thead += `<tr><th scope="col" class="cj-corner">${esc(t.conj.person)}</th>${cols.map(c => `<th scope="col" class="c-${c.key}">${c.group ? mob : ''}${c.label}</th>`).join('')}</tr>`;
+  const mob = group ? `<span class="cj-mob">${esc(C0.present)}:</span> ` : '';
+  thead += `<tr><th scope="col" class="cj-corner">${esc(C0.person)}</th>${cols.map(c => `<th scope="col" class="c-${c.key}">${c.group ? mob : ''}${c.label}</th>`).join('')}</tr>`;
   const body = rows.map(i => `<tr>${personCell(i)}${cols.map(c => `<td class="c-${c.key}">${ar(forms[c.key][i], 'cj-f')}</td>`).join('')}</tr>`).join('');
   const sw = multi
-    ? `<div class="cj-switch" role="group" aria-label="${esc(t.conj.showCol)}" hidden>${cols.map((c, i) =>
-        `<button type="button" data-col="${c.key}" aria-pressed="${i === 0}">${esc(t.conj.short[c.key as keyof typeof t.conj.short] || c.key)}</button>`).join('')}</div>`
+    ? `<div class="cj-switch" role="group" aria-label="${esc(C0.showCol)}" hidden>${cols.map((c, i) =>
+        `<button type="button" data-col="${c.key}" aria-pressed="${i === 0}">${esc(C0.short[c.key as keyof ConjLabels['short']] || c.key)}</button>`).join('')}</div>`
     : '';
   // data-show ставит initConjugation(): без скрипта видны все колонки (таблица прокручивается внутри рамки)
   return `<div class="cj-box${multi ? ' cj-multi' : ''}">${sw}` +
     `<table class="cj" dir="rtl"><caption class="sr-only">${esc(caption)}</caption><thead>${thead}</thead><tbody>${body}</tbody></table></div>`;
 }
 
-/** level — уровень заголовков разделов (h2 на странице глагола, глубже — внутри «Любого глагола») */
-export function renderConjugation(forms: Forms, opts: { transitive: boolean; level?: 2 | 3 | 4 }): string {
-  const C = t.conj;
+/** level — уровень заголовков разделов (h2 на странице глагола, глубже — внутри «Любого глагола»); C — подписи языка страницы */
+export function renderConjugation(forms: Forms, opts: { transitive: boolean; level?: 2 | 3 | 4; C: ConjLabels }): string {
+  const C = (C0 = opts.C), A = CONJ_AR;
   const all = [...Array(13).keys()];
   const h = `h${opts.level ?? 2}`;
   const sec = (title: string, inner: string) => `<section class="cj-sec"><${h} class="cj-sec-h">${title}</${h}>${inner}</section>`;
   const active = table(
     `${C.active}: ${C.past}, ${C.present}`,
     [
-      { key: 'past', label: head(C.past, C.pastAr) },
-      { key: 'present', label: head(C.moods.present, C.moodsAr.present), group: true },
-      { key: 'subjunctive', label: head(C.moods.subjunctive, C.moodsAr.subjunctive), group: true },
-      { key: 'jussive', label: head(C.moods.jussive, C.moodsAr.jussive), group: true },
+      { key: 'past', label: head(C.past, A.past) },
+      { key: 'present', label: head(C.moods.present, A.moods.present), group: true },
+      { key: 'subjunctive', label: head(C.moods.subjunctive, A.moods.subjunctive), group: true },
+      { key: 'jussive', label: head(C.moods.jussive, A.moods.jussive), group: true },
     ],
-    forms, all, head(C.present, C.presentAr),
+    forms, all, head(C.present, A.present),
   );
-  const imperative = table(C.imperative, [{ key: 'imperative', label: ar(C.imperativeAr, 'cj-h-ar') }], forms, IMPERATIVE_PERSONS);
+  const imperative = table(C.imperative, [{ key: 'imperative', label: ar(A.imperative, 'cj-h-ar') }], forms, IMPERATIVE_PERSONS);
   const hasPassive = forms.passive_past.some(Boolean) || forms.passive_present.some(Boolean);
   let passive = '';
   if (hasPassive && opts.transitive) {
     passive = table(C.passive, [
-      { key: 'passive_past', label: head(C.past, C.pastAr) },
-      { key: 'passive_present', label: head(C.present, C.presentAr) },
+      { key: 'passive_past', label: head(C.past, A.past) },
+      { key: 'passive_present', label: head(C.present, A.present) },
     ], forms, all);
   } else if (hasPassive) {
     // непереходный: только безличная форма 3 л. ед. ч. м. р. (форму ж. р., которую тоже даёт Qutrub, не показываем — см. описание PR)
     passive = `<p class="cj-impersonal">${esc(C.impersonal)}<br>${ar([forms.passive_past[HUWA], forms.passive_present[HUWA]].filter(Boolean).join(' – '), 'cj-f')}</p>`;
   }
-  return sec(head(C.active, C.activeAr), active) +
-    `<div class="cj-two">${sec(head(C.imperative, C.imperativeAr), imperative)}${passive ? sec(head(C.passive, C.passiveAr), passive) : ''}</div>`;
+  return sec(head(C.active, A.active), active) +
+    `<div class="cj-two">${sec(head(C.imperative, A.imperative), imperative)}${passive ? sec(head(C.passive, A.passive), passive) : ''}</div>`;
 }
 
 /** переключатель колонок на телефоне (кнопки над таблицей) */

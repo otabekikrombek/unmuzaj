@@ -1,0 +1,16 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import ItemList from '../../../components/ItemList.astro';
+import { getCollection } from 'astro:content';
+import { SECTION_AR } from '../../../config/nav';
+import { useI18n, localeParams, tf } from '../../../i18n';
+export const getStaticPaths = localeParams;
+const { locale, t } = useI18n(Astro.url);
+const x = (await getCollection('exercises')).sort((a, b) => a.data.added.localeCompare(b.data.added));
+---
+<Base title={t.nav.exercises} description={t.pages.exercises.desc}>
+  <PageHead title={t.nav.exercises} ar={SECTION_AR.exercises} lead={t.sectionsDesc.exercises} />
+  <div class="wrap"><ItemList items={x.map(e => { const ti = tf(e.data, 'title', locale), de = tf(e.data, 'description', locale);
+    return { title: ti.text, href: `exercises/${e.data.key}/`, side: e.data.level, meta: de.text, ru: ti.ru || de.ru }; })} /></div>
+</Base>

@@ -1,0 +1,260 @@
+---
+import Base from '../../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { useI18n, withLocales, tf, fmt, plural } from '../../../i18n';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+export async function getStaticPaths() {
+  return withLocales((await getCollection('decks')).map(d => ({ params: { deck: d.data.key }, props: { d: d.data } })));
+}
+const { d } = Astro.props;
+const { locale, t, l } = useI18n(Astro.url);
+const T = t.deck;
+const themes = [...new Set(d.items.map(i => i.t))];
+const ti = tf(d, 'title', locale), de = tf(d, 'description', locale);
+// перевод слова — на языке страницы (r_uz…), иначе русский с пометкой (f: 1). a и t не переводятся: по ним хранится прогресс.
+const items = d.items.map(w => { const r = tf(w, 'r', locale); return { a: w.a, r: r.text, t: w.t, ...(r.ru ? { f: 1 } : {}) }; });
+const topicsRu = locale !== 'ru';
+---
+<Base title={ti.text} description={`${de.text} ${fmt(T.descTail, { words: plural(locale, t.common.words, d.items.length) })}`} group="tasks">
+  <section class="trainer" data-deck={d.key}>
+    <div class="wrap">
+      <div class="top">
+        <div>
+          <Breadcrumbs title={ti.text} titleRu={ti.ru} tone="study" />
+          <h1><span lang={ti.ru ? 'ru' : undefined}>{ti.text}</span>{ti.ru && <small class="ru-mark">{t.meta.inRussian}</small>}</h1>
+        </div>
+        <p class="who" id="who" aria-live="polite" data-pagefind-ignore></p>
+      </div>
+      <div class="stats" id="stats" data-pagefind-ignore></div>
+      <div class="tabs" role="tablist" data-pagefind-ignore>
+        <button role="tab" data-tab="cards" aria-selected="true">{T.tabs.cards}</button>
+        <button role="tab" data-tab="test" aria-selected="false">{T.tabs.test}</button>
+        <button role="tab" data-tab="hard" aria-selected="false">{T.tabs.hard}</button>
+        <button role="tab" data-tab="board" aria-selected="false">{T.tabs.board}</button>
+      </div>
+
+      <div data-panel="cards" data-pagefind-ignore>
+        <div class="controls">
+          <select id="theme" aria-label={T.which}>
+            <option value="*">{T.all}</option>
+            <option value="!">{T.onlyHard}</option>
+            {themes.map(x => <option value={x} lang={topicsRu ? 'ru' : undefined}>{x}</option>)}
+          </select>
+          <div class="seg" role="group" aria-label={T.dir}>
+            <button data-dir="1" aria-pressed="true">{T.dirs[0]}</button>
+            <button data-dir="2" aria-pressed="false">{T.dirs[1]}</button>
+            <button data-dir="3" aria-pressed="false">{T.dirs[2]}</button>
+          </div>
+        </div>
+        <button class="card" id="card" type="button" aria-live="polite"></button>
+        <div class="answer">
+          <button class="no" id="no" type="button">{T.no}</button>
+          <button class="yes" id="yes" type="button">{T.yes}</button>
+        </div>
+        <p class="hint" id="cnt"></p>
+      </div>
+
+      <div data-panel="test" hidden><div id="test"></div></div>
+      <div data-panel="hard" hidden><div id="hard" class="sheet"></div></div>
+      <div data-panel="board" hidden><div id="board" class="sheet"></div></div>
+    </div>
+  </section>
+  <div class="wrap below">
+    <p class="muted small">{T.below}</p>
+  </div>
+  <script type="application/json" id="deck-data" set:html={JSON.stringify({ key: d.key, items, login: l('login/'), t: T, mark: t.meta.inRussian, loading: t.common.loading })} />
+  <script>
+    import { DeckStore, type NetState } from '../../../lib/deckStore';
+    import { getWho, rpc, token } from '../../../lib/api';
+    import { nextWord, answer, rec, level, testWords, shuffle, type Word } from '../../../lib/srs';
+
+    const D = JSON.parse(document.getElementById('deck-data')!.textContent!);
+    type WF = Word & { f?: 1 }; // f — перевод ещё по-русски
+    const W: WF[] = D.items, T = D.t;
+    const f = (s: string, v: Record<string, unknown> = {}) => s.replace(/\{(\w+)\}/g, (_, k) => String(v[k] ?? ''));
+    // перевод слова; если он ещё по-русски — lang="ru" и пометка «(rus tilida)»
+    const ruW = (w: WF) => `<span class="ru"${w.f ? ' lang="ru"' : ''}>${esc(w.r)}${w.f && D.mark ? `<small class="ru-mark">${esc(D.mark)}</small>` : ''}</span>`;
+    const trW = (w: WF) => `<span${w.f ? ' lang="ru"' : ''}>${esc(w.r)}</span>`;
+    const $ = (id: string) => document.getElementById(id)!;
+    const esc = (s: unknown) => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
+    const store = new DeckStore(D.key);
+    const who = getWho();
+
+    store.onNet = (s: NetState) => { $('who').innerHTML = (who ? `<b>${esc(who.nickname)}</b> · ` : '') + f(T.net[s], { login: D.login }); };
+
+    // ---------- статистика ----------
+    function stats() {
+      const c = { new: 0, learn: 0, good: 0, done: 0 } as Record<string, number>;
+      W.forEach(w => c[level(store.S, w)]++);
+      const N = W.length, col: Record<string, string> = { done: 'var(--sec-F)', good: 'var(--sun)', learn: 'var(--sec-G)', new: 'var(--study-chip)' };
+      const nm: Record<string, string> = T.lv;
+      $('stats').innerHTML = `<div class="bar">${['done', 'good', 'learn', 'new'].map(k => `<i style="width:${c[k] / N * 100}%;background:${col[k]}"></i>`).join('')}</div>
+        <div class="leg">${['new', 'learn', 'good', 'done'].map(k => `<span><b style="background:${col[k]}"></b>${nm[k]}: ${c[k]}</span>`).join('')}<span>${f(T.passed, { k: N - c.new, n: N })}</span></div>`;
+    }
+
+    // ---------- карточки ----------
+    let dir = 1, cd = 1, cur: WF | null = null, flip = false, marked = false, prevA: string | null = null;
+    const sel = $('theme') as HTMLSelectElement;
+    function pool() {
+      const v = sel.value;
+      if (v === '*') return W;
+      if (v === '!') return W.filter(w => { const r = store.S.words[w.a]; return r && r.bad > 0 && r.box < 4; });
+      return W.filter(w => w.t === v);
+    }
+    function next() { cur = nextWord(store.S, pool(), prevA); marked = false; flip = false; cd = dir === 3 ? (Math.random() < .5 ? 1 : 2) : dir; show(); }
+    function show() {
+      stats();
+      const c = $('card'), A = pool();
+      $('cnt').textContent = A.length ? f(T.inSet, { n: A.length, k: A.filter(w => !rec(store.S, w).n).length }) : '';
+      if (!cur) { c.innerHTML = `<span class="ru">${esc(sel.value === '!' ? T.noHard : T.empty)}</span>`; return; }
+      const r = rec(store.S, cur);
+      const tag = !r.n ? `<span class="tag new">${T.tagNew}</span>` : r.box <= 1 ? `<span class="tag err">${f(T.tagErr, { n: r.bad })}</span>` : `<span class="tag rep">${T.tagRep}</span>`;
+      const A1 = `<span class="ar" lang="ar" dir="rtl">${esc(cur.a)}</span>`, R1 = ruW(cur);
+      const front = cd === 1 ? A1 : R1, back = cd === 1 ? R1 : A1;
+      c.innerHTML = tag + front + (flip ? '<span class="rule"></span>' + back : `<span class="th">${T.tapHint}</span>`) + `<span class="th"${D.mark ? ' lang="ru"' : ''}>${esc(cur.t)}</span>`;
+    }
+    function go() { prevA = cur!.a; next(); }
+    $('card').addEventListener('click', () => { if (!cur) return; flip = !flip; store.touch(); show(); });
+    $('yes').addEventListener('click', () => {
+      if (!cur) return; if (marked) return go();
+      const r = answer(store.S, cur, true); store.record(cur.a, cur.t, r, true, 'c', cd as 1 | 2); go();
+    });
+    $('no').addEventListener('click', () => {
+      if (!cur) return; if (marked) return go();
+      const r = answer(store.S, cur, false); store.record(cur.a, cur.t, r, false, 'c', cd as 1 | 2);
+      if (!flip) { flip = true; marked = true; show(); $('cnt').textContent = T.remember; return; }
+      go();
+    });
+    sel.addEventListener('change', () => { prevA = null; next(); });
+    document.querySelectorAll<HTMLButtonElement>('[data-dir]').forEach(b => b.addEventListener('click', () => {
+      dir = +b.dataset.dir!; document.querySelectorAll('[data-dir]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      cd = dir === 3 ? (Math.random() < .5 ? 1 : 2) : dir; flip = false; show();
+    }));
+
+    // ---------- тест ----------
+    type Q = { w: WF; dq: number; opts: WF[] };
+    let Qs: Q[] = [], qi = 0, score = 0, t0 = 0;
+    function startTest() {
+      Qs = testWords(store.S, W).map((w, k) => {
+        const same = W.filter(x => x !== w && x.t === w.t), other = W.filter(x => x !== w && x.t !== w.t);
+        const ds = shuffle(same).slice(0, 2).concat(shuffle(other)).slice(0, 3);
+        return { w, dq: k % 2, opts: shuffle([w, ...ds]) };
+      });
+      qi = 0; score = 0; t0 = Date.now(); showQ();
+    }
+    function showQ() {
+      stats();
+      const X = $('test');
+      if (qi >= Qs.length) {
+        store.recordTest(score, Qs.length, Math.round((Date.now() - t0) / 1000));
+        const lvl = T.grades[score >= 18 ? 0 : score >= 14 ? 1 : score >= 10 ? 2 : 3];
+        X.innerHTML = `<div class="result"><p class="big">${f(T.result, { s: score, n: Qs.length })}</p><p>${f(T.resultNote, { lvl })}</p><button class="btn" id="again">${T.again}</button></div>`;
+        $('again').addEventListener('click', startTest); return;
+      }
+      const q = Qs[qi];
+      X.innerHTML = `<p class="hint">${f(T.qOf, { i: qi + 1, n: Qs.length, s: score })}</p>
+        <div class="q">${q.dq ? ruW(q.w) : `<span class="ar" lang="ar" dir="rtl">${esc(q.w.a)}</span>`}</div>
+        <div class="opts">${q.opts.map((o, k) => `<button class="opt ${q.dq ? 'ar' : ''}" ${q.dq ? 'lang="ar" dir="rtl"' : o.f ? 'lang="ru"' : ''} data-k="${k}">${esc(q.dq ? o.a : o.r)}</button>`).join('')}</div>` +
+        (!q.dq && q.opts.some(o => o.f) && D.mark ? `<p class="hint">${esc(D.mark)}</p>` : '');
+      X.querySelectorAll<HTMLButtonElement>('.opt').forEach(b => b.addEventListener('click', () => {
+        const o = q.opts[+b.dataset.k!], right = o === q.w;
+        if (right) score++;
+        const r = answer(store.S, q.w, right); store.record(q.w.a, q.w.t, r, right, 't', q.dq ? 2 : 1);
+        X.querySelectorAll<HTMLButtonElement>('.opt').forEach(x => { x.disabled = true; if (q.opts[+x.dataset.k!] === q.w) x.classList.add('ok'); });
+        if (!right) b.classList.add('bad');
+        setTimeout(() => { qi++; showQ(); }, right ? 600 : 1700);
+      }));
+    }
+
+    // ---------- трудные ----------
+    function hard() {
+      const L = W.filter(w => (store.S.words[w.a]?.bad ?? 0) > 0).sort((a, b) => store.S.words[b.a].bad - store.S.words[a.a].bad);
+      $('hard').innerHTML = L.length ? `<h2>${T.hardH}</h2>${L.some(w => w.f) && D.mark ? `<p class="hint">${esc(D.mark)}</p>` : ''}<table>${L.map(w => `<tr><td>${trW(w)}</td><td class="n">${store.S.words[w.a].bad}${store.S.words[w.a].box >= 4 ? ' ✓' : ''}</td><td class="ar" lang="ar" dir="rtl">${esc(w.a)}</td></tr>`).join('')}</table><p class="hint">${T.relearned}</p>` : `<p>${T.noErr}</p>`;
+    }
+
+    // ---------- рейтинг ----------
+    async function board() {
+      const B = $('board');
+      if (!who || who.kind !== 'pin') { B.innerHTML = `<p>${f(T.boardLogin, { href: D.login + '#class' })}</p>`; return; }
+      B.innerHTML = `<p>${D.loading}</p>`;
+      await store.sync();
+      try {
+        const r = await rpc<any>('class_board', { p_token: token(), p_deck: D.key });
+        const part = (title: string, L: any[], unit: string) => {
+          const top = L.slice(0, 10), mine = L.findIndex(x => x.id === r.me);
+          return `<h3>${title}</h3>` + (top.length ? `<ol>${top.map(x => `<li class="${x.id === r.me ? 'me' : ''}">${esc(x.n)} — ${x.v} ${unit}</li>`).join('')}</ol>` + (mine >= 10 ? `<p class="hint">${f(T.yourPlace, { n: mine + 1 })}</p>` : '') : `<p class="hint">${T.boardEmpty}</p>`);
+        };
+        B.innerHTML = part(T.bTime, r.time, T.uMin) + part(T.bKnown, r.known, T.uWords) + part(T.bAcc, r.acc, '%') +
+          `<p class="hint">${T.bNote}</p>`;
+      } catch { B.innerHTML = `<p>${T.offline}</p>`; }
+    }
+
+    // ---------- вкладки ----------
+    function tab(name: string) {
+      document.querySelectorAll<HTMLElement>('[data-tab]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
+      document.querySelectorAll<HTMLElement>('[data-panel]').forEach(p => (p.hidden = p.dataset.panel !== name));
+      if (name === 'test') startTest(); if (name === 'hard') hard(); if (name === 'board') board(); if (name === 'cards') next();
+    }
+    document.querySelectorAll<HTMLElement>('[data-tab]').forEach(b => b.addEventListener('click', () => tab(b.dataset.tab!)));
+
+    setInterval(() => store.tick(), 5000);
+    setInterval(() => store.sync(), 60_000);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') store.flush(); });
+    window.addEventListener('pagehide', () => store.flush());
+
+    store.onNet(store.net);
+    await store.load();
+    tab(location.hash === '#test' ? 'test' : 'cards');
+  </script>
+</Base>
+
+<style>
+  .trainer { background: linear-gradient(160deg, var(--study-from) 0%, var(--study-mid) 55%, var(--study-to) 100%); color: var(--study-ink); padding: 20px 0 32px; }
+  .trainer h1 { color: var(--study-ink); margin: 2px 0 8px; font-size: clamp(1.5rem, 4vw, 2rem); }
+  .top { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+  .who { margin: 0 0 10px; font-size: .95rem; color: var(--study-muted); max-width: 420px; }
+  .who :global(a) { color: var(--study-link); }
+  .stats { background: var(--study-card); border-radius: var(--r-m); padding: 10px 12px; margin-bottom: 14px; }
+  .stats :global(.bar) { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: var(--study-chip); }
+  .stats :global(.bar i) { display: block; height: 100%; }
+  .stats :global(.leg) { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: .88rem; margin-top: 8px; color: var(--study-muted); }
+  .stats :global(.leg b) { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; }
+  .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+  .tabs button, .seg button { border: 0; min-height: 44px; padding: 0 14px; border-radius: 8px; font: 600 .95rem var(--sans); cursor: pointer; background: var(--study-chip); color: var(--study-ink); }
+  .tabs button[aria-selected='true'], .seg button[aria-pressed='true'] { background: var(--sun); color: var(--on-sun); }
+  .controls { display: grid; grid-template-columns: 1fr auto; gap: 10px; margin-bottom: 12px; }
+  .seg { display: flex; gap: 4px; }
+  .card { width: 100%; min-height: 250px; border: 0; border-radius: 16px; background: var(--sheet); color: var(--ink); cursor: pointer; position: relative;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 36px 18px 18px; box-shadow: var(--shadow); font: inherit; }
+  .card :global(.ar), .q :global(.ar) { font-family: var(--ar); font-size: calc(clamp(2rem, 7vw, 2.6rem) * var(--ar-scale)); line-height: 1.6; }
+  .card :global(.ru), .q :global(.ru) { font-family: var(--serif); font-size: 1.45rem; font-weight: 700; color: var(--accent); }
+  .card :global(.th) { font-size: .85rem; color: var(--ink-soft); }
+  .card :global(.rule) { width: 50%; border-top: 1px solid var(--line); }
+  .card :global(.tag) { position: absolute; top: 12px; left: 12px; font-size: .78rem; font-weight: 700; }
+  .card :global(.tag.new) { background: var(--sun); color: var(--on-sun); }
+  .card :global(.tag.err) { background: var(--bad-bg); color: var(--bad-ink); }
+  .card :global(.tag.rep) { background: var(--tag-bg); color: var(--tag-ink); }
+  .answer { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+  .answer button { min-height: 52px; border: 0; border-radius: 10px; font: 700 1.05rem var(--sans); cursor: pointer; color: var(--on-tile); }
+  .no { background: var(--tile-0); } .yes { background: var(--tile-3); }
+  .hint { color: var(--study-muted); font-size: .92rem; text-align: center; margin: 10px 0 0; }
+  .q { background: var(--sheet); color: var(--ink); border-radius: 14px; padding: 22px; text-align: center; margin: 8px 0; }
+  .opts { display: grid; gap: 8px; }
+  .opts :global(.opt) { min-height: 54px; border: 0; border-radius: 10px; background: var(--sheet); color: var(--ink); font: 1.1rem var(--sans); cursor: pointer; padding: 8px 12px; }
+  .opts :global(.opt.ar) { font-family: var(--ar); font-size: calc(1.6rem * var(--ar-scale)); }
+  .opts :global(.opt.ok) { background: var(--ok-bg); outline: 3px solid var(--ok); } .opts :global(.opt.bad) { background: var(--bad-bg); outline: 3px solid var(--bad); }
+  .opts :global(.opt:disabled) { cursor: default; opacity: 1; }
+  #test :global(.result) { background: var(--study-card); border-radius: 14px; padding: 24px; text-align: center; }
+  #test :global(.big) { font-family: var(--serif); font-size: 3rem; font-weight: 700; margin: 0; color: var(--sun); }
+  #test :global(.btn) { background: var(--sun); border-color: var(--sun); color: var(--on-sun); }
+  .sheet { background: var(--sheet); color: var(--ink); border-radius: 14px; padding: 16px 18px; }
+  .sheet :global(h2), .sheet :global(h3) { font-size: 1.15rem; margin-top: 8px; }
+  .sheet :global(table) { width: 100%; border-collapse: collapse; }
+  .sheet :global(td) { padding: 5px 6px; border-bottom: 1px solid var(--line); }
+  .sheet :global(td.ar) { font-size: calc(1.35rem * var(--ar-scale)); text-align: right; }
+  .sheet :global(td.n) { text-align: center; color: var(--bad-ink); white-space: nowrap; }
+  .sheet :global(li.me) { font-weight: 700; color: var(--lapis); }
+  .sheet :global(.hint) { color: var(--ink-soft); text-align: left; }
+  .below { margin-top: 16px; }
+  @media (max-width: 640px) { .controls { grid-template-columns: 1fr; } .seg button { flex: 1; padding: 0 6px; font-size: .88rem; } }
+</style>

@@ -9,6 +9,8 @@
     "check": "astro check",
     "test:e2e": "playwright test",
     "make-quiz": "node scripts/make-quiz.mjs",
+    "test:i18n": "node tests/i18n.mjs",
+    "uz-review": "node scripts/uz-review.mjs",
     "conjugate": "python3 scripts/conjugate/build.py",
     "conjugate:lookup": "python3 scripts/conjugate/lookup.py"
   },

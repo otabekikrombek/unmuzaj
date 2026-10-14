@@ -5,7 +5,7 @@ import { verbTypes, type Forms, type VerbType } from './conjugation';
 import { normAr } from './normalize';
 
 export type VerbEntry = {
-  key: string; verb: string; root: string; future_type: string; transitive: boolean; ru: string;
+  key: string; verb: string; root: string; future_type: string; transitive: boolean; ru: string; uz?: string; en?: string; // перевод: ru, необязательно uz / en
   source: Record<string, string | number | null>; doubt: boolean; doubt_note?: string; checked: boolean;
 };
 export type Verb = VerbEntry & { types: VerbType[]; present: string; imperative: string; forms: Forms; engine: string };

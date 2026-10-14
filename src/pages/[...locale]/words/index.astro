@@ -1,0 +1,19 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import ItemList from '../../../components/ItemList.astro';
+import { getCollection } from 'astro:content';
+import { SECTION_AR } from '../../../config/nav';
+import { useI18n, localeParams, tf, plural } from '../../../i18n';
+export const getStaticPaths = localeParams;
+const { locale, t } = useI18n(Astro.url);
+const decks = (await getCollection('decks')).sort((a, b) => a.data.added.localeCompare(b.data.added));
+---
+<Base title={t.nav.words} description={t.pages.words.desc}>
+  <PageHead title={t.nav.words} ar={SECTION_AR.words} lead={t.pages.words.lead} />
+  <div class="wrap">
+    <ItemList items={decks.map(d => { const ti = tf(d.data, 'title', locale), de = tf(d.data, 'description', locale);
+      return { title: ti.text, href: `words/${d.data.key}/`, side: plural(locale, t.common.words, d.data.items.length), meta: de.text, ru: ti.ru || de.ru }; })} />
+    <p class="muted small" style="margin-top:12px">{t.common.gradually}</p>
+  </div>
+</Base>

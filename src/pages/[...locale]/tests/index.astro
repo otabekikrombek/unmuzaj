@@ -1,0 +1,24 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import ItemList from '../../../components/ItemList.astro';
+import { getCollection } from 'astro:content';
+import { SECTION_AR } from '../../../config/nav';
+import { useI18n, localeParams, tf, fmt } from '../../../i18n';
+export const getStaticPaths = localeParams;
+const { locale, t } = useI18n(Astro.url);
+const T = t.pages.tests;
+const q = (await getCollection('quizzes')).filter(x => x.data.kind === 'test');
+const decks = await getCollection('decks');
+---
+<Base title={t.nav.tests} description={T.desc}>
+  <PageHead title={t.nav.tests} ar={SECTION_AR.tests} lead={t.sectionsDesc.tests} />
+  <div class="wrap">
+    <ItemList items={[
+      ...q.map(x => { const ti = tf(x.data, 'title', locale), de = tf(x.data, 'description', locale);
+        return { title: ti.text, href: `quizzes/${x.data.key}/`, side: x.data.level, meta: de.text, ru: ti.ru || de.ru }; }),
+      ...decks.map(d => { const ti = tf(d.data, 'title', locale);
+        return { title: fmt(T.wordTest, { title: ti.text }), href: `words/${d.data.key}/#test`, side: T.q20, meta: T.wordTestMeta, ru: ti.ru }; }),
+    ]} />
+  </div>
+</Base>

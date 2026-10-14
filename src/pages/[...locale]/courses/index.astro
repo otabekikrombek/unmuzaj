@@ -1,0 +1,16 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import ItemList from '../../../components/ItemList.astro';
+import { getCollection } from 'astro:content';
+import { SECTION_AR } from '../../../config/nav';
+import { useI18n, localeParams, tf, plural } from '../../../i18n';
+export const getStaticPaths = localeParams;
+const { locale, t } = useI18n(Astro.url);
+const c = await getCollection('courses');
+---
+<Base title={t.nav.courses} description={t.pages.courses.desc}>
+  <PageHead title={t.nav.courses} ar={SECTION_AR.courses} lead={t.sectionsDesc.courses} />
+  <div class="wrap"><ItemList items={c.map(x => { const ti = tf(x.data, 'title', locale), de = tf(x.data, 'description', locale);
+    return { title: ti.text, href: `courses/${x.data.key}/`, side: plural(locale, t.common.tasks, x.data.items.length), meta: de.text, ru: ti.ru || de.ru }; })} /></div>
+</Base>

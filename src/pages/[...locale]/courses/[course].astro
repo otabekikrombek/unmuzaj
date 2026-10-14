@@ -1,0 +1,41 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import { getCollection } from 'astro:content';
+import { useI18n, withLocales, tf } from '../../../i18n';
+export async function getStaticPaths() {
+  return withLocales((await getCollection('courses')).map(c => ({ params: { course: c.data.key }, props: { c: c.data } })));
+}
+const { c } = Astro.props;
+const { locale, t, l } = useI18n(Astro.url);
+const decks = Object.fromEntries((await getCollection('decks')).map(d => [d.data.key, d.data]));
+const quizzes = Object.fromEntries((await getCollection('quizzes')).map(d => [d.data.key, d.data]));
+const exercises = Object.fromEntries((await getCollection('exercises')).map(d => [d.data.key, d.data]));
+const steps = c.items.map(it => {
+  const d = it.kind === 'deck' ? decks[it.key] : it.kind === 'exercise' ? exercises[it.key] : quizzes[it.key];
+  const href = it.kind === 'deck' ? `words/${it.key}/` : it.kind === 'exercise' ? `exercises/${it.key}/` : `quizzes/${it.key}/`;
+  const ti = tf(d, 'title', locale), de = tf(d, 'description', locale);
+  return { title: ti.text || it.key, desc: de.text, ru: ti.ru || de.ru, kind: t.kinds[it.kind], href };
+});
+const ti = tf(c, 'title', locale), de = tf(c, 'description', locale), au = tf(c, 'audience', locale);
+---
+<Base title={ti.text} description={de.text}>
+  <PageHead title={ti.text} titleRu={ti.ru} ar="الْمُقَرَّرُ" lead={de.text} leadRu={de.ru}>{c.audience && <p class="small muted">{t.pages.courses.forWhom} <span lang={au.ru ? 'ru' : undefined}>{au.text}</span></p>}</PageHead>
+  <div class="wrap narrow">
+    <ol class="steps">
+      {steps.map(s => (
+        <li><a href={l(s.href)}><span class="k">{s.kind}</span><span class="t"><span lang={s.ru ? 'ru' : undefined}>{s.title}</span>{s.ru && <small class="ru-mark">{t.meta.inRussian}</small>}</span><span class="d" lang={s.ru ? 'ru' : undefined}>{s.desc}</span></a></li>
+      ))}
+    </ol>
+  </div>
+</Base>
+<style>
+  .steps { padding-left: 2.2em; margin: 0; }
+  .steps li { padding: 4px 0; border-bottom: 1px solid var(--line); }
+  .steps li::marker { font-family: var(--serif); font-weight: 700; color: var(--accent-2); }
+  .steps a { display: grid; padding: 12px 4px; text-decoration: none; color: inherit; }
+  .steps a:hover { background: var(--hover); }
+  .k { font-size: .85rem; color: var(--accent-2); }
+  .t { font-family: var(--serif); font-weight: 700; font-size: 1.15rem; }
+  .d { color: var(--ink-soft); font-size: .95rem; }
+</style>
