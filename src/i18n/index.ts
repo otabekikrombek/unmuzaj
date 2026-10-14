@@ -20,7 +20,7 @@ export type { Dict };
 
 const BASE = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 
-/** путь внутри сайта без base и без языка: /unmuzaj/uz/words/w100/ → { locale: 'uz', rest: 'words/w100/' } */
+/** путь внутри сайта без base и без языка: /uz/words/w100/ → { locale: 'uz', rest: 'words/w100/' } */
 export function splitPath(pathname: string): { locale: Locale; rest: string } {
   let p = pathname.startsWith(BASE) ? pathname.slice(BASE.length) : pathname.replace(/^\/+/, '');
   const seg = p.split('/')[0];
@@ -36,7 +36,7 @@ export function useI18n(url: URL) {
   return { locale, t, l: (path = '') => lu(path, locale), intl: t.meta.intl };
 }
 
-/** ссылка на страницу сайта на нужном языке: lu('words/', 'uz') → /unmuzaj/uz/words/ (тот же хелпер u из lib/url) */
+/** ссылка на страницу сайта на нужном языке: lu('words/', 'uz') → /uz/words/ (тот же хелпер u из lib/url) */
 export const lu = (path = '', locale: Locale = DEFAULT_LOCALE) => u(path, locale);
 
 /** getStaticPaths: каждая страница — на всех языках */

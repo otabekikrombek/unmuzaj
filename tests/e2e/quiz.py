@@ -1,8 +1,8 @@
 # Сквозной тест викторин (этап 4): учитель → гость → ученик проходит викторину (с обрывом связи) → разбор → табло → панель учителя.
-# Подготовка — как для flow.py (tests/README.md): база e2e, эмулятор на :8787, сайт на :4322/unmuzaj/.
+# Подготовка — как для flow.py (tests/README.md): база e2e, эмулятор на :8787, сайт на :4322/.
 import os, subprocess, sys, time, urllib.request
 from playwright.sync_api import sync_playwright
-B = 'http://localhost:4322/unmuzaj/'
+B = 'http://localhost:4322/'
 SQL = lambda q: subprocess.run(['psql','-h','localhost','-p','54329','-U','postgres','-d','e2e','-tAc',q],capture_output=True,text=True,env={'PGPASSWORD':'pw','PATH':'/usr/bin:/bin'}).stdout.strip()
 ctl = lambda q: urllib.request.urlopen('http://localhost:8787/__ctl?'+q).read()
 errs, fails = [], []

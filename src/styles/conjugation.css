@@ -1,0 +1,59 @@
+/* Таблицы спряжения (src/lib/conjugation.ts): страницы /conjugation/ и режим «Любой глагол».
+   Таблица справа налево: справа — лицо, левее — формы. На телефоне (≤ 640 px) видна одна колонка форм,
+   выбор — кнопками над таблицей. При печати видны все колонки. */
+.cj-sec { margin: 0 0 28px; }
+.cj-sec-h { font-size: 1.3rem; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; margin-bottom: 10px; }
+.cj-sec-h .cj-h-ar { font-size: calc(1.3rem * var(--ar-scale)); color: var(--accent-2); font-weight: 400; }
+.cj-two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 0 32px; align-items: start; }
+.cj-box { max-width: 100%; overflow-x: auto; }
+.cj { border-collapse: collapse; width: 100%; background: var(--sheet); border: 1px solid var(--line); }
+.cj th, .cj td { padding: 6px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; text-align: right; }
+.cj tbody tr:nth-child(even) > * { background: var(--stripe); }
+.cj thead > tr > * { background: var(--surface-2); }
+.cj thead th { font: 600 .85rem/1.3 var(--sans); color: var(--ink-soft); vertical-align: bottom; }
+.cj thead .cj-h-ru { display: block; }
+.cj thead .cj-h-ar { display: block; font-size: calc(1.05rem * var(--ar-scale)); color: var(--ink); font-weight: 400; }
+.cj .cj-grouprow > * { border-bottom: 0; padding-bottom: 0; }
+.cj .cj-group { text-align: center; border-bottom: 2px solid var(--accent-2); }
+.cj .cj-group .cj-h-ru, .cj .cj-group .cj-h-ar { display: inline; }
+.cj .cj-corner { width: 1%; white-space: nowrap; }
+.cj-p { width: 1%; white-space: nowrap; font-weight: 400; }
+.cj-p-ar { display: block; font-size: calc(1.1rem * var(--ar-scale)); line-height: 1.5; color: var(--accent); }
+.cj-p-ru { display: block; font: .8rem/1.2 var(--sans); color: var(--ink-soft); }
+.cj-f { font-size: calc(1.45rem * var(--ar-scale)); line-height: 1.7; color: var(--ink); white-space: nowrap; }
+.cj-none { color: var(--ink-soft); }
+.cj-mob { display: none; }
+.cj-switch { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
+.cj-switch[hidden] { display: none; }
+.cj-switch button {
+  min-height: 44px; min-width: 44px; padding: 0 14px; border-radius: 99px; border: 1px solid var(--input-border);
+  background: var(--sheet); color: var(--ink); font: 600 .95rem var(--sans); cursor: pointer;
+}
+.cj-switch button[aria-pressed='true'] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.cj-impersonal { background: var(--sheet); border: 1px solid var(--line); border-radius: var(--r-s); padding: 12px 14px; color: var(--ink-soft); }
+.cj-impersonal .cj-f { color: var(--ink); }
+
+/* на широком экране кнопки не нужны: видны все колонки */
+@media (min-width: 641px) { .cj-switch { display: none !important; } }
+@media (max-width: 900px) { .cj-two { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 640px) {
+  .cj-mob { display: inline; }
+  .cj-multi .cj-grouprow { display: none; }
+  .cj-multi[data-show='past'] :is(td, th)[class^='c-']:not(.c-past),
+  .cj-multi[data-show='present'] :is(td, th)[class^='c-']:not(.c-present),
+  .cj-multi[data-show='subjunctive'] :is(td, th)[class^='c-']:not(.c-subjunctive),
+  .cj-multi[data-show='jussive'] :is(td, th)[class^='c-']:not(.c-jussive),
+  .cj-multi[data-show='passive_past'] :is(td, th)[class^='c-']:not(.c-passive_past),
+  .cj-multi[data-show='passive_present'] :is(td, th)[class^='c-']:not(.c-passive_present) { display: none; }
+  .cj th, .cj td { padding: 6px 8px; }
+}
+@media print {
+  .cj-switch { display: none !important; }
+  .cj-multi :is(td, th)[class^='c-'] { display: table-cell !important; }
+  .cj-multi .cj-grouprow { display: table-row !important; }
+  .cj-mob { display: none !important; }
+  .cj, .cj thead th, .cj tbody tr > * { background: #fff !important; color: #000 !important; border-color: #888 !important; }
+  .cj-f, .cj-p-ar, .cj-h-ar { color: #000 !important; }
+  .cj-sec, .cj-box { break-inside: avoid; }
+  .cj-f { font-size: 1.25rem; line-height: 1.5; }
+}

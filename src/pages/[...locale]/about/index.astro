@@ -6,14 +6,17 @@ import { useI18n, localeParams, fmt } from '../../../i18n';
 export const getStaticPaths = localeParams;
 const { locale, t } = useI18n(Astro.url);
 const A = t.about;
+const names = { name: SITE.name, nameAr: SITE.nameAr, formerName: SITE.formerName, formerNameAr: SITE.formerNameAr };
+const arSpan = (s: string) => `<span lang="ar" dir="rtl">${s}</span>`; // арабские названия внутри текста
 ---
-<Base title={A.title} description={fmt(A.desc, { author: SITE.author[locale] })}>
+<Base title={A.title} description={fmt(A.desc, { ...names, author: SITE.author[locale] })}>
   <PageHead title={A.title} ar={SITE.nameAr} />
   <div class="wrap narrow prose">
     <p class="motto"><span lang="uz">{SITE.motto}</span>{t.meta.mottoTr && <><br /><span class="muted">{t.meta.mottoTr}</span></>}</p>
-    <p set:html={A.intro} />
-    <h2>{A.whyH}</h2>
+    <p set:html={fmt(A.intro, names)} />
+    <h2 set:html={fmt(A.whyH, { nameAr: arSpan(SITE.nameAr) })} />
     <p set:html={A.why} />
+    <p class="muted" set:html={fmt(A.former, { formerName: SITE.formerName, formerNameAr: arSpan(SITE.formerNameAr) })} />
     <h2>{A.forWhomH}</h2>
     <p>{A.forWhom}</p>
     <h2>{A.authorH}</h2>

@@ -3,6 +3,7 @@
 // его можно заменить пропом parent (например, пробный экзамен лежит в /quizzes/, но относится к «Тестам»).
 import { useI18n, splitPath } from '../i18n';
 import { sectionOf } from '../config/nav';
+import { hasAr } from '../lib/normalize';
 interface Props { title: string; parent?: { label: string; href: string }; tone?: 'page' | 'study'; titleRu?: boolean }
 const { title, parent, tone = 'page', titleRu = false } = Astro.props;
 const { t, l } = useI18n(Astro.url);
@@ -21,7 +22,7 @@ const ld = {
 <nav class={`crumbs ${tone}`} aria-label={t.nav.youAreHere} data-pagefind-ignore>
   <ol>
     {items.map((it, i) => (
-      <li>{it.href ? <a href={it.href}>{it.label}</a> : <span aria-current="page" lang={it.ru ? 'ru' : undefined}>{it.label}</span>}{i < items.length - 1 && <span class="sep" aria-hidden="true">›</span>}</li>
+      <li>{it.href ? <a href={it.href}>{it.label}</a> : <span aria-current="page" lang={it.ru ? 'ru' : hasAr(it.label) ? 'ar' : undefined} dir={!it.ru && hasAr(it.label) ? 'rtl' : undefined}>{it.label}</span>}{i < items.length - 1 && <span class="sep" aria-hidden="true">›</span>}</li>
     ))}
   </ol>
 </nav>

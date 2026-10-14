@@ -1,0 +1,1839 @@
+[
+ {
+  "key": "kaana",
+  "verb": "كَانَ",
+  "root": "كون",
+  "future_type": "ضمة",
+  "transitive": false,
+  "ru": "быть",
+  "source": {
+   "list": "freq",
+   "freq": 1,
+   "bab": "qutrub",
+   "transitive": "qutrub",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "Нет в Arramooz; взято из таблицы Qutrub (triverbtable): ضمة (корень كون) и كسرة (корень كين). Выбрано يَكُونُ. Переходность там «оба» (ك) — выбрано «непереходный»: это глагол-связка (كَانَ وَأَخَوَاتُهَا), страдательного залога у неё нет."
+ },
+ {
+  "key": "qaala",
+  "verb": "قَالَ",
+  "root": "قول",
+  "future_type": "ضمة",
+  "transitive": true,
+  "ru": "сказать, говорить",
+  "source": {
+   "list": "freq",
+   "freq": 2,
+   "bab": "arramooz+task",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "tamma",
+  "verb": "تَمَّ",
+  "root": "تمم",
+  "future_type": "كسرة",
+  "transitive": false,
+  "ru": "завершиться; состояться",
+  "source": {
+   "list": "freq",
+   "freq": 3,
+   "bab": "arramooz",
+   "transitive": "qutrub",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "Arramooz: переходный; Qutrub: «оба» (ك). Выбрано «непереходный» (تَمَّ الْأَمْرُ)."
+ },
+ {
+  "key": "qaama",
+  "verb": "قَامَ",
+  "root": "قوم",
+  "future_type": "ضمة",
+  "transitive": false,
+  "ru": "встать; (قَامَ بِـ) провести, осуществить",
+  "source": {
+   "list": "freq",
+   "freq": 5,
+   "bab": "arramooz",
+   "transitive": "qutrub",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "Arramooz: переходный; Qutrub: «оба» (ك). Выбрано «непереходный» (قَامَ، قَامَ بِـ)."
+ },
+ {
+  "key": "dhakara",
+  "verb": "ذَكَرَ",
+  "root": "ذكر",
+  "future_type": "ضمة",
+  "transitive": true,
+  "ru": "упомянуть; вспомнить",
+  "source": {
+   "list": "freq",
+   "freq": 6,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "ana",
+  "verb": "عَنَى",
+  "root": "عني",
+  "future_type": "كسرة",
+  "transitive": true,
+  "ru": "значить, означать; иметь в виду",
+  "source": {
+   "list": "freq",
+   "freq": 7,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "badaa",
+  "verb": "بَدَأَ",
+  "root": "بدء",
+  "future_type": "فتحة",
+  "transitive": true,
+  "ru": "начать; начаться",
+  "source": {
+   "list": "freq",
+   "freq": 8,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "daa",
+  "verb": "دَعَا",
+  "root": "دعو",
+  "future_type": "ضمة",
+  "transitive": true,
+  "ru": "звать, приглашать; призывать",
+  "source": {
+   "list": "freq",
+   "freq": 9,
+   "bab": "arramooz+task",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "aada",
+  "verb": "عَادَ",
+  "root": "عود",
+  "future_type": "ضمة",
+  "transitive": false,
+  "ru": "вернуться",
+  "source": {
+   "list": "freq",
+   "freq": 10,
+   "bab": "arramooz",
+   "transitive": "qutrub",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "Arramooz: переходный; Qutrub: «оба» (ك). Выбрано «непереходный» (عَادَ إِلَى)."
+ },
+ {
+  "key": "raa",
+  "verb": "رَأَى",
+  "root": "رءي",
+  "future_type": "فتحة",
+  "transitive": true,
+  "ru": "видеть; полагать",
+  "source": {
+   "list": "freq",
+   "freq": 11,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "wasala",
+  "verb": "وَصَلَ",
+  "root": "وصل",
+  "future_type": "كسرة",
+  "transitive": true,
+  "ru": "прибыть, дойти; соединить",
+  "source": {
+   "list": "freq",
+   "freq": 12,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "balagha",
+  "verb": "بَلَغَ",
+  "root": "بلغ",
+  "future_type": "ضمة",
+  "transitive": true,
+  "ru": "достичь",
+  "source": {
+   "list": "freq",
+   "freq": 14,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "jaa",
+  "verb": "جَاءَ",
+  "root": "جيء",
+  "future_type": "كسرة",
+  "transitive": true,
+  "ru": "прийти",
+  "source": {
+   "list": "freq",
+   "freq": 15,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "hasala",
+  "verb": "حَصَلَ",
+  "root": "حصل",
+  "future_type": "ضمة",
+  "transitive": false,
+  "ru": "произойти; (حَصَلَ عَلَى) получить",
+  "source": {
+   "list": "freq",
+   "freq": 16,
+   "bab": "qutrub",
+   "transitive": "qutrub",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "Нет в Arramooz; огласовка ضمة — из таблицы Qutrub (triverbtable). Переходность там «оба» (ك) — выбрано «непереходный» (حَصَلَ، حَصَلَ عَلَى)."
+ },
+ {
+  "key": "wajaba",
+  "verb": "وَجَبَ",
+  "root": "وجب",
+  "future_type": "كسرة",
+  "transitive": false,
+  "ru": "быть необходимым (يَجِبُ — нужно)",
+  "source": {
+   "list": "freq",
+   "freq": 17,
+   "bab": "arramooz",
+   "transitive": "qutrub",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "Arramooz: переходный; Qutrub: «оба» (ك). Выбрано «непереходный» (يَجِبُ)."
+ },
+ {
+  "key": "wajada",
+  "verb": "وَجَدَ",
+  "root": "وجد",
+  "future_type": "كسرة",
+  "transitive": true,
+  "ru": "найти",
+  "source": {
+   "list": "freq",
+   "freq": 18,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "arafa",
+  "verb": "عَرَفَ",
+  "root": "عرف",
+  "future_type": "كسرة",
+  "transitive": true,
+  "ru": "знать; узнать",
+  "source": {
+   "list": "freq",
+   "freq": 19,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "В Arramooz две огласовки: ضمة и كسرة. Выбрано يَعْرِفُ."
+ },
+ {
+  "key": "qatala",
+  "verb": "قَتَلَ",
+  "root": "قتل",
+  "future_type": "ضمة",
+  "transitive": true,
+  "ru": "убить",
+  "source": {
+   "list": "freq",
+   "freq": 20,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "amila",
+  "verb": "عَمِلَ",
+  "root": "عمل",
+  "future_type": "فتحة",
+  "transitive": true,
+  "ru": "работать; делать",
+  "source": {
+   "list": "freq",
+   "freq": 21,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "naqala",
+  "verb": "نَقَلَ",
+  "root": "نقل",
+  "future_type": "ضمة",
+  "transitive": true,
+  "ru": "перенести, перевезти; передать",
+  "source": {
+   "list": "freq",
+   "freq": 22,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "aqada",
+  "verb": "عَقَدَ",
+  "root": "عقد",
+  "future_type": "كسرة",
+  "transitive": true,
+  "ru": "завязать; провести (собрание), заключить (договор)",
+  "source": {
+   "list": "freq",
+   "freq": 23,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "shahida",
+  "verb": "شَهِدَ",
+  "root": "شهد",
+  "future_type": "فتحة",
+  "transitive": true,
+  "ru": "быть свидетелем; засвидетельствовать",
+  "source": {
+   "list": "freq",
+   "freq": 24,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "waqaa",
+  "verb": "وَقَعَ",
+  "root": "وقع",
+  "future_type": "فتحة",
+  "transitive": false,
+  "ru": "упасть; случиться; находиться",
+  "source": {
+   "list": "freq",
+   "freq": 25,
+   "bab": "qutrub",
+   "transitive": "qutrub",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "Нет в Arramooz (есть только وَقِعَ); огласовка فتحة — из таблицы Qutrub (triverbtable). Переходность там «оба» (ك) — выбрано «непереходный»."
+ },
+ {
+  "key": "badaa-2",
+  "verb": "بَدَا",
+  "root": "بدو",
+  "future_type": "ضمة",
+  "transitive": false,
+  "ru": "казаться; показаться",
+  "source": {
+   "list": "freq",
+   "freq": 26,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "baqiya",
+  "verb": "بَقِيَ",
+  "root": "بقي",
+  "future_type": "فتحة",
+  "transitive": false,
+  "ru": "остаться",
+  "source": {
+   "list": "freq",
+   "freq": 27,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "talaba",
+  "verb": "طَلَبَ",
+  "root": "طلب",
+  "future_type": "ضمة",
+  "transitive": true,
+  "ru": "просить, требовать",
+  "source": {
+   "list": "freq",
+   "freq": 28,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "rafada",
+  "verb": "رَفَضَ",
+  "root": "رفض",
+  "future_type": "ضمة",
+  "transitive": true,
+  "ru": "отказаться, отвергнуть",
+  "source": {
+   "list": "freq",
+   "freq": 29,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "В Arramooz две огласовки: ضمة и كسرة. Выбрано يَرْفُضُ."
+ },
+ {
+  "key": "jara",
+  "verb": "جَرَى",
+  "root": "جري",
+  "future_type": "كسرة",
+  "transitive": false,
+  "ru": "бежать, течь; происходить",
+  "source": {
+   "list": "freq",
+   "freq": 30,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "wadaa",
+  "verb": "وَضَعَ",
+  "root": "وضع",
+  "future_type": "فتحة",
+  "transitive": true,
+  "ru": "положить, поставить",
+  "source": {
+   "list": "freq",
+   "freq": 31,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "damma",
+  "verb": "ضَمَّ",
+  "root": "ضمم",
+  "future_type": "ضمة",
+  "transitive": true,
+  "ru": "присоединить; включать",
+  "source": {
+   "list": "freq",
+   "freq": 32,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "ata",
+  "verb": "أَتَى",
+  "root": "ءتي",
+  "future_type": "كسرة",
+  "transitive": true,
+  "ru": "прийти",
+  "source": {
+   "list": "freq",
+   "freq": 33,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "hamala",
+  "verb": "حَمَلَ",
+  "root": "حمل",
+  "future_type": "كسرة",
+  "transitive": true,
+  "ru": "нести",
+  "source": {
+   "list": "freq",
+   "freq": 34,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "faaza",
+  "verb": "فَازَ",
+  "root": "فوز",
+  "future_type": "ضمة",
+  "transitive": false,
+  "ru": "победить, выиграть",
+  "source": {
+   "list": "freq",
+   "freq": 35,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "jaala",
+  "verb": "جَعَلَ",
+  "root": "جعل",
+  "future_type": "فتحة",
+  "transitive": true,
+  "ru": "сделать (кого-л. кем-л.); положить",
+  "source": {
+   "list": "freq",
+   "freq": 36,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "dakhala",
+  "verb": "دَخَلَ",
+  "root": "دخل",
+  "future_type": "ضمة",
+  "transitive": true,
+  "ru": "войти",
+  "source": {
+   "list": "freq",
+   "freq": 37,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "aasha",
+  "verb": "عَاشَ",
+  "root": "عيش",
+  "future_type": "كسرة",
+  "transitive": false,
+  "ru": "жить",
+  "source": {
+   "list": "freq",
+   "freq": 38,
+   "bab": "qutrub",
+   "transitive": "qutrub",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "Нет в Arramooz; огласовка и переходность — из таблицы Qutrub (triverbtable)."
+ },
+ {
+  "key": "zaada",
+  "verb": "زَادَ",
+  "root": "زيد",
+  "future_type": "كسرة",
+  "transitive": true,
+  "ru": "увеличить(ся), прибавить",
+  "source": {
+   "list": "freq",
+   "freq": 39,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "В Arramooz два глагола: زَادَ يَزُودُ (корень زود, непереходный) и زَادَ يَزِيدُ (корень زيد, переходный). Выбрано يَزِيدُ."
+ },
+ {
+  "key": "samaha",
+  "verb": "سَمَحَ",
+  "root": "سمح",
+  "future_type": "فتحة",
+  "transitive": false,
+  "ru": "позволить, разрешить",
+  "source": {
+   "list": "freq",
+   "freq": 40,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "wasafa",
+  "verb": "وَصَفَ",
+  "root": "وصف",
+  "future_type": "كسرة",
+  "transitive": true,
+  "ru": "описать",
+  "source": {
+   "list": "freq",
+   "freq": 41,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "saa",
+  "verb": "سَعَى",
+  "root": "سعي",
+  "future_type": "فتحة",
+  "transitive": false,
+  "ru": "стремиться",
+  "source": {
+   "list": "freq",
+   "freq": 42,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "hadatha",
+  "verb": "حَدَثَ",
+  "root": "حدث",
+  "future_type": "ضمة",
+  "transitive": false,
+  "ru": "произойти, случиться",
+  "source": {
+   "list": "freq",
+   "freq": 43,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "bahatha",
+  "verb": "بَحَثَ",
+  "root": "بحث",
+  "future_type": "فتحة",
+  "transitive": true,
+  "ru": "искать (بَحَثَ عَنْ); исследовать",
+  "source": {
+   "list": "freq",
+   "freq": 44,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "dafaa",
+  "verb": "دَفَعَ",
+  "root": "دفع",
+  "future_type": "فتحة",
+  "transitive": true,
+  "ru": "толкнуть; заплатить",
+  "source": {
+   "list": "freq",
+   "freq": 45,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "nashara",
+  "verb": "نَشَرَ",
+  "root": "نشر",
+  "future_type": "ضمة",
+  "transitive": true,
+  "ru": "опубликовать; распространить",
+  "source": {
+   "list": "freq",
+   "freq": 46,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "В Arramooz две огласовки: ضمة и كسرة. Выбрано يَنْشُرُ."
+ },
+ {
+  "key": "zaara",
+  "verb": "زَارَ",
+  "root": "زور",
+  "future_type": "ضمة",
+  "transitive": true,
+  "ru": "посетить",
+  "source": {
+   "list": "freq",
+   "freq": 47,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "В Arramooz два глагола: корень زور (ضمة) и زير (كسرة). Выбрано يَزُورُ."
+ },
+ {
+  "key": "shamila",
+  "verb": "شَمِلَ",
+  "root": "شمل",
+  "future_type": "فتحة",
+  "transitive": true,
+  "ru": "охватывать, включать",
+  "source": {
+   "list": "freq",
+   "freq": 48,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "sadara",
+  "verb": "صَدَرَ",
+  "root": "صدر",
+  "future_type": "ضمة",
+  "transitive": false,
+  "ru": "выйти (об издании); исходить",
+  "source": {
+   "list": "freq",
+   "freq": 49,
+   "bab": "arramooz",
+   "transitive": "qutrub",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "В Arramooz две огласовки: ضمة и كسرة. Выбрано يَصْدُرُ. Переходность в Qutrub «оба» (ك) — выбрано «непереходный» (صَدَرَ الْكِتَابُ)."
+ },
+ {
+  "key": "kataba",
+  "verb": "كَتَبَ",
+  "root": "كتب",
+  "future_type": "ضمة",
+  "transitive": true,
+  "ru": "писать",
+  "source": {
+   "list": "freq",
+   "freq": 50,
+   "bab": "arramooz+task",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "laiba",
+  "verb": "لَعِبَ",
+  "root": "لعب",
+  "future_type": "فتحة",
+  "transitive": false,
+  "ru": "играть",
+  "source": {
+   "list": "freq",
+   "freq": 51,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "kashafa",
+  "verb": "كَشَفَ",
+  "root": "كشف",
+  "future_type": "كسرة",
+  "transitive": true,
+  "ru": "раскрыть, обнаружить",
+  "source": {
+   "list": "freq",
+   "freq": 52,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "arada",
+  "verb": "عَرَضَ",
+  "root": "عرض",
+  "future_type": "كسرة",
+  "transitive": true,
+  "ru": "показать, представить; предложить",
+  "source": {
+   "list": "freq",
+   "freq": 53,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "В Arramooz две огласовки: ضمة и كسرة. Выбрано يَعْرِضُ."
+ },
+ {
+  "key": "qaada",
+  "verb": "قَادَ",
+  "root": "قود",
+  "future_type": "ضمة",
+  "transitive": true,
+  "ru": "вести, руководить",
+  "source": {
+   "list": "freq",
+   "freq": 54,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "rafaa",
+  "verb": "رَفَعَ",
+  "root": "رفع",
+  "future_type": "فتحة",
+  "transitive": true,
+  "ru": "поднять",
+  "source": {
+   "list": "freq",
+   "freq": 55,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "hadara",
+  "verb": "حَضَرَ",
+  "root": "حضر",
+  "future_type": "ضمة",
+  "transitive": true,
+  "ru": "присутствовать; прийти",
+  "source": {
+   "list": "freq",
+   "freq": 56,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "akhadha",
+  "verb": "أَخَذَ",
+  "root": "ءخذ",
+  "future_type": "ضمة",
+  "transitive": true,
+  "ru": "взять",
+  "source": {
+   "list": "freq",
+   "freq": 57,
+   "bab": "arramooz+task",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "malaka",
+  "verb": "مَلَكَ",
+  "root": "ملك",
+  "future_type": "كسرة",
+  "transitive": true,
+  "ru": "владеть",
+  "source": {
+   "list": "freq",
+   "freq": 58,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "kharaja",
+  "verb": "خَرَجَ",
+  "root": "خرج",
+  "future_type": "ضمة",
+  "transitive": false,
+  "ru": "выйти",
+  "source": {
+   "list": "freq",
+   "freq": 59,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "faala",
+  "verb": "فَعَلَ",
+  "root": "فعل",
+  "future_type": "فتحة",
+  "transitive": true,
+  "ru": "делать",
+  "source": {
+   "list": "freq",
+   "freq": 60,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "baata",
+  "verb": "بَاتَ",
+  "root": "بيت",
+  "future_type": "كسرة",
+  "transitive": false,
+  "ru": "переночевать; стать",
+  "source": {
+   "list": "freq",
+   "freq": 61,
+   "bab": "arramooz",
+   "transitive": "qutrub",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "Arramooz: переходный; Qutrub: «оба» (ك). Выбрано «непереходный»."
+ },
+ {
+  "key": "saala",
+  "verb": "سَأَلَ",
+  "root": "سءل",
+  "future_type": "فتحة",
+  "transitive": true,
+  "ru": "спросить; просить",
+  "source": {
+   "list": "freq",
+   "freq": 62,
+   "bab": "arramooz+task",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "farada",
+  "verb": "فَرَضَ",
+  "root": "فرض",
+  "future_type": "كسرة",
+  "transitive": true,
+  "ru": "навязать, наложить (обязанность)",
+  "source": {
+   "list": "freq",
+   "freq": 63,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "alima",
+  "verb": "عَلِمَ",
+  "root": "علم",
+  "future_type": "فتحة",
+  "transitive": true,
+  "ru": "знать, узнать",
+  "source": {
+   "list": "freq",
+   "freq": 64,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "taraha",
+  "verb": "طَرَحَ",
+  "root": "طرح",
+  "future_type": "فتحة",
+  "transitive": true,
+  "ru": "поставить (вопрос), выдвинуть; бросить",
+  "source": {
+   "list": "freq",
+   "freq": 65,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "najaha",
+  "verb": "نَجَحَ",
+  "root": "نجح",
+  "future_type": "فتحة",
+  "transitive": false,
+  "ru": "преуспеть; сдать (экзамен)",
+  "source": {
+   "list": "freq",
+   "freq": 66,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "radda",
+  "verb": "رَدَّ",
+  "root": "ردد",
+  "future_type": "ضمة",
+  "transitive": true,
+  "ru": "ответить; вернуть",
+  "source": {
+   "list": "freq",
+   "freq": 67,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "zalla",
+  "verb": "ظَلَّ",
+  "root": "ظلل",
+  "future_type": "فتحة",
+  "transitive": false,
+  "ru": "оставаться; продолжать",
+  "source": {
+   "list": "freq",
+   "freq": 68,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "В Arramooz две огласовки: فتحة и كسرة. Выбрано يَظَلُّ."
+ },
+ {
+  "key": "taraka",
+  "verb": "تَرَكَ",
+  "root": "ترك",
+  "future_type": "ضمة",
+  "transitive": true,
+  "ru": "оставить",
+  "source": {
+   "list": "freq",
+   "freq": 69,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "nafa",
+  "verb": "نَفَى",
+  "root": "نفي",
+  "future_type": "كسرة",
+  "transitive": true,
+  "ru": "отрицать; изгнать",
+  "source": {
+   "list": "freq",
+   "freq": 70,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "hadafa",
+  "verb": "هَدَفَ",
+  "root": "هدف",
+  "future_type": "كسرة",
+  "transitive": false,
+  "ru": "стремиться (к цели), иметь целью",
+  "source": {
+   "list": "freq",
+   "freq": 71,
+   "bab": "qutrub",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "Arramooz даёт ضمة (يَهْدُفُ); в таблице Qutrub есть и كسرة. Выбрано يَهْدِفُ — так в современном языке."
+ },
+ {
+  "key": "zahara",
+  "verb": "ظَهَرَ",
+  "root": "ظهر",
+  "future_type": "فتحة",
+  "transitive": false,
+  "ru": "появиться",
+  "source": {
+   "list": "freq",
+   "freq": 72,
+   "bab": "arramooz",
+   "transitive": "qutrub",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "Arramooz: переходный; Qutrub: «оба» (ك). Выбрано «непереходный»."
+ },
+ {
+  "key": "dhahaba",
+  "verb": "ذَهَبَ",
+  "root": "ذهب",
+  "future_type": "فتحة",
+  "transitive": false,
+  "ru": "пойти, уйти",
+  "source": {
+   "list": "freq",
+   "freq": 73,
+   "bab": "arramooz",
+   "transitive": "qutrub",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "Arramooz: переходный; Qutrub: «оба» (ك). Выбрано «непереходный» (ذَهَبَ إِلَى)."
+ },
+ {
+  "key": "shaara",
+  "verb": "شَعَرَ",
+  "root": "شعر",
+  "future_type": "ضمة",
+  "transitive": false,
+  "ru": "чувствовать (شَعَرَ بِـ)",
+  "source": {
+   "list": "freq",
+   "freq": 74,
+   "bab": "arramooz",
+   "transitive": "qutrub",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "Arramooz: переходный; Qutrub: «оба» (ك). Выбрано «непереходный» (شَعَرَ بِـ)."
+ },
+ {
+  "key": "waqafa",
+  "verb": "وَقَفَ",
+  "root": "وقف",
+  "future_type": "كسرة",
+  "transitive": false,
+  "ru": "встать, остановиться; стоять",
+  "source": {
+   "list": "freq",
+   "freq": 75,
+   "bab": "arramooz",
+   "transitive": "qutrub",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "Arramooz: переходный; Qutrub: «оба» (ك). Выбрано «непереходный»."
+ },
+ {
+  "key": "manaa",
+  "verb": "مَنَعَ",
+  "root": "منع",
+  "future_type": "فتحة",
+  "transitive": true,
+  "ru": "запретить; помешать",
+  "source": {
+   "list": "freq",
+   "freq": 76,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "marra",
+  "verb": "مَرَّ",
+  "root": "مرر",
+  "future_type": "ضمة",
+  "transitive": false,
+  "ru": "проходить (мимо)",
+  "source": {
+   "list": "freq",
+   "freq": 77,
+   "bab": "qutrub",
+   "transitive": "qutrub",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "Arramooz даёт فتحة (يَمَرُّ); в таблице Qutrub есть ضمة (يَمُرُّ). Выбрано يَمُرُّ — так в современном языке. Переходность: «непереходный» (مَرَّ بِـ)."
+ },
+ {
+  "key": "fataha",
+  "verb": "فَتَحَ",
+  "root": "فتح",
+  "future_type": "فتحة",
+  "transitive": true,
+  "ru": "открыть",
+  "source": {
+   "list": "freq",
+   "freq": 78,
+   "bab": "arramooz+task",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "khasira",
+  "verb": "خَسِرَ",
+  "root": "خسر",
+  "future_type": "فتحة",
+  "transitive": true,
+  "ru": "проиграть; потерять",
+  "source": {
+   "list": "freq",
+   "freq": 79,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "saara",
+  "verb": "صَارَ",
+  "root": "صير",
+  "future_type": "كسرة",
+  "transitive": false,
+  "ru": "стать",
+  "source": {
+   "list": "freq",
+   "freq": 80,
+   "bab": "arramooz",
+   "transitive": "qutrub",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "В Arramooz два глагола: корень صور (ضمة) и صير (كسرة). Выбрано يَصِيرُ. Переходность в Qutrub «оба» (ك) — выбрано «непереходный»: глагол-связка."
+ },
+ {
+  "key": "qada",
+  "verb": "قَضَى",
+  "root": "قضي",
+  "future_type": "كسرة",
+  "transitive": true,
+  "ru": "провести (время); решить, вынести решение",
+  "source": {
+   "list": "freq",
+   "freq": 81,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "qabila",
+  "verb": "قَبِلَ",
+  "root": "قبل",
+  "future_type": "فتحة",
+  "transitive": true,
+  "ru": "принять, согласиться",
+  "source": {
+   "list": "freq",
+   "freq": 82,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "samia",
+  "verb": "سَمِعَ",
+  "root": "سمع",
+  "future_type": "فتحة",
+  "transitive": true,
+  "ru": "слышать, слушать",
+  "source": {
+   "list": "freq",
+   "freq": 83,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "saqata",
+  "verb": "سَقَطَ",
+  "root": "سقط",
+  "future_type": "ضمة",
+  "transitive": false,
+  "ru": "упасть",
+  "source": {
+   "list": "freq",
+   "freq": 84,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "amala",
+  "verb": "أَمَلَ",
+  "root": "ءمل",
+  "future_type": "ضمة",
+  "transitive": true,
+  "ru": "надеяться",
+  "source": {
+   "list": "freq",
+   "freq": 85,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "shanna",
+  "verb": "شَنَّ",
+  "root": "شنن",
+  "future_type": "ضمة",
+  "transitive": true,
+  "ru": "начать (атаку, кампанию)",
+  "source": {
+   "list": "freq",
+   "freq": 86,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "В Arramooz две огласовки: ضمة (переходный) и كسرة (непереходный). Выбрано يَشُنُّ."
+ },
+ {
+  "key": "nazara",
+  "verb": "نَظَرَ",
+  "root": "نظر",
+  "future_type": "ضمة",
+  "transitive": false,
+  "ru": "смотреть (نَظَرَ إِلَى); рассматривать",
+  "source": {
+   "list": "freq",
+   "freq": 87,
+   "bab": "arramooz",
+   "transitive": "qutrub",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "Arramooz: переходный; Qutrub: «оба» (ك). Выбрано «непереходный» (نَظَرَ إِلَى)."
+ },
+ {
+  "key": "nassa",
+  "verb": "نَصَّ",
+  "root": "نصص",
+  "future_type": "ضمة",
+  "transitive": false,
+  "ru": "гласить, предусматривать (о тексте)",
+  "source": {
+   "list": "freq",
+   "freq": 88,
+   "bab": "arramooz",
+   "transitive": "qutrub",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "В Arramooz две огласовки: ضمة и كسرة. Выбрано يَنُصُّ. Переходность в Qutrub «оба» (ك) — выбрано «непереходный» (يَنُصُّ عَلَى)."
+ },
+ {
+  "key": "jamaa",
+  "verb": "جَمَعَ",
+  "root": "جمع",
+  "future_type": "فتحة",
+  "transitive": true,
+  "ru": "собрать",
+  "source": {
+   "list": "freq",
+   "freq": 89,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "khaada",
+  "verb": "خَاضَ",
+  "root": "خوض",
+  "future_type": "ضمة",
+  "transitive": true,
+  "ru": "вступить (в бой, спор), погрузиться",
+  "source": {
+   "list": "freq",
+   "freq": 90,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "manaha",
+  "verb": "مَنَحَ",
+  "root": "منح",
+  "future_type": "فتحة",
+  "transitive": true,
+  "ru": "дать, предоставить",
+  "source": {
+   "list": "freq",
+   "freq": 91,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "В Arramooz две огласовки: فتحة и كسرة. Выбрано يَمْنَحُ."
+ },
+ {
+  "key": "halla",
+  "verb": "حَلَّ",
+  "root": "حلل",
+  "future_type": "ضمة",
+  "transitive": true,
+  "ru": "решить; развязать",
+  "source": {
+   "list": "freq",
+   "freq": 92,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "В Arramooz три огласовки: ضمة, فتحة, كسرة (разные значения). Выбрано يَحُلُّ «решать»."
+ },
+ {
+  "key": "lafata",
+  "verb": "لَفَتَ",
+  "root": "لفت",
+  "future_type": "كسرة",
+  "transitive": true,
+  "ru": "обратить (внимание)",
+  "source": {
+   "list": "freq",
+   "freq": 93,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "tabia",
+  "verb": "تَبِعَ",
+  "root": "تبع",
+  "future_type": "فتحة",
+  "transitive": true,
+  "ru": "следовать",
+  "source": {
+   "list": "freq",
+   "freq": 94,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "waliya",
+  "verb": "وَلِيَ",
+  "root": "ولي",
+  "future_type": "كسرة",
+  "transitive": true,
+  "ru": "следовать (за кем-л.); управлять",
+  "source": {
+   "list": "freq",
+   "freq": 95,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "raghiba",
+  "verb": "رَغِبَ",
+  "root": "رغب",
+  "future_type": "فتحة",
+  "transitive": false,
+  "ru": "желать (رَغِبَ فِي)",
+  "source": {
+   "list": "freq",
+   "freq": 96,
+   "bab": "arramooz",
+   "transitive": "qutrub",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "Arramooz: переходный; Qutrub: «оба» (ك). Выбрано «непереходный» (رَغِبَ فِي)."
+ },
+ {
+  "key": "badhala",
+  "verb": "بَذَلَ",
+  "root": "بذل",
+  "future_type": "ضمة",
+  "transitive": true,
+  "ru": "прилагать (усилия)",
+  "source": {
+   "list": "freq",
+   "freq": 97,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "В Arramooz две огласовки: ضمة и كسرة. Выбрано يَبْذُلُ."
+ },
+ {
+  "key": "saara-2",
+  "verb": "سَارَ",
+  "root": "سير",
+  "future_type": "كسرة",
+  "transitive": false,
+  "ru": "идти, двигаться",
+  "source": {
+   "list": "freq",
+   "freq": 98,
+   "bab": "arramooz",
+   "transitive": "qutrub",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "В Arramooz два глагола: корень سور (ضمة) и سير (كسرة). Выбрано يَسِيرُ. Переходность в Qutrub «оба» (ك) — выбрано «непереходный»."
+ },
+ {
+  "key": "khadaa",
+  "verb": "خَضَعَ",
+  "root": "خضع",
+  "future_type": "فتحة",
+  "transitive": false,
+  "ru": "подчиняться",
+  "source": {
+   "list": "freq",
+   "freq": 99,
+   "bab": "arramooz",
+   "transitive": "qutrub",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "Arramooz: переходный; Qutrub: «оба» (ك). Выбрано «непереходный» (خَضَعَ لِـ)."
+ },
+ {
+  "key": "qaraa",
+  "verb": "قَرَأَ",
+  "root": "قرء",
+  "future_type": "فتحة",
+  "transitive": true,
+  "ru": "читать",
+  "source": {
+   "list": "freq",
+   "freq": 100,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "waada",
+  "verb": "وَعَدَ",
+  "root": "وعد",
+  "future_type": "كسرة",
+  "transitive": true,
+  "ru": "обещать",
+  "source": {
+   "list": "freq",
+   "freq": 101,
+   "bab": "arramooz+task",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "daara",
+  "verb": "دَارَ",
+  "root": "دور",
+  "future_type": "ضمة",
+  "transitive": false,
+  "ru": "вращаться; идти (о разговоре)",
+  "source": {
+   "list": "freq",
+   "freq": 102,
+   "bab": "arramooz",
+   "transitive": "qutrub",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "Arramooz: переходный; Qutrub: «оба» (ك). Выбрано «непереходный»."
+ },
+ {
+  "key": "darasa",
+  "verb": "دَرَسَ",
+  "root": "درس",
+  "future_type": "ضمة",
+  "transitive": true,
+  "ru": "изучать, учиться",
+  "source": {
+   "list": "freq",
+   "freq": 103,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": true,
+  "checked": false,
+  "doubt_note": "В Arramooz две огласовки: ضمة и كسرة. Выбрано يَدْرُسُ."
+ },
+ {
+  "key": "jalasa",
+  "verb": "جَلَسَ",
+  "root": "جلس",
+  "future_type": "كسرة",
+  "transitive": false,
+  "ru": "сесть, сидеть",
+  "source": {
+   "list": "task",
+   "freq": null,
+   "bab": "arramooz+task",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "baa",
+  "verb": "بَاعَ",
+  "root": "بيع",
+  "future_type": "كسرة",
+  "transitive": true,
+  "ru": "продать",
+  "source": {
+   "list": "task",
+   "freq": null,
+   "bab": "arramooz+task",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "rama",
+  "verb": "رَمَى",
+  "root": "رمي",
+  "future_type": "كسرة",
+  "transitive": true,
+  "ru": "бросить",
+  "source": {
+   "list": "task",
+   "freq": null,
+   "bab": "arramooz+task",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "madda",
+  "verb": "مَدَّ",
+  "root": "مدد",
+  "future_type": "ضمة",
+  "transitive": true,
+  "ru": "протянуть, вытянуть",
+  "source": {
+   "list": "task",
+   "freq": null,
+   "bab": "arramooz+task",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ },
+ {
+  "key": "malaa",
+  "verb": "مَلَأَ",
+  "root": "ملء",
+  "future_type": "فتحة",
+  "transitive": true,
+  "ru": "наполнить, заполнить",
+  "source": {
+   "list": "dictionary",
+   "freq": null,
+   "bab": "arramooz",
+   "transitive": "arramooz",
+   "ru": "claude"
+  },
+  "doubt": false,
+  "checked": false
+ }
+]

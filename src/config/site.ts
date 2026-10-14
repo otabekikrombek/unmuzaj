@@ -1,7 +1,9 @@
 // Основные настройки сайта. Меняйте здесь — изменится на всех страницах.
 export const SITE = {
-  name: 'Unmuzaj',
-  nameAr: 'الأُنْمُوذَجُ',
+  name: 'Allimni',
+  nameAr: 'عَلِّمْنِي',
+  formerName: 'Unmuzaj',
+  formerNameAr: 'الأُنْمُوذَجُ',
   motto: 'Barcha arab tili ixlosmandlari uchun', // девиз всегда по-узбекски; перевод — t.meta.mottoTr
   // имя автора на каждом языке интерфейса (должность — t.footer.authorRole)
   author: { ru: 'Отабек Икромбеков', uz: 'Otabek Ikrombekov', en: 'Otabek Ikrombekov' } as Record<'ru' | 'uz' | 'en', string>,

@@ -88,4 +88,18 @@ const courses = defineCollection({
   }),
 });
 
-export const collections = { decks, quizzes, exercises, courses };
+// Таблицы спряжения: генерирует scripts/conjugate/build.py (Qutrub) из src/data/verbs.json. Руками не править.
+const forms = z.array(z.string()).length(13);
+const conjugations = defineCollection({
+  loader: glob({ pattern: '*.json', base: './src/content/conjugations' }),
+  schema: z.object({
+    key: z.string(),
+    verb: z.string(),
+    future_type: z.enum(['فتحة', 'ضمة', 'كسرة']),
+    transitive: z.boolean(),
+    engine: z.string(),
+    forms: z.object({ past: forms, present: forms, subjunctive: forms, jussive: forms, imperative: forms, passive_past: forms, passive_present: forms }),
+  }),
+});
+
+export const collections = { decks, quizzes, exercises, courses, conjugations };

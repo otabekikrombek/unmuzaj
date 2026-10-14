@@ -2,6 +2,7 @@
 // GitHub Pages показывает один файл 404.html для любого неверного адреса. Текст — на языке из адреса
 // (/uz/…, /en/…): все три варианта в странице, нужный открывает маленький скрипт; без JavaScript — русский.
 import Base from '../layouts/Base.astro';
+import { SITE } from '../config/site';
 import { LOCALES, dict, lu, fmt } from '../i18n';
 const ru = dict('ru').pages.notFound;
 ---
@@ -15,7 +16,7 @@ const ru = dict('ru').pages.notFound;
       </div>
     ); })}
   </div>
-  <script is:inline define:vars={{ titles: Object.fromEntries(LOCALES.map(x => [x, `${dict(x).pages.notFound.title} — Unmuzaj`])) }}>
+  <script is:inline define:vars={{ titles: Object.fromEntries(LOCALES.map(x => [x, `${dict(x).pages.notFound.title} — ${SITE.name}`])) }}>
     var m = location.pathname.match(/\/(uz|en)\//), x = m ? m[1] : null;
     if (x) {
       document.querySelectorAll('[data-nf]').forEach(function (d) { d.hidden = d.getAttribute('data-nf') !== x; });

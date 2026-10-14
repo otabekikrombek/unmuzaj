@@ -2,10 +2,11 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
-// Адрес сайта. При переходе на собственный домен:
-//   SITE = 'https://unmuzaj.uz', BASE = '/'  и файл public/CNAME с доменом.
-const SITE = 'https://otabekikrombek.github.io';
-const BASE = '/unmuzaj';
+// Адрес сайта: собственный домен (Cloudflare DNS → GitHub Pages), с 2026-10-14.
+// Домен задаётся в настройках репозитория (Settings → Pages → Custom domain);
+// public/CNAME — для справки, при публикации через Actions GitHub его не читает.
+const SITE = 'https://allimni.net';
+const BASE = '/';
 
 export default defineConfig({
   site: SITE,

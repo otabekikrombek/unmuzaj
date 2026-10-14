@@ -94,7 +94,7 @@ const data = { t: S, home: l(''), base: u(''), groups: S.groups };
     }
     let html = '';
     if (ws.length) {
-      html += `<h3>${esc(D.groups.words)}</h3><ul>${ws.map(w => `<li><a href="${esc(HOME + w.h)}"><span class="w-ar" lang="ar" dir="rtl">${esc(w.a)}</span><span class="w-ru"${w.f ? ' lang="ru"' : ''}>${esc(w.r)}</span><span class="ex" lang="ru">${esc(w.t)}</span></a></li>`).join('')}</ul>` +
+      html += `<h3>${esc(D.groups.words)}</h3><ul>${ws.map(w => `<li><a href="${esc(HOME + w.h)}"><span class="w-ar" lang="ar" dir="rtl">${esc(w.a)}</span><span class="w-ru"${w.f ? ' lang="ru"' : ''}>${esc(w.r)}</span><span class="ex"${/[А-Яа-яЁё]/.test(w.t) ? ' lang="ru"' : ''}>${esc(w.t)}</span></a></li>`).join('')}</ul>` +
         `<p class="more"><a href="${esc(HOME + 'dictionary/?q=' + encodeURIComponent(raw))}">${esc(T.allInDict)}</a></p>`;
     }
     for (const g of ['tasks', 'grammar', 'texts', 'articles', 'sections']) if (groups[g]) html += `<h3>${esc(D.groups[g] || g)}</h3><ul>${groups[g].join('')}</ul>`;

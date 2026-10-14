@@ -1,4 +1,5 @@
 ---
+import { SITE } from '../../../config/site';
 import Base from '../../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
 import { useI18n, withLocales, tf } from '../../../i18n';
@@ -15,7 +16,7 @@ const quizUrl = new URL(l(`quizzes/${q.key}/`), Astro.site).href;
   <section class="bd">
     <header class="bh">
       <div>
-        <p class="logo" lang="ar" dir="rtl">الأُنْمُوذَجُ</p>
+        <p class="logo" lang="ar" dir="rtl">{SITE.nameAr}</p>
         <h1>🏆 <span lang={ti.ru ? 'ru' : undefined}>{ti.text}</span></h1>
         {q.title_ar && <p class="har" lang="ar" dir="rtl">{q.title_ar}</p>}
       </div>

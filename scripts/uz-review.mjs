@@ -12,7 +12,7 @@ const SECTIONS = {
   meta: 'Общее', lang: 'Переключатель языка', nav: 'Меню и шапка', navGroups: 'Группы меню', look: 'Окно «Оформление»', search: 'Поиск по сайту',
   sectionsDesc: 'Описания разделов', common: 'Общие слова', kinds: 'Типы заданий', home: 'Главная страница', pages: 'Страницы разделов',
   about: 'О сайте', privacy: 'Конфиденциальность', login: 'Вход', me: 'Мой прогресс', deck: 'Карточки слов', quiz: 'Викторины и тесты',
-  board: 'Табло для проектора', teacher: 'Панель учителя', footer: 'Подвал',
+  board: 'Табло для проектора', conj: 'Спряжение глаголов', teacher: 'Панель учителя', footer: 'Подвал',
 };
 
 // Решения, которые стоит подтвердить в первую очередь
@@ -27,6 +27,10 @@ const QUESTIONS = [
   'В примере названия класса «2 курс ТГУВ» → **TDShU 2-kurs, 1-guruh**.',
   'Названия палитр: Бирюза → **Feruza**, Лазурит → **Lojuvard**, Пергамент → **Pergament**.',
   'Девиз «Barcha arab tili ixlosmandlari uchun» на узбекской версии показывается без перевода.',
+  'Спряжение: «спряжение» → **tuslanish**, «порода» → **bob** (I bob), «залог» → **nisbat** (maʼlum / majhul), «переходный» → **oʻtimli**.',
+  'Спряжение: наклонения → **marfuʼ / mansub / majzum**; типы глаголов → **salim, mahmuz, misol, ajvaf, noqis, muzoaf, lafif**; огласовки → **fatha / zamma / kasra**.',
+  'Спряжение: род в подписях лиц → **(muz.)** и **(muan.)** (muzakkar / muannas): «sen (muz.)», «ular ikkovi (muan.)». Или лучше другие сокращения?',
+  'Подпись к названию на главной: «allimniy — menga oʻrgat». Как лучше передать عَلِّمْنِي латиницей?',
 ];
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\|/g, '\\|').replace(/\n/g, ' ');

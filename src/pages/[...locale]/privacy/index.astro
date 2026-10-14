@@ -11,12 +11,14 @@ const links = {
   telegram: `<a href="${SITE.contacts.telegramHref}">Telegram ${SITE.contacts.telegram}</a>`,
 };
 ---
-<Base title={P.title} description={P.desc}>
+<Base title={P.title} description={fmt(P.desc, { name: SITE.name })}>
   <PageHead title={P.title} />
   <div class="wrap narrow prose">
     <p class="notice">{P.draft}</p>
     <h2>{P.guestH}</h2>
     <p>{P.guest}</p>
+    <h2>{P.conjH}</h2>
+    <p>{P.conj}</p>
     <h2>{P.classH}</h2>
     <p>{P.class}</p>
     <h2>{P.emailH}</h2>

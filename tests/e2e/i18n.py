@@ -7,12 +7,12 @@
 # Плюс: переключатель в шапке и подвале, выбор запоминается (русская ссылка → /uz/…), ?параметры сохраняются;
 # карточки и викторина на uz с пометкой «(rus tilida)»; поиск на uz; контраст AA меню языков и пометок; 404 на языке адреса;
 # русская версия не изменилась.
-# Подготовка: npm run build; раздать dist как /unmuzaj/ на :4322 (см. tests/README.md). Запуск: python3 tests/e2e/i18n.py
+# Подготовка: npm run build; раздать dist в корне на :4322 (см. tests/README.md). Запуск: python3 tests/e2e/i18n.py
 import os, re
 from playwright.sync_api import sync_playwright
-B = 'http://localhost:4322/unmuzaj/'
+B = 'http://localhost:4322/'
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-PAGES = ['', 'words/', 'words/w100/', 'dictionary/', 'quizzes/', 'quizzes/matn-10/', 'quizzes/izafa/', 'quizzes/mock-ekzamen/', 'tests/', 'exercises/',
+PAGES = ['', 'words/', 'words/w100/', 'dictionary/', 'conjugation/', 'conjugation/kataba/', 'conjugation/jalasa/', 'quizzes/', 'quizzes/matn-10/', 'quizzes/izafa/', 'quizzes/mock-ekzamen/', 'tests/', 'exercises/',
          'exercises/predlogi/', 'grammar/', 'texts/', 'courses/', 'courses/tsu-2-sem1/', 'login/', 'me/', 'teacher/', 'about/', 'privacy/',
          'board/matn-10/?class=XXXXXX']
 MARK = {'uz': '(rus tilida)', 'en': '(in Russian)'}
@@ -46,8 +46,8 @@ UNMARKED = r"""() => {
 }"""
 # внутренние ссылки не на своём языке (кроме переключателя языка и прежних страниц v1/)
 FOREIGN = r"""(loc) => [...document.querySelectorAll('a[href]:not([data-set-lang])')].map(a => a.getAttribute('href'))
-  .filter(h => h.startsWith('/unmuzaj/') && !/^\/unmuzaj\/(v1\/|pagefind\/|sitemap|favicon)/.test(h))
-  .filter(h => !h.startsWith(`/unmuzaj/${loc}/`))
+  .filter(h => h.startsWith('/') && !h.startsWith('//') && !/^\/(v1\/|pagefind\/|sitemap|favicon)/.test(h))
+  .filter(h => !h.startsWith(`/${loc}/`))
   .filter((h, i, arr) => arr.indexOf(h) === i)"""
 FOREIGN_SWITCH = "[...document.querySelectorAll('a[data-set-lang]')].map(a => a.getAttribute('href'))"
 
@@ -67,7 +67,7 @@ with sync_playwright() as p:
                 check(f'lang: {where}', pg.evaluate('document.documentElement.lang') == loc)
                 bare = path.split('?')[0]
                 alts = pg.evaluate("Object.fromEntries([...document.querySelectorAll('link[rel=alternate][hreflang]')].map(l => [l.hreflang, new URL(l.href).pathname]))")
-                check(f'hreflang: {where}', alts == {'ru': f'/unmuzaj/{bare}', 'uz': f'/unmuzaj/uz/{bare}', 'en': f'/unmuzaj/en/{bare}', 'x-default': f'/unmuzaj/{bare}'}, str(alts))
+                check(f'hreflang: {where}', alts == {'ru': f'/{bare}', 'uz': f'/uz/{bare}', 'en': f'/en/{bare}', 'x-default': f'/{bare}'}, str(alts))
                 um = pg.evaluate(UNMARKED)
                 check(f'нет русского текста вне lang="ru": {where}', not um, '\n    ' + '\n    '.join(um[:8]))
                 fl = pg.evaluate(FOREIGN, loc)
@@ -75,7 +75,7 @@ with sync_playwright() as p:
                 check(f'нет горизонтальной прокрутки: {where}', pg.evaluate('document.documentElement.scrollWidth <= window.innerWidth'))
                 if 'board/' not in path:
                     sw = pg.evaluate(FOREIGN_SWITCH)
-                    check(f'переключатель ведёт на эту же страницу: {where}', f'/unmuzaj/{bare}' in sw and f'/unmuzaj/uz/{bare}' in sw and f'/unmuzaj/en/{bare}' in sw, str(sw))
+                    check(f'переключатель ведёт на эту же страницу: {where}', f'/{bare}' in sw and f'/uz/{bare}' in sw and f'/en/{bare}' in sw, str(sw))
             ctx.close()
 
     # 2. шапка на 360 px: переключатель виден и помещается
@@ -140,7 +140,7 @@ with sync_playwright() as p:
     nav(pg, B + 'uz/')
     pg.keyboard.press('/'); pg.fill('#srchQ', 'كتاب'); pg.wait_for_selector('#srchRes a')
     hrefs = pg.evaluate("[...document.querySelectorAll('#srchRes a')].map(a => new URL(a.href).pathname)")
-    check('поиск uz: ссылки на /uz/', hrefs and all(h.startswith('/unmuzaj/uz/') for h in hrefs), str(hrefs[:5]))
+    check('поиск uz: ссылки на /uz/', hrefs and all(h.startswith('/uz/') for h in hrefs), str(hrefs[:5]))
     check('поиск uz: заголовок группы по-узбекски', 'Soʻzlar' in pg.locator('#srchRes h3').first.text_content())
     pg.fill('#srchQ', 'izofa'); pg.wait_for_timeout(600)
     check('поиск uz: Pagefind ищет по узбекским страницам', pg.locator('#srchRes').inner_text() != '')
@@ -164,7 +164,7 @@ with sync_playwright() as p:
 
     # 7. 404 на языке адреса; русская версия без изменений
     ctx = b.new_context(viewport={'width': 360, 'height': 740}); pg = page(ctx)
-    pg.route('**/unmuzaj/uz/nope/', lambda r: r.fulfill(path=os.path.join(ROOT, 'dist', '404.html'), status=404))
+    pg.route('**/uz/nope/', lambda r: r.fulfill(path=os.path.join(ROOT, 'dist', '404.html'), status=404))
     pg.goto(B + 'uz/nope/')
     check('404 по-узбекски', pg.locator('[data-nf=uz]').is_visible() and pg.evaluate('document.documentElement.lang') == 'uz' and 'yoʻq' in pg.locator('h1:visible').inner_text())
     nav(pg, B)
