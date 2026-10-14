@@ -1,7 +1,9 @@
 // Основные настройки сайта. Меняйте здесь — изменится на всех страницах.
 export const SITE = {
-  name: 'Unmuzaj',
-  nameAr: 'الأُنْمُوذَجُ',
+  name: 'Allimni',
+  nameAr: 'عَلِّمْنِي',
+  formerName: 'Unmuzaj',
+  formerNameAr: 'الأُنْمُوذَجُ',
   motto: 'Barcha arab tili ixlosmandlari uchun',
   mottoRu: 'Для всех, кто любит арабский язык',
   author: 'Отабек Икромбеков',

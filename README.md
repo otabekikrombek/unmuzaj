@@ -1,6 +1,6 @@
-# Unmuzaj · الأُنْمُوذَجُ
+# Allimni · عَلِّمْنِي
 
-Сайт арабского языка: https://otabekikrombek.github.io/unmuzaj/
+Сайт арабского языка: https://allimni.net (ранее — Unmuzaj, otabekikrombek.github.io/unmuzaj/)
 
 *Barcha arab tili ixlosmandlari uchun.* Автор — Отабек Икромбеков.
 
@@ -40,12 +40,12 @@
 | Вы забыли пароль учителя | Supabase → Authentication → Users → ваш email → Send password recovery. |
 | Нужно добавить другого учителя | Supabase → Authentication → Users → Add user, затем на сайте: Панель учителя → «Администратор» → email → «учитель». |
 
-## Переход на собственный домен (позже)
+## Домен allimni.net (сделано 14.10.2026)
 
-1. Купить домен (например, `unmuzaj.uz`) и в его настройках DNS добавить записи для GitHub Pages: 4 записи `A` на 185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153.
-2. Попросить Claude: «переведи сайт на домен unmuzaj.uz». Он добавит файл `public/CNAME` и поменяет `SITE`/`BASE` в `astro.config.mjs`. Ссылки внутри сайта поправятся сами.
-3. GitHub → Settings → Pages → Custom domain → ввести домен → Enforce HTTPS.
-4. Supabase → Authentication → URL Configuration: заменить адрес сайта на новый.
+- Домен куплен в Cloudflare. В Cloudflare → allimni.net → DNS: 4 записи `A` для `allimni.net` (185.199.108.153, .109.153, .110.153, .111.153) и `CNAME` `www` → `otabekikrombek.github.io`, у всех — серое облако «DNS only».
+- GitHub → репозиторий → Settings → Pages → Custom domain: `allimni.net`, галочка Enforce HTTPS.
+- Supabase → Authentication → URL Configuration: Site URL `https://allimni.net`, в Redirect URLs — `https://allimni.net/**`.
+- Настоящие имена учеников хранятся только в браузере и привязаны к адресу сайта. На новом компьютере или после смены адреса: Панель учителя → «Загрузить имена из файла» (файл сохраняется кнопкой «Сохранить имена в файл»).
 
 ## Для разработчика
 

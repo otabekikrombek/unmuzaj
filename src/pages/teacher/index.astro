@@ -81,7 +81,12 @@ const siteUrl = new URL(u(''), Astro.site).href;
             <button class="btn ghost sm" id="resetSel">Новый ПИН отмеченным</button>
             <button class="btn ghost sm" id="namesBtn">Настоящие имена…</button>
           </div>
-          <p class="muted small">Настоящие имена хранятся только в этом браузере, не на сервере. Чтобы видеть их на другом компьютере, вставьте список и там.</p>
+          <p class="muted small">Настоящие имена хранятся только в этом браузере, не на сервере. Чтобы видеть их на другом компьютере или в другом браузере, сохраните их в файл и загрузите там.</p>
+          <div class="acts">
+            <button class="btn ghost sm" id="expBtn" type="button">Сохранить имена в файл</button>
+            <button class="btn ghost sm" id="impBtn" type="button">Загрузить имена из файла</button>
+            <input id="impFile" type="file" accept="application/json,.json" hidden />
+          </div>
         </div>
         <div class="tw"><table id="people"></table></div>
         <form id="namesForm" class="box" hidden>
@@ -179,6 +184,38 @@ const siteUrl = new URL(u(''), Astro.site).href;
       $<HTMLTextAreaElement>('namesTxt').value.split('\n').forEach(line => { const [c, ...rest] = line.split(/[;,\t]/); const code = (c || '').replace(/\D/g, '').padStart(2, '0'); const nm = rest.join(' ').trim(); if (code !== '00' && nm) m[code] = nm; });
       try { localStorage.setItem(namesKey(), JSON.stringify(m)); } catch {}
       $('namesForm').hidden = true; people(); if (R) { renderReport(); quizPart(); }
+    });
+
+    // ---------- экспорт / импорт имён (только локально, без сервера) ----------
+    // Ключи localStorage с префиксом unmuzaj: оставлены намеренно (см. CLAUDE.md §0.1).
+    const LOCAL_KEY = /^unmuzaj:(names:\d+|look)$/;
+    $('expBtn').addEventListener('click', () => {
+      const d: Record<string, string> = {};
+      try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i) || ''; if (LOCAL_KEY.test(k)) d[k] = localStorage.getItem(k) || ''; } } catch {}
+      const classesWithNames = Object.keys(d).filter(k => k.startsWith('unmuzaj:names:')).length;
+      if (!classesWithNames) return alert('В этом браузере пока нет сохранённых имён.');
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([JSON.stringify({ app: 'allimni', saved: new Date().toISOString(), data: d }, null, 1)], { type: 'application/json' }));
+      a.download = `allimni_imena_${new Date().toISOString().slice(0, 10)}.json`; a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    });
+    $('impBtn').addEventListener('click', () => $<HTMLInputElement>('impFile').click());
+    $<HTMLInputElement>('impFile').addEventListener('change', async e => {
+      const f = (e.target as HTMLInputElement).files?.[0]; (e.target as HTMLInputElement).value = '';
+      if (!f) return;
+      let raw: any; try { raw = JSON.parse(await f.text()); } catch { return alert('Не удалось прочитать файл. Нужен файл, сохранённый кнопкой «Сохранить имена в файл».'); }
+      const src: Record<string, unknown> = raw && typeof raw === 'object' ? (raw.data && typeof raw.data === 'object' ? raw.data : raw) : {};
+      const items = Object.entries(src).filter(([k, v]) => LOCAL_KEY.test(k) && typeof v === 'string') as [string, string][];
+      const nameItems = items.filter(([k]) => k.startsWith('unmuzaj:names:'));
+      if (!nameItems.length) return alert('В файле нет имён учеников.');
+      let people_n = 0; nameItems.forEach(([, v]) => { try { people_n += Object.keys(JSON.parse(v)).length; } catch {} });
+      const clash = nameItems.filter(([k, v]) => { const old = localStorage.getItem(k); return old && old !== v && old !== '{}'; }).length;
+      let msg = `Загрузить имена: классов — ${nameItems.length}, учеников — ${people_n}?`;
+      if (clash) msg += `\n\nВнимание: для классов (${clash}) в этом браузере уже есть другие имена. Они будут заменены именами из файла.`;
+      if (!confirm(msg)) return;
+      try { items.forEach(([k, v]) => { if (k === 'unmuzaj:look' && localStorage.getItem(k)) return; localStorage.setItem(k, v); }); } catch { return alert('Браузер не дал сохранить данные.'); }
+      people(); if (R) { renderReport(); quizPart(); }
+      alert('Готово: имена загружены.');
     });
 
     // ---------- ученики ----------
@@ -415,7 +452,7 @@ const siteUrl = new URL(u(''), Astro.site).href;
       if (!r.ok) return alert('Не удалось выгрузить.');
       const head = ['Код', 'Имя', 'Когда', 'Попытка', '№', 'Часть', 'Вопрос', 'Ответ', 'Правильный', 'Верно', 'Секунд'];
       const rows = (r.rows as any[]).map(x => { const L = learnerById(x.learner); return [L?.code || '', L ? label(L) : '', new Date(x.at).toLocaleString('ru-RU'), x.attempt, x.no, x.s, x.q, x.a, x.c, x.ok ? 'да' : 'нет', x.sec]; });
-      download([head, ...rows], `unmuzaj_${cur.join}_${k}.csv`);
+      download([head, ...rows], `allimni_${cur.join}_${k}.csv`);
     });
     function download(rows: unknown[][], name: string) {
       const csv = '\ufeff' + rows.map(r => r.map(v => '"' + String(v ?? '').replace(/"/g, '""') + '"').join(';')).join('\r\n');
@@ -426,7 +463,7 @@ const siteUrl = new URL(u(''), Astro.site).href;
       const head = ['Код', ...COLS.map(c => c[1])];
       const rows = (R.learners as any[]).map(s => [s.code, ...COLS.map(c => { const v = c[2](s); return c[0] === 'last' ? (v ? new Date(v).toLocaleString('ru-RU') : '') : v ?? ''; })]);
       const csv = '﻿' + [head, ...rows].map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(';')).join('\r\n');
-      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = `unmuzaj_${cur?.join || 'class'}.csv`; a.click();
+      const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = `allimni_${cur?.join || 'class'}.csv`; a.click();
     });
 
     // ---------- вкладки, администратор ----------
