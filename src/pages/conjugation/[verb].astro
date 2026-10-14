@@ -1,0 +1,92 @@
+---
+// Страница глагола: таблица спряжения (Qutrub) по src/content/conjugations/<key>.json и src/data/verbs.json.
+import Base from '../../layouts/Base.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ConjCredits from '../../components/ConjCredits.astro';
+import { getVerbs, type Verb } from '../../lib/verbs';
+import { renderConjugation, mixed } from '../../lib/conjugation';
+import { u } from '../../lib/url';
+import { t } from '../../i18n/ru';
+import { SITE } from '../../config/site';
+import '../../styles/conjugation.css';
+
+export async function getStaticPaths() {
+  const verbs = await getVerbs();
+  return verbs.map((v, i) => ({ params: { verb: v.key }, props: { v, prev: verbs[i - 1], next: verbs[i + 1] } }));
+}
+const { v, prev, next } = Astro.props as { v: Verb; prev?: Verb; next?: Verb };
+const C = t.conj;
+const title = `${v.verb} – ${v.present}: ${C.title.toLowerCase()}`;
+const description = `Спряжение глагола ${v.verb} (${v.present}) «${v.ru}»: прошедшее и настоящее-будущее время, наклонения, повелительная форма, страдательный залог. Все 13 лиц, с огласовками.`;
+const rootSpaced = [...v.root].join(' ');
+const ld = {
+  '@context': 'https://schema.org', '@type': 'LearningResource', name: title, description,
+  inLanguage: ['ar', 'ru'], learningResourceType: 'conjugation table', isAccessibleForFree: true,
+  url: new URL(Astro.url.pathname, Astro.site).href,
+};
+---
+<Base title={title} description={description} group="grammar">
+  <div class="page-head">
+    <div class="wrap">
+      <Breadcrumbs title={v.verb} />
+      <h1 class="vh"><span class="vh-ar" lang="ar" dir="rtl">{v.verb} – {v.present}</span><span class="vh-ru" set:html={mixed(v.ru)} /></h1>
+      <ul class="vtags">
+        <li><span class="muted">{C.type}:</span> {v.types.map(x => C.typesOne[x]).join(', ')} <span class="nb">(<span lang="ar" dir="rtl">{v.types.map(x => C.typesAr[x]).join('، ')}</span>)</span></li>
+        <li><span class="muted">{C.root}:</span> <span lang="ar" dir="rtl">{rootSpaced}</span></li>
+        <li><span class="muted">{C.babLabel}:</span> <span class="nb">{C.bab[v.future_type]} (<span lang="ar" dir="rtl">{C.babPattern[v.future_type]}</span>)</span></li>
+        <li>{v.transitive ? C.transitive : C.intransitive}, {C.form1}</li>
+      </ul>
+      <div class="vact no-print">
+        <button type="button" class="btn ghost" id="printBtn">{C.print}</button>
+        <a class="btn ghost" href={u('conjugation/')}>{C.allVerbs}</a>
+      </div>
+    </div>
+  </div>
+  <div class="wrap">
+    <p class="notice cj-notice">
+      {C.auto} {v.checked ? C.checked : C.unchecked}
+      {!v.checked && <> {C.report} <a href={SITE.contacts.telegramHref}>Telegram {SITE.contacts.telegram}</a>.</>}
+    </p>
+    {v.doubt && v.doubt_note && (
+      <details class="doubt no-print">
+        <summary>{C.doubtTitle}</summary>
+        <p set:html={mixed(v.doubt_note)} />
+      </details>
+    )}
+    <div id="cj" set:html={renderConjugation(v.forms, { transitive: v.transitive })} />
+    <nav class="pn no-print" aria-label={C.allVerbs}>
+      {prev ? <a href={u(`conjugation/${prev.key}/`)} rel="prev"><span class="muted small">← {C.prev}</span><span lang="ar" dir="rtl">{prev.verb}</span></a> : <span />}
+      {next ? <a href={u(`conjugation/${next.key}/`)} rel="next" class="pn-next"><span class="muted small">{C.next} →</span><span lang="ar" dir="rtl">{next.verb}</span></a> : <span />}
+    </nav>
+    <ConjCredits engine={v.engine} />
+  </div>
+  <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+  <script>
+    import { initConjugation } from '../../lib/conjugation';
+    initConjugation();
+    document.getElementById('printBtn')?.addEventListener('click', () => window.print());
+  </script>
+</Base>
+
+<style>
+  .vh { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 18px; margin: 10px 0 8px; }
+  .vh-ar { font-size: calc(clamp(2.2rem, 7vw, 3rem) * var(--ar-scale)); line-height: 1.6; color: var(--accent); font-weight: 400; }
+  .vh-ru { font-size: clamp(1.3rem, 3.5vw, 1.7rem); }
+  .vtags { list-style: none; margin: 0 0 14px; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: .95rem; }
+  .vtags [lang='ar'] { font-size: calc(1.1rem * var(--ar-scale)); }
+  .vact { display: flex; flex-wrap: wrap; gap: 10px; }
+  .cj-notice { margin-bottom: 14px; }
+  .doubt { margin: 0 0 20px; border: 1px dashed var(--line-strong); border-radius: var(--r-s); padding: 6px 12px; background: var(--sheet); }
+  .doubt summary { cursor: pointer; min-height: 32px; display: flex; align-items: center; font-weight: 600; }
+  .doubt p { margin: 8px 0 4px; }
+  .pn { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 8px 0 24px; }
+  .pn a { display: flex; flex-direction: column; padding: 10px 12px; border: 1px solid var(--line); border-radius: var(--r-s); text-decoration: none; background: var(--sheet); }
+  .pn a:hover { background: var(--hover); }
+  .pn [lang='ar'] { font-size: calc(1.5rem * var(--ar-scale)); color: var(--ink); line-height: 1.6; }
+  .pn-next { text-align: right; align-items: flex-end; }
+  @media print {
+    :global(.site-head), :global(.site-foot), :global(.crumbs), .no-print { display: none !important; }
+    .page-head { border: 0; padding: 0; margin-bottom: 8px; }
+    .cj-notice { border: 1px solid #888; background: #fff; }
+  }
+</style>

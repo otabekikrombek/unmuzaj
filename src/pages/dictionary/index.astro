@@ -3,6 +3,9 @@ import Base from '../../layouts/Base.astro';
 import PageHead from '../../components/PageHead.astro';
 import dict from '../../data/dictionary.json';
 import { t } from '../../i18n/ru';
+import { u } from '../../lib/url';
+import { verbFormIndex, verbFor } from '../../lib/verbs';
+const verbIdx = await verbFormIndex();
 const total = dict.reduce((a, g) => a + g.items.length, 0);
 ---
 <Base title={t.nav.dictionary} description="Тематический арабско-русский словарь с поиском: огласовки, множественное число, пары антонимов.">
@@ -17,7 +20,9 @@ const total = dict.reduce((a, g) => a + g.items.length, 0);
           <h2>{g.t}</h2>
           <table>
             <tbody>
-              {g.items.map(w => (<tr data-s={`${w.r}`} data-a={w.a}><td class="ru">{w.r}</td><td class="ar" lang="ar" dir="rtl">{w.a}</td></tr>))}
+              {g.items.map(w => { const vb = verbFor(verbIdx, w.a); return (
+                <tr data-s={`${w.r}`} data-a={w.a}><td class="ru">{w.r}{vb && <a class="cj-link" href={u(`conjugation/${vb.key}/`)}>{t.conj.dictLink}: <span lang="ar" dir="rtl">{vb.verb}</span></a>}</td><td class="ar" lang="ar" dir="rtl">{w.a}</td></tr>
+              ); })}
             </tbody>
           </table>
         </section>
@@ -50,6 +55,8 @@ const total = dict.reduce((a, g) => a + g.items.length, 0);
   td { padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
   td.ar { font-size: calc(1.45rem * var(--ar-scale)); text-align: right; width: 55%; line-height: 1.7; }
   td.ru { color: var(--ink); }
+  .cj-link { display: inline-flex; align-items: center; gap: 4px; margin-left: 10px; min-height: 32px; font-size: .9rem; }
+  .cj-link [lang='ar'] { font-size: calc(1.15rem * var(--ar-scale)); }
   tr:nth-child(even) td { background: var(--stripe); }
   [hidden] { display: none !important; }
   /* узкий экран и крупный шрифт: перевод над арабским словом */

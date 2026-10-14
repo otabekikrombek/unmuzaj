@@ -8,7 +8,9 @@
     "preview": "astro preview",
     "check": "astro check",
     "test:e2e": "playwright test",
-    "make-quiz": "node scripts/make-quiz.mjs"
+    "make-quiz": "node scripts/make-quiz.mjs",
+    "conjugate": "python3 scripts/conjugate/build.py",
+    "conjugate:lookup": "python3 scripts/conjugate/lookup.py"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",
