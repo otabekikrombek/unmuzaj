@@ -1,8 +1,8 @@
 # Сквозной тест: учитель создаёт класс → ученик входит → карточки → офлайн → второе устройство → отчёт.
-# Запуск: локальный Postgres + tests/mock (см. README_TESTS.md), сайт на :4322/unmuzaj/
+# Запуск: локальный Postgres + tests/mock (см. README_TESTS.md), сайт на :4322/
 import json, random, re, sys, urllib.request, subprocess
 from playwright.sync_api import sync_playwright
-B = 'http://localhost:4322/unmuzaj/'
+B = 'http://localhost:4322/'
 SQL = lambda q: subprocess.run(['psql','-h','localhost','-p','54329','-U','postgres','-d','e2e','-tAc',q],capture_output=True,text=True,env={'PGPASSWORD':'pw','PATH':'/usr/bin:/bin'}).stdout.strip()
 ctl = lambda q: urllib.request.urlopen('http://localhost:8787/__ctl?'+q).read()
 errs = []

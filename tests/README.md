@@ -28,7 +28,7 @@ psql -d t1 -f supabase/tests/20_quiz_test.sql   # викторины; в кон�
 
 1. База `e2e`: шаги выше, но с одним пользователем `teacher@x`.
 2. `DB=e2e node tests/mock-supabase.mjs` — мини-эмулятор Supabase на `:8787`. Пароль любого пользователя — `secret123`. Печатает тестовый `ANON`-ключ.
-3. Собрать сайт на эмулятор: `PUBLIC_SUPABASE_URL=http://localhost:8787 PUBLIC_SUPABASE_ANON_KEY=<ANON> npm run build`, затем раздать `dist` как `/unmuzaj/` на `:4322`.
+3. Собрать сайт на эмулятор: `PUBLIC_SUPABASE_URL=http://localhost:8787 PUBLIC_SUPABASE_ANON_KEY=<ANON> npm run build`, затем раздать `dist` в корне на `:4322`.
 4. `python3 tests/e2e/flow.py` (нужен Playwright для Python).
 
 Сценарий:
@@ -49,7 +49,7 @@ psql -d t1 -f supabase/tests/20_quiz_test.sql   # викторины; в кон�
 
 - `node tests/contrast.mjs src/styles/tokens.css` — быстрая проверка: все пары цветов (текст/фон) в 4 палитрах × 2 режимах проходят AA. Запускать после любой правки `tokens.css`.
 - `python3 tests/e2e/design.py` — каждая страница × 4 палитры × 2 режима × ширина 360 и 1280: контраст AA через axe-core, нет горизонтальной прокрутки, нет ошибок в консоли; плюс окна «Оформление» и «Поиск», вопрос викторины, тест карточек; тема до отрисовки, «как в системе», сохранение выбора; размер текста; поиск (/, Ctrl+K, русский и арабский с огласовками и без); меню и «хлебные крошки». Скриншоты — в `test-results/design/`. `--quick` — 5 страниц вместо 21.
-- Сайт для этого теста: `npm run build` (с поиском Pagefind) и раздать `dist` как `/unmuzaj/` на `:4322` (база не нужна).
+- Сайт для этого теста: `npm run build` (с поиском Pagefind) и раздать `dist` в корне на `:4322` (база не нужна).
 
 ## Спряжение глаголов (§13.2)
 

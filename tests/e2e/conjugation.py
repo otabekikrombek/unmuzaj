@@ -5,7 +5,7 @@
 # а пакеты Qutrub скачиваются с PyPI. Запуск: python3 tests/e2e/conjugation.py
 import hashlib, json, os, sys, urllib.request
 from playwright.sync_api import sync_playwright
-B = 'http://localhost:4322/unmuzaj/'
+B = 'http://localhost:4322/'
 PYODIDE_DIR = os.environ.get('PYODIDE_DIR')
 fails, errs = [], []
 

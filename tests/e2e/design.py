@@ -7,7 +7,7 @@
 # Скриншоты: test-results/design/. Запуск: python3 tests/e2e/design.py [--quick]
 import os, sys, json, time
 from playwright.sync_api import sync_playwright
-B = 'http://localhost:4322/unmuzaj/'
+B = 'http://localhost:4322/'
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 AXE = os.path.join(ROOT, 'node_modules', 'axe-core', 'axe.min.js')
 OUT = os.path.join(ROOT, 'test-results', 'design'); os.makedirs(OUT, exist_ok=True)
