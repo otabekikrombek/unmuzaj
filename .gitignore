@@ -7,3 +7,5 @@ test-results/
 playwright-report/
 .venv-conjugate/
 __pycache__/
+.lighthouseci/
+.wrangler/

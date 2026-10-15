@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && pagefind --site dist",
+    "build": "astro build && pagefind --site dist && node scripts/security/headers.mjs",
     "preview": "astro preview",
     "check": "astro check",
     "test:e2e": "playwright test",
@@ -12,7 +12,9 @@
     "test:i18n": "node tests/i18n.mjs",
     "uz-review": "node scripts/uz-review.mjs",
     "conjugate": "python3 scripts/conjugate/build.py",
-    "conjugate:lookup": "python3 scripts/conjugate/lookup.py"
+    "conjugate:lookup": "python3 scripts/conjugate/lookup.py",
+    "size": "size-limit",
+    "weight": "node scripts/audit/weight.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",
@@ -27,8 +29,10 @@
   "private": true,
   "type": "module",
   "devDependencies": {
+    "@size-limit/file": "^14.1.0",
     "axe-core": "^4.11.0",
     "jsonwebtoken": "^9.0.3",
-    "pg": "^8.23.1"
+    "pg": "^8.23.1",
+    "size-limit": "^14.1.0"
   }
 }

@@ -64,3 +64,5 @@ npm run build        # сборка + индекс поиска Pagefind (в р�
 ```
 
 Проверка словарей интерфейса — `npm run test:i18n`. Тесты базы и сквозные тесты — см. `tests/README.md`. Техническое задание — `CLAUDE.md`.
+
+Бюджет веса — `npm run size`, таблица веса страниц — `npm run weight` (после сборки). Каждый PR автоматически проверяется: вкладка Actions → «Проверки». Безопасность — `SECURITY.md`, `docs/SECURITY_CHECKLIST.md`; аудит и нулевая точка — `docs/AUDIT_2026-10.md`; переезд на Cloudflare Pages — `docs/HOSTING_CLOUDFLARE.md`.

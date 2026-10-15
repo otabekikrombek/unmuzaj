@@ -1,0 +1,61 @@
+# Проверки каждого PR и main: уязвимости зависимостей, типы, строки интерфейса, сборка,
+# бюджет веса (size-limit) и Lighthouse (6 страниц, телефон). Пороги — «Правила Allimni 2.0» в CLAUDE.md.
+# Сайт эта задача не публикует — публикация в deploy.yml.
+name: Проверки
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      - name: Уязвимости зависимостей (npm audit)
+        # то, что попадает на сайт: high и critical — ошибка; инструменты сборки и тестов: только critical
+        run: |
+          npm audit --omit=dev --audit-level=high
+          npm audit --audit-level=critical
+
+      - name: Типы (astro check)
+        run: npm run check
+
+      - name: Строки интерфейса (ru / uz / en)
+        run: npm run test:i18n
+
+      - name: Сборка
+        run: npm run build
+
+      - name: Заголовки безопасности для Cloudflare Pages созданы
+        run: test -s dist/_headers && grep -q 'Content-Security-Policy' dist/_headers
+
+      - name: Бюджет веса (size-limit)
+        run: npx size-limit
+
+      - name: Lighthouse (телефон, 6 страниц)
+        run: npx --yes @lhci/cli@0.15.1 autorun --config=lighthouserc.cjs
+
+      - name: Отчёты Lighthouse
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse
+          path: .lighthouseci/
+          if-no-files-found: ignore
