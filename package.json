@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && pagefind --site dist",
+    "build": "astro build && pagefind --site dist && node scripts/security/headers.mjs",
     "preview": "astro preview",
     "check": "astro check",
     "test:e2e": "playwright test",
