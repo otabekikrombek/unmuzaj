@@ -1,0 +1,207 @@
+{
+ "meta": {
+  "lighthouse": "12.6.1",
+  "chrome": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/141.0.0.0 Safari/537.36",
+  "date": "2026-10-15T08:44:50.877Z",
+  "formFactor": "mobile",
+  "throttling": {
+   "rttMs": 150,
+   "throughputKbps": 1638.4,
+   "requestLatencyMs": 562.5,
+   "downloadThroughputKbps": 1474.5600000000002,
+   "uploadThroughputKbps": 675,
+   "cpuSlowdownMultiplier": 4
+  },
+  "throttlingMethod": "simulate",
+  "runs_per_page": 3,
+  "server": "lhci staticDistDir (локально, gzip), сборка коммита b1b506e"
+ },
+ "pages": {
+  "/quizzes/matn-10/": {
+   "scores": {
+    "performance": 88,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100
+   },
+   "all_runs_performance": [
+    88,
+    88,
+    92
+   ],
+   "FCP_ms": 2644,
+   "LCP_ms": 3319,
+   "TBT_ms": 0,
+   "CLS": 0.032,
+   "SI_ms": 2644,
+   "transfer_KiB": 396.8,
+   "by_type_KiB": {
+    "total": 396.8,
+    "font": 308.7,
+    "script": 64.9,
+    "document": 13.4,
+    "stylesheet": 9.2,
+    "other": 0.5,
+    "image": 0.0,
+    "media": 0.0,
+    "third-party": 0.0
+   },
+   "third_party_requests": 0
+  },
+  "/dictionary/": {
+   "scores": {
+    "performance": 100,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100
+   },
+   "all_runs_performance": [
+    96,
+    100,
+    100
+   ],
+   "FCP_ms": 1517,
+   "LCP_ms": 1517,
+   "TBT_ms": 0,
+   "CLS": 0.013,
+   "SI_ms": 1517,
+   "transfer_KiB": 250.6,
+   "by_type_KiB": {
+    "total": 250.6,
+    "font": 210.8,
+    "document": 24.4,
+    "script": 7.9,
+    "stylesheet": 7.0,
+    "other": 0.5,
+    "image": 0.0,
+    "media": 0.0,
+    "third-party": 0.0
+   },
+   "third_party_requests": 0
+  },
+  "/words/w100/": {
+   "scores": {
+    "performance": 88,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100
+   },
+   "all_runs_performance": [
+    87,
+    88,
+    89
+   ],
+   "FCP_ms": 1820,
+   "LCP_ms": 2870,
+   "TBT_ms": 0,
+   "CLS": 0.148,
+   "SI_ms": 1820,
+   "transfer_KiB": 293.2,
+   "by_type_KiB": {
+    "total": 293.2,
+    "font": 210.8,
+    "script": 63.2,
+    "document": 10.0,
+    "stylesheet": 8.7,
+    "other": 0.5,
+    "image": 0.0,
+    "media": 0.0,
+    "third-party": 0.0
+   },
+   "third_party_requests": 0
+  },
+  "/courses/tsu-2-sem1/": {
+   "scores": {
+    "performance": 97,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100
+   },
+   "all_runs_performance": [
+    97,
+    97,
+    100
+   ],
+   "FCP_ms": 2112,
+   "LCP_ms": 2112,
+   "TBT_ms": 0,
+   "CLS": 0.015,
+   "SI_ms": 2112,
+   "transfer_KiB": 232.6,
+   "by_type_KiB": {
+    "total": 232.6,
+    "font": 210.8,
+    "document": 7.3,
+    "stylesheet": 7.0,
+    "script": 6.9,
+    "other": 0.5,
+    "image": 0.0,
+    "media": 0.0,
+    "third-party": 0.0
+   },
+   "third_party_requests": 0
+  },
+  "/": {
+   "scores": {
+    "performance": 97,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100
+   },
+   "all_runs_performance": [
+    93,
+    97,
+    97
+   ],
+   "FCP_ms": 2114,
+   "LCP_ms": 2114,
+   "TBT_ms": 0,
+   "CLS": 0.023,
+   "SI_ms": 2114,
+   "transfer_KiB": 235.5,
+   "by_type_KiB": {
+    "total": 235.5,
+    "font": 210.8,
+    "document": 8.7,
+    "stylesheet": 8.5,
+    "script": 6.9,
+    "other": 0.5,
+    "image": 0.0,
+    "media": 0.0,
+    "third-party": 0.0
+   },
+   "third_party_requests": 0
+  },
+  "/conjugation/": {
+   "scores": {
+    "performance": 100,
+    "accessibility": 100,
+    "best-practices": 100,
+    "seo": 100
+   },
+   "all_runs_performance": [
+    99,
+    100,
+    100
+   ],
+   "FCP_ms": 1515,
+   "LCP_ms": 1515,
+   "TBT_ms": 0,
+   "CLS": 0.006,
+   "SI_ms": 1515,
+   "transfer_KiB": 344.4,
+   "by_type_KiB": {
+    "total": 344.4,
+    "font": 308.7,
+    "document": 16.2,
+    "script": 11.9,
+    "stylesheet": 7.0,
+    "other": 0.5,
+    "image": 0.0,
+    "media": 0.0,
+    "third-party": 0.0
+   },
+   "third_party_requests": 0
+  }
+ }
+}
