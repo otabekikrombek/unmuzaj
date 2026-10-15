@@ -59,7 +59,7 @@ const siteUrl = new URL(l(''), Astro.site).href;
           </select>
           <button class="btn ghost sm" id="reload">{T.reload}</button>
           <button class="btn ghost sm" id="csv">{T.csv}</button>
-          <button class="btn ghost sm" onclick="print()">{T.print}</button>
+          <button class="btn ghost sm" id="repPrint">{T.print}</button>
         </div>
         <div id="report"><p class="muted">{T.pickClass}</p></div>
       </section>
@@ -303,6 +303,7 @@ const siteUrl = new URL(l(''), Astro.site).href;
       catch { $('report').innerHTML = `<p>${T.reportFail}</p>`; $('qzRep').innerHTML = ''; }
     }
     $('period').addEventListener('change', loadReport); $('reload').addEventListener('click', loadReport);
+    $('repPrint').addEventListener('click', () => print()); // без onclick в разметке: его запретит CSP
 
     const known = (s: any) => Object.values(s.decks || {}).reduce((a: number, d: any) => a + (d.good || 0) + (d.done || 0), 0) as number;
     const acc = (s: any) => (s.answers ? Math.round(1000 * s.ok / s.answers) / 10 : null);
@@ -467,15 +468,17 @@ const siteUrl = new URL(l(''), Astro.site).href;
       const rows = (r.rows as any[]).map(x => { const L = learnerById(x.learner); return [L?.code || '', L ? label(L) : '', new Date(x.at).toLocaleString(D.intl), x.attempt, x.no, x.s, x.q, x.a, x.c, x.ok ? T.yes : T.no, x.sec]; });
       download([head, ...rows], `allimni_${cur.join}_${k}.csv`);
     });
+    // ячейка CSV; текст, начинающийся с = + - @, Excel принял бы за формулу — перед ним ставится апостроф
+    const csvCell = (v: unknown) => { const t = String(v ?? ''); return '"' + (typeof v === 'string' && /^[=+\-@\t\r]/.test(t) ? "'" + t : t).replace(/"/g, '""') + '"'; };
     function download(rows: unknown[][], name: string) {
-      const csv = '\ufeff' + rows.map(r => r.map(v => '"' + String(v ?? '').replace(/"/g, '""') + '"').join(';')).join('\r\n');
+      const csv = '\ufeff' + rows.map(r => r.map(csvCell).join(';')).join('\r\n');
       const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = name; a.click();
     }
     $('csv').addEventListener('click', () => {
       if (!R) return;
       const head = [T.csvCode, ...COLS.map(c => c[1])];
       const rows = (R.learners as any[]).map(s => [s.code, ...COLS.map(c => { const v = c[2](s); return c[0] === 'last' ? (v ? new Date(v).toLocaleString(D.intl) : '') : v ?? ''; })]);
-      const csv = '﻿' + [head, ...rows].map(r => r.map(v => '"' + String(v).replace(/"/g, '""') + '"').join(';')).join('\r\n');
+      const csv = '﻿' + [head, ...rows].map(r => r.map(csvCell).join(';')).join('\r\n');
       const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = `allimni_${cur?.join || 'class'}.csv`; a.click();
     });
 
