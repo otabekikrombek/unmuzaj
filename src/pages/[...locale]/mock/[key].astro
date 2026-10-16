@@ -277,6 +277,7 @@ const ld = {
       results();
       if (!who) return netShow('guest');
       netShow('pending');
+      await firstFlush?.catch(() => {}); // иначе очередь занята отправкой при открытии страницы и попытка ждала бы следующего раза
       netShow(await submitAttempt(M.attempt(st, X, device()) as Attempt));
     }
     function netShow(s: SendState) {
