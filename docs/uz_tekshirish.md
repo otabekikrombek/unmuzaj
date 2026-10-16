@@ -1,6 +1,6 @@
 # Oʻzbekcha satrlarni tekshirish · Проверка узбекских строк
 
-Здесь собраны **все строки интерфейса на узбекском** (латиница) рядом с русскими — 720 строк.
+Здесь собраны **все строки интерфейса на узбекском** (латиница) рядом с русскими — 724 строк.
 Файл создаётся автоматически из `src/i18n/uz.ts` командой `npm run uz-review`, поэтому правки вносите **не сюда, а в `src/i18n/uz.ts`**
 (или пришлите список исправлений: номер строки и правильный вариант).
 
@@ -433,433 +433,437 @@
 | 313 | `mock.meta` | {q} · {m} | {q} · {m} |
 | 314 | `mock.questions` | {n} вопроса | {n} ta savol |
 | 315 | `mock.minutes` | {n} минуты | {n} daqiqa |
-| 316 | `mock.rulesH` | Правила | Qoidalar |
-| 317 | `mock.ruleTimer` | Один общий таймер на весь экзамен — {m}. В 0:00 экзамен сдаётся автоматически; за 5 минут и за 1 минуту до конца появится предупреждение. | Butun imtihonga bitta umumiy taymer — {m}. 0:00 da imtihon avtomatik topshiriladi; tugashiga 5 daqiqa va 1 daqiqa qolganda ogohlantirish chiqadi. |
-| 318 | `mock.ruleNav` | Вопросы можно листать в любом порядке, менять ответ и отмечать, чтобы вернуться к ним. Клавиши: 1–4 — вариант ответа, ← и → — предыдущий и следующий вопрос. | Savollarni istalgan tartibda varaqlash, javobni oʻzgartirish va keyin qaytish uchun belgilab qoʻyish mumkin. Tugmalar: 1–4 — javob varianti, ← va → — oldingi va keyingi savol. |
-| 319 | `mock.ruleFocus` | Во время экзамена скрыты меню, поиск и подвал сайта, страница открывается во весь экран (где браузер это позволяет). Выделять, копировать и печатать текст нельзя. | Imtihon vaqtida sayt menyusi, qidiruv va pastki qismi yashiriladi, sahifa toʻliq ekranda ochiladi (brauzer imkon bergan joyda). Matnni belgilash, nusxalash va chop etish mumkin emas. |
-| 320 | `mock.ruleExit` | Выход из окна экзамена — другая вкладка или приложение, сворачивание, выход из полноэкранного режима — засчитывается. Число выходов видно в результате и преподавателю. | Imtihon oynasidan chiqish — boshqa varaq yoki ilovaga oʻtish, oynani yigʻish, toʻliq ekran rejimidan chiqish — hisobga olinadi. Chiqishlar soni natijada va oʻqituvchiga koʻrinadi. |
-| 321 | `mock.ruleExitMax` | Выйти из окна можно не больше {n} раза: при следующем выходе экзамен сдаётся автоматически. | Oynadan koʻpi bilan {n} marta chiqish mumkin: keyingi chiqishda imtihon avtomatik topshiriladi. |
-| 322 | `mock.ruleReload` | Если страница случайно закроется или перезагрузится, откройте её снова: экзамен продолжится с того же места. Время при этом не останавливается, а закрытие страницы считается выходом из окна. | Sahifa tasodifan yopilsa yoki qayta yuklansa, uni yana oching: imtihon oʻsha joydan davom etadi. Vaqt toʻxtamaydi, sahifani yopish esa oynadan chiqish hisoblanadi. |
-| 323 | `mock.ruleHonest` | Честно о пределах: браузер не может полностью запретить другую вкладку, второй телефон или ИИ. Эти правила сдерживают и ведут учёт, но это не наблюдение за экзаменом. | Cheklovlar haqida rostini aytsak: brauzer boshqa varaqni, ikkinchi telefonni yoki sunʼiy intellektni toʻliq taqiqlay olmaydi. Bu qoidalar tiyib turadi va hisob yuritadi, lekin bu imtihonni kuzatish emas. |
-| 324 | `mock.whoGuest` | Вы проходите как гость: результат сохранится только на этом устройстве. | Siz mehmon sifatida topshiryapsiz: natija faqat shu qurilmada saqlanadi. |
-| 325 | `mock.start` | Начать экзамен | Imtihonni boshlash |
-| 326 | `mock.resumeH` | Экзамен идёт | Imtihon davom etyapti |
-| 327 | `mock.resumeText` | Осталось времени: {t}. Время не останавливается. | Qolgan vaqt: {t}. Vaqt toʻxtamaydi. |
-| 328 | `mock.resume` | Продолжить экзамен | Imtihonni davom ettirish |
-| 329 | `mock.timeLeft` | Осталось времени | Qolgan vaqt |
-| 330 | `mock.qOf` | Вопрос {i} из {n} | Savol {i}/{n} |
-| 331 | `mock.answered` | Отвечено: {a} из {n} | Javob berildi: {a}/{n} |
-| 332 | `mock.prev` | Назад | Orqaga |
-| 333 | `mock.next` | Далее | Keyingi |
-| 334 | `mock.mark` | Отметить | Belgilash |
-| 335 | `mock.finish` | Завершить | Yakunlash |
-| 336 | `mock.options` | Варианты ответа | Javob variantlari |
-| 337 | `mock.palette` | Все вопросы | Barcha savollar |
-| 338 | `mock.legendAnswered` | есть ответ | javob bor |
-| 339 | `mock.legendEmpty` | без ответа | javobsiz |
-| 340 | `mock.legendMarked` | отмечен | belgilangan |
-| 341 | `mock.qState` | Вопрос {n}: {s} | {n}-savol: {s} |
-| 342 | `mock.warn5` | Осталось 5 минут. | 5 daqiqa qoldi. |
-| 343 | `mock.warn1` | Осталась 1 минута. | 1 daqiqa qoldi. |
-| 344 | `mock.confirmH` | Завершить экзамен? | Imtihonni yakunlaysizmi? |
-| 345 | `mock.confirmEmpty` | Без ответа: {n} вопроса. | Javobsiz savollar: {n} ta. |
-| 346 | `mock.confirmAll` | Ответы есть на все вопросы. | Barcha savollarga javob berilgan. |
-| 347 | `mock.confirmNote` | После сдачи ответы изменить нельзя. | Topshirgandan keyin javoblarni oʻzgartirib boʻlmaydi. |
-| 348 | `mock.confirmYes` | Сдать экзамен | Imtihonni topshirish |
-| 349 | `mock.confirmNo` | Вернуться к вопросам | Savollarga qaytish |
-| 350 | `mock.exitH` | Вы вышли из окна экзамена | Siz imtihon oynasidan chiqdingiz |
-| 351 | `mock.exitText` | Выходов из окна: {n}. Это записывается в результат и видно преподавателю. | Oynadan chiqishlar: {n}. Bu natijaga yoziladi va oʻqituvchiga koʻrinadi. |
-| 352 | `mock.exitLimit` | Предел — {max}. При превышении экзамен сдаётся автоматически. | Chegara — {max}. Undan oshsa, imtihon avtomatik topshiriladi. |
-| 353 | `mock.exitBack` | Вернуться к экзамену | Imtihonga qaytish |
-| 354 | `mock.noPrint` | Печать во время экзамена недоступна. | Imtihon vaqtida chop etish mumkin emas. |
-| 355 | `mock.resultH` | Результат | Natija |
-| 356 | `mock.doneTime` | Время вышло — экзамен сдан автоматически. | Vaqt tugadi — imtihon avtomatik topshirildi. |
-| 357 | `mock.doneExits` | Слишком много выходов из окна — экзамен сдан автоматически. | Oynadan juda koʻp chiqildi — imtihon avtomatik topshirildi. |
-| 358 | `mock.sumAnswered` | Отвечено | Javob berilgan |
-| 359 | `mock.sumCorrect` | Верных ответов | Toʻgʻri javoblar |
-| 360 | `mock.sumTime` | Затрачено времени | Sarflangan vaqt |
-| 361 | `mock.sumExits` | Выходов из окна | Oynadan chiqishlar |
-| 362 | `mock.ofN` | {a} из {n} | {a}/{n} |
-| 363 | `mock.tableH` | Ответы | Javoblar |
-| 364 | `mock.cols.n` | № | № |
-| 365 | `mock.cols.q` | Вопрос | Savol |
-| 366 | `mock.cols.yours` | Ваш ответ | Javobingiz |
-| 367 | `mock.cols.right` | Правильный ответ | Toʻgʻri javob |
-| 368 | `mock.cols.topic` | Тема | Mavzu |
-| 369 | `mock.noAnswer` | нет ответа | javob yoʻq |
-| 370 | `mock.isOk` | верно | toʻgʻri |
-| 371 | `mock.isBad` | неверно | notoʻgʻri |
-| 372 | `mock.topic` | тема {n} | {n}-mavzu |
-| 373 | `mock.topicsH` | По темам | Mavzular boʻyicha |
-| 374 | `mock.topicCols.topic` | Тема | Mavzu |
-| 375 | `mock.topicCols.n` | Вопросов | Savollar |
-| 376 | `mock.topicCols.ok` | Верных | Toʻgʻri |
-| 377 | `mock.detailH` | Все вопросы | Barcha savollar |
-| 378 | `mock.yourMark` | ваш ответ | javobingiz |
-| 379 | `mock.rightMark` | правильный ответ | toʻgʻri javob |
-| 380 | `mock.print` | Печать / PDF | Chop etish / PDF |
-| 381 | `mock.again` | Новый экзамен | Yangi imtihon |
-| 382 | `mock.newConfirm` | Начать новый экзамен? Разбор этого экзамена исчезнет с экрана (если вы вошли, он сохранён в «Моём прогрессе»). | Yangi imtihon boshlansinmi? Bu imtihon tahlili ekrandan yoʻqoladi (agar kirgan boʻlsangiz, u «Mening natijalarim»da saqlangan). |
-| 383 | `mock.toList` | К списку экзаменов | Imtihonlar roʻyxatiga |
-| 384 | `mock.printDate` | Дата: {d} | Sana: {d} |
-| 385 | `mock.guestSaved` | Результат сохранён только на этом устройстве: вы не вошли. | Natija faqat shu qurilmada saqlandi: siz kirmagansiz. |
-| 386 | `mock.noscript` | Для экзамена нужен включённый JavaScript. | Imtihon uchun JavaScript yoqilgan boʻlishi kerak. |
+| 316 | `mock.bookH` | Источник вопросов | Savollar manbasi |
+| 317 | `mock.bookAuthor` | Автор: {list} | Muallif: {list} |
+| 318 | `mock.bookAuthors` | Авторы: {list} | Mualliflar: {list} |
+| 319 | `mock.bookRights` | Вопросы составлены по этой книге. Права на книгу принадлежат её авторам и издателю. | Savollar shu kitob asosida tuzilgan. Kitobga boʻlgan huquqlar uning mualliflari va noshiriga tegishli. |
+| 320 | `mock.rulesH` | Правила | Qoidalar |
+| 321 | `mock.ruleTimer` | Один общий таймер на весь экзамен — {m}. В 0:00 экзамен сдаётся автоматически; за 5 минут и за 1 минуту до конца появится предупреждение. | Butun imtihonga bitta umumiy taymer — {m}. 0:00 da imtihon avtomatik topshiriladi; tugashiga 5 daqiqa va 1 daqiqa qolganda ogohlantirish chiqadi. |
+| 322 | `mock.ruleNav` | Вопросы можно листать в любом порядке, менять ответ и отмечать, чтобы вернуться к ним. Клавиши: 1–4 — вариант ответа, ← и → — предыдущий и следующий вопрос. | Savollarni istalgan tartibda varaqlash, javobni oʻzgartirish va keyin qaytish uchun belgilab qoʻyish mumkin. Tugmalar: 1–4 — javob varianti, ← va → — oldingi va keyingi savol. |
+| 323 | `mock.ruleFocus` | Во время экзамена скрыты меню, поиск и подвал сайта, страница открывается во весь экран (где браузер это позволяет). Выделять, копировать и печатать текст нельзя. | Imtihon vaqtida sayt menyusi, qidiruv va pastki qismi yashiriladi, sahifa toʻliq ekranda ochiladi (brauzer imkon bergan joyda). Matnni belgilash, nusxalash va chop etish mumkin emas. |
+| 324 | `mock.ruleExit` | Выход из окна экзамена — другая вкладка или приложение, сворачивание, выход из полноэкранного режима — засчитывается. Число выходов видно в результате и преподавателю. | Imtihon oynasidan chiqish — boshqa varaq yoki ilovaga oʻtish, oynani yigʻish, toʻliq ekran rejimidan chiqish — hisobga olinadi. Chiqishlar soni natijada va oʻqituvchiga koʻrinadi. |
+| 325 | `mock.ruleExitMax` | Выйти из окна можно не больше {n} раза: при следующем выходе экзамен сдаётся автоматически. | Oynadan koʻpi bilan {n} marta chiqish mumkin: keyingi chiqishda imtihon avtomatik topshiriladi. |
+| 326 | `mock.ruleReload` | Если страница случайно закроется или перезагрузится, откройте её снова: экзамен продолжится с того же места. Время при этом не останавливается, а закрытие страницы считается выходом из окна. | Sahifa tasodifan yopilsa yoki qayta yuklansa, uni yana oching: imtihon oʻsha joydan davom etadi. Vaqt toʻxtamaydi, sahifani yopish esa oynadan chiqish hisoblanadi. |
+| 327 | `mock.ruleHonest` | Честно о пределах: браузер не может полностью запретить другую вкладку, второй телефон или ИИ. Эти правила сдерживают и ведут учёт, но это не наблюдение за экзаменом. | Cheklovlar haqida rostini aytsak: brauzer boshqa varaqni, ikkinchi telefonni yoki sunʼiy intellektni toʻliq taqiqlay olmaydi. Bu qoidalar tiyib turadi va hisob yuritadi, lekin bu imtihonni kuzatish emas. |
+| 328 | `mock.whoGuest` | Вы проходите как гость: результат сохранится только на этом устройстве. | Siz mehmon sifatida topshiryapsiz: natija faqat shu qurilmada saqlanadi. |
+| 329 | `mock.start` | Начать экзамен | Imtihonni boshlash |
+| 330 | `mock.resumeH` | Экзамен идёт | Imtihon davom etyapti |
+| 331 | `mock.resumeText` | Осталось времени: {t}. Время не останавливается. | Qolgan vaqt: {t}. Vaqt toʻxtamaydi. |
+| 332 | `mock.resume` | Продолжить экзамен | Imtihonni davom ettirish |
+| 333 | `mock.timeLeft` | Осталось времени | Qolgan vaqt |
+| 334 | `mock.qOf` | Вопрос {i} из {n} | Savol {i}/{n} |
+| 335 | `mock.answered` | Отвечено: {a} из {n} | Javob berildi: {a}/{n} |
+| 336 | `mock.prev` | Назад | Orqaga |
+| 337 | `mock.next` | Далее | Keyingi |
+| 338 | `mock.mark` | Отметить | Belgilash |
+| 339 | `mock.finish` | Завершить | Yakunlash |
+| 340 | `mock.options` | Варианты ответа | Javob variantlari |
+| 341 | `mock.palette` | Все вопросы | Barcha savollar |
+| 342 | `mock.legendAnswered` | есть ответ | javob bor |
+| 343 | `mock.legendEmpty` | без ответа | javobsiz |
+| 344 | `mock.legendMarked` | отмечен | belgilangan |
+| 345 | `mock.qState` | Вопрос {n}: {s} | {n}-savol: {s} |
+| 346 | `mock.warn5` | Осталось 5 минут. | 5 daqiqa qoldi. |
+| 347 | `mock.warn1` | Осталась 1 минута. | 1 daqiqa qoldi. |
+| 348 | `mock.confirmH` | Завершить экзамен? | Imtihonni yakunlaysizmi? |
+| 349 | `mock.confirmEmpty` | Без ответа: {n} вопроса. | Javobsiz savollar: {n} ta. |
+| 350 | `mock.confirmAll` | Ответы есть на все вопросы. | Barcha savollarga javob berilgan. |
+| 351 | `mock.confirmNote` | После сдачи ответы изменить нельзя. | Topshirgandan keyin javoblarni oʻzgartirib boʻlmaydi. |
+| 352 | `mock.confirmYes` | Сдать экзамен | Imtihonni topshirish |
+| 353 | `mock.confirmNo` | Вернуться к вопросам | Savollarga qaytish |
+| 354 | `mock.exitH` | Вы вышли из окна экзамена | Siz imtihon oynasidan chiqdingiz |
+| 355 | `mock.exitText` | Выходов из окна: {n}. Это записывается в результат и видно преподавателю. | Oynadan chiqishlar: {n}. Bu natijaga yoziladi va oʻqituvchiga koʻrinadi. |
+| 356 | `mock.exitLimit` | Предел — {max}. При превышении экзамен сдаётся автоматически. | Chegara — {max}. Undan oshsa, imtihon avtomatik topshiriladi. |
+| 357 | `mock.exitBack` | Вернуться к экзамену | Imtihonga qaytish |
+| 358 | `mock.noPrint` | Печать во время экзамена недоступна. | Imtihon vaqtida chop etish mumkin emas. |
+| 359 | `mock.resultH` | Результат | Natija |
+| 360 | `mock.doneTime` | Время вышло — экзамен сдан автоматически. | Vaqt tugadi — imtihon avtomatik topshirildi. |
+| 361 | `mock.doneExits` | Слишком много выходов из окна — экзамен сдан автоматически. | Oynadan juda koʻp chiqildi — imtihon avtomatik topshirildi. |
+| 362 | `mock.sumAnswered` | Отвечено | Javob berilgan |
+| 363 | `mock.sumCorrect` | Верных ответов | Toʻgʻri javoblar |
+| 364 | `mock.sumTime` | Затрачено времени | Sarflangan vaqt |
+| 365 | `mock.sumExits` | Выходов из окна | Oynadan chiqishlar |
+| 366 | `mock.ofN` | {a} из {n} | {a}/{n} |
+| 367 | `mock.tableH` | Ответы | Javoblar |
+| 368 | `mock.cols.n` | № | № |
+| 369 | `mock.cols.q` | Вопрос | Savol |
+| 370 | `mock.cols.yours` | Ваш ответ | Javobingiz |
+| 371 | `mock.cols.right` | Правильный ответ | Toʻgʻri javob |
+| 372 | `mock.cols.topic` | Тема | Mavzu |
+| 373 | `mock.noAnswer` | нет ответа | javob yoʻq |
+| 374 | `mock.isOk` | верно | toʻgʻri |
+| 375 | `mock.isBad` | неверно | notoʻgʻri |
+| 376 | `mock.topic` | тема {n} | {n}-mavzu |
+| 377 | `mock.topicsH` | По темам | Mavzular boʻyicha |
+| 378 | `mock.topicCols.topic` | Тема | Mavzu |
+| 379 | `mock.topicCols.n` | Вопросов | Savollar |
+| 380 | `mock.topicCols.ok` | Верных | Toʻgʻri |
+| 381 | `mock.detailH` | Все вопросы | Barcha savollar |
+| 382 | `mock.yourMark` | ваш ответ | javobingiz |
+| 383 | `mock.rightMark` | правильный ответ | toʻgʻri javob |
+| 384 | `mock.print` | Печать / PDF | Chop etish / PDF |
+| 385 | `mock.again` | Новый экзамен | Yangi imtihon |
+| 386 | `mock.newConfirm` | Начать новый экзамен? Разбор этого экзамена исчезнет с экрана (если вы вошли, он сохранён в «Моём прогрессе»). | Yangi imtihon boshlansinmi? Bu imtihon tahlili ekrandan yoʻqoladi (agar kirgan boʻlsangiz, u «Mening natijalarim»da saqlangan). |
+| 387 | `mock.toList` | К списку экзаменов | Imtihonlar roʻyxatiga |
+| 388 | `mock.printDate` | Дата: {d} | Sana: {d} |
+| 389 | `mock.guestSaved` | Результат сохранён только на этом устройстве: вы не вошли. | Natija faqat shu qurilmada saqlandi: siz kirmagansiz. |
+| 390 | `mock.noscript` | Для экзамена нужен включённый JavaScript. | Imtihon uchun JavaScript yoqilgan boʻlishi kerak. |
 
 ## Табло для проектора
 
 | № | Ключ | Русский | Oʻzbekcha |
 |---|---|---|---|
-| 387 | `board.title` | Табло | Tablo |
-| 388 | `board.classCode` | Код класса | Sinf kodi |
-| 389 | `board.show` | Показать | Koʻrsatish |
-| 390 | `board.hours` | за последние {n} ч. | oxirgi {n} soatda |
-| 391 | `board.empty` | Пока нет результатов. Табло обновляется само. | Hozircha natijalar yoʻq. Tablo oʻzi yangilanadi. |
-| 392 | `board.noClass` | Класс с таким кодом не найден. | Bunday kodli sinf topilmadi. |
-| 393 | `board.offline` | Нет связи — пробую снова… | Aloqa yoʻq — qayta urinilmoqda… |
-| 394 | `board.updated` | обновлено {t} | yangilandi: {t} |
+| 391 | `board.title` | Табло | Tablo |
+| 392 | `board.classCode` | Код класса | Sinf kodi |
+| 393 | `board.show` | Показать | Koʻrsatish |
+| 394 | `board.hours` | за последние {n} ч. | oxirgi {n} soatda |
+| 395 | `board.empty` | Пока нет результатов. Табло обновляется само. | Hozircha natijalar yoʻq. Tablo oʻzi yangilanadi. |
+| 396 | `board.noClass` | Класс с таким кодом не найден. | Bunday kodli sinf topilmadi. |
+| 397 | `board.offline` | Нет связи — пробую снова… | Aloqa yoʻq — qayta urinilmoqda… |
+| 398 | `board.updated` | обновлено {t} | yangilandi: {t} |
 
 ## Страница-переадресация
 
 | № | Ключ | Русский | Oʻzbekcha |
 |---|---|---|---|
-| 395 | `moved.title` | Страница переехала | Sahifa koʻchirildi |
-| 396 | `moved.text` | Эта страница теперь находится по новому адресу: | Bu sahifa endi yangi manzilda: |
+| 399 | `moved.title` | Страница переехала | Sahifa koʻchirildi |
+| 400 | `moved.text` | Эта страница теперь находится по новому адресу: | Bu sahifa endi yangi manzilda: |
 
 ## Спряжение глаголов
 
 | № | Ключ | Русский | Oʻzbekcha |
 |---|---|---|---|
-| 397 | `conj.title` | Спряжение глаголов | Feʼllar tuslanishi |
-| 398 | `conj.description` | Таблицы спряжения арабских глаголов: прошедшее и настоящее-будущее время, наклонения, повелительная форма, страдательный залог. С огласовками. | Arab feʼllarining tuslanish jadvallari: oʻtgan va hozirgi-kelasi zamon, mayllar, buyruq shakli, majhul nisbat. Harakatlari bilan. |
-| 399 | `conj.lead` | Таблицы спряжения {n} употребительных глаголов I породы — с огласовками, по всем 13 лицам. Любой другой глагол можно проспрягать ниже. | Keng qoʻllaniladigan {n} ta I bob feʼlining tuslanish jadvallari — harakatlari bilan, barcha 13 shaxs boʻyicha. Boshqa istalgan feʼlni quyida tuslash mumkin. |
-| 400 | `conj.count` | {n} глагола | {n} ta feʼl |
-| 401 | `conj.searchLabel` | Найти глагол | Feʼlni topish |
-| 402 | `conj.searchPh` | например: писать, كتب, يكتب | masalan: كتب, يكتب |
-| 403 | `conj.found` | Найдено: {n} | Topildi: {n} |
-| 404 | `conj.notFound` | Такого глагола в списке нет. Попробуйте режим «Любой глагол» ниже. | Roʻyxatda bunday feʼl yoʻq. Quyidagi «Istalgan feʼl» rejimini sinab koʻring. |
-| 405 | `conj.allTypes` | Все | Hammasi |
-| 406 | `conj.types.sound` | правильные | salim |
-| 407 | `conj.types.hamzated` | хамзованные | mahmuz |
-| 408 | `conj.types.assimilated` | подобные правильным | misol |
-| 409 | `conj.types.hollow` | пустые | ajvaf |
-| 410 | `conj.types.defective` | недостаточные | noqis |
-| 411 | `conj.types.doubled` | удвоенные | muzoaf |
-| 412 | `conj.types.lafif` | дважды слабые | lafif |
-| 413 | `conj.typesOne.sound` | правильный | salim |
-| 414 | `conj.typesOne.hamzated` | хамзованный | mahmuz |
-| 415 | `conj.typesOne.assimilated` | подобный правильному | misol |
-| 416 | `conj.typesOne.hollow` | пустой | ajvaf |
-| 417 | `conj.typesOne.defective` | недостаточный | noqis |
-| 418 | `conj.typesOne.doubled` | удвоенный | muzoaf |
-| 419 | `conj.typesOne.lafif` | дважды слабый | lafif |
-| 420 | `conj.bab.فتحة` | фатха | fatha |
-| 421 | `conj.bab.ضمة` | дамма | zamma |
-| 422 | `conj.bab.كسرة` | кясра | kasra |
-| 423 | `conj.babLabel` | Огласовка в настоящем-будущем | Hozirgi-kelasi zamondagi harakat |
-| 424 | `conj.root` | Корень | Oʻzak |
-| 425 | `conj.type` | Тип | Turi |
-| 426 | `conj.form1` | I порода | I bob |
-| 427 | `conj.transitive` | переходный | oʻtimli |
-| 428 | `conj.intransitive` | непереходный | oʻtimsiz |
-| 429 | `conj.print` | Печать | Chop etish |
-| 430 | `conj.allVerbs` | Все глаголы | Barcha feʼllar |
-| 431 | `conj.prev` | Предыдущий | Oldingi |
-| 432 | `conj.next` | Следующий | Keyingi |
-| 433 | `conj.auto` | Таблица построена автоматически (Qutrub). | Jadval avtomatik tuzilgan (Qutrub). |
-| 434 | `conj.unchecked` | Формы ещё не проверены преподавателем. | Shakllar hali oʻqituvchi tomonidan tekshirilmagan. |
-| 435 | `conj.checked` | Формы проверены преподавателем. | Shakllar oʻqituvchi tomonidan tekshirilgan. |
-| 436 | `conj.doubtTitle` | Для преподавателя: что проверить | Oʻqituvchi uchun: nimani tekshirish kerak |
-| 437 | `conj.report` | Заметили ошибку? Напишите нам: | Xato koʻrdingizmi? Bizga yozing: |
-| 438 | `conj.pageTitle` | {verb} – {present}: спряжение глаголов | {verb} – {present}: feʼl tuslanishi |
-| 439 | `conj.pageDesc` | Спряжение глагола {verb} ({present}){gloss}: прошедшее и настоящее-будущее время, наклонения, повелительная форма, страдательный залог. Все 13 лиц, с огласовками. | {verb} ({present}){gloss} feʼlining tuslanishi: oʻtgan va hozirgi-kelasi zamon, mayllar, buyruq shakli, majhul nisbat. Barcha 13 shaxs, harakatlari bilan. |
-| 440 | `conj.active` | Действительный залог | Maʼlum nisbat |
-| 441 | `conj.passive` | Страдательный залог | Majhul nisbat |
-| 442 | `conj.person` | Лицо | Shaxs |
-| 443 | `conj.past` | Прошедшее время | Oʻtgan zamon |
-| 444 | `conj.present` | Настоящее-будущее время | Hozirgi-kelasi zamon |
-| 445 | `conj.moods.present` | изъявительное | marfuʼ |
-| 446 | `conj.moods.subjunctive` | сослагательное | mansub |
-| 447 | `conj.moods.jussive` | повелительное (усечённое) | majzum |
-| 448 | `conj.moodsLead` | Наклонения настоящего-будущего времени | Hozirgi-kelasi zamon mayllari |
-| 449 | `conj.short.past` | Прош. | Oʻtgan |
-| 450 | `conj.short.present` | Изъяв. | Marfuʼ |
-| 451 | `conj.short.subjunctive` | Сослаг. | Mansub |
-| 452 | `conj.short.jussive` | Усеч. | Majzum |
-| 453 | `conj.short.passive_past` | Прош. | Oʻtgan |
-| 454 | `conj.short.passive_present` | Наст.-буд. | Hoz.-kel. |
-| 455 | `conj.showCol` | Показать колонку | Ustunni koʻrsatish |
-| 456 | `conj.imperative` | Повелительная форма | Buyruq shakli |
-| 457 | `conj.impersonal` | Непереходный глагол: в страдательном залоге только безличная форма (3-е лицо ед. ч. м. р., обычно с предлогом): | Oʻtimsiz feʼl: majhul nisbatda faqat shaxssiz shakl bor (III shaxs, birlik, muzakkar; odatda jar harfi bilan): |
-| 458 | `conj.noForm` | нет формы | shakl yoʻq |
-| 459 | `conj.persons` | я · ты м. · ты ж. · он · она · вы двое · они двое м. · они двое ж. · мы · вы м. · вы ж. · они м. · они ж. | men · sen (muz.) · sen (muan.) · u (muz.) · u (muan.) · siz ikkovingiz · ular ikkovi (muz.) · ular ikkovi (muan.) · biz · sizlar (muz.) · sizlar (muan.) · ular (muz.) · ular (muan.) |
-| 460 | `conj.any` | Любой глагол | Istalgan feʼl |
-| 461 | `conj.anyLead` | Проспрягать глагол, которого нет в списке: Qutrub запускается прямо в браузере. | Roʻyxatda yoʻq feʼlni tuslash: Qutrub toʻgʻridan-toʻgʻri brauzerda ishlaydi. |
-| 462 | `conj.anyLoad` | Загрузить движок спряжения | Tuslash dasturini yuklash |
-| 463 | `conj.anySize` | Загрузка около 7 МБ (Pyodide с cdn.jsdelivr.net и пакеты Qutrub с pypi.org), один раз — потом из кэша браузера. | Taxminan 7 MB yuklanadi (Pyodide — cdn.jsdelivr.net saytidan, Qutrub paketlari — pypi.org saytidan), bir marta — keyin brauzer keshidan olinadi. |
-| 464 | `conj.anyLoading` | Загружаю Python и Qutrub… | Python va Qutrub yuklanmoqda… |
-| 465 | `conj.anySteps` | Загружаю Python (Pyodide)… · Ставлю пакеты Qutrub… · Готово. | Python (Pyodide) yuklanmoqda… · Qutrub paketlari oʻrnatilmoqda… · Tayyor. |
-| 466 | `conj.anyFail` | Не удалось загрузить движок. Проверьте интернет и попробуйте ещё раз. | Dasturni yuklab boʻlmadi. Internetni tekshirib, qaytadan urinib koʻring. |
-| 467 | `conj.anyVerb` | Глагол в прошедшем времени, 3-е лицо ед. ч. м. р., с огласовками | Oʻtgan zamondagi feʼl (III shaxs, birlik, muzakkar), harakatlari bilan |
-| 468 | `conj.anyVerbPh` | например: نَصَرَ | masalan: نَصَرَ |
-| 469 | `conj.anyBab` | Огласовка второго корневого в настоящем-будущем (для глаголов I породы) | Hozirgi-kelasi zamonda ikkinchi oʻzak harfining harakati (I bob feʼllari uchun) |
-| 470 | `conj.transBoth` | переходный и непереходный | oʻtimli va oʻtimsiz |
-| 471 | `conj.anyTrans` | Переходность | Oʻtimlilik |
-| 472 | `conj.anyGo` | Проспрягать | Tuslash |
-| 473 | `conj.anyHint` | Глаголы II–X пород (например, عَلَّمَ، اِسْتَخْرَجَ) тоже можно; огласовка для них не важна. | II–X bob feʼllarini ham (masalan, عَلَّمَ، اِسْتَخْرَجَ) tuslash mumkin; ular uchun harakat muhim emas. |
-| 474 | `conj.anyDict` | В словаре Qutrub есть: | Qutrub lugʻatida bor: |
-| 475 | `conj.anyNoDict` | В словаре Qutrub такого глагола I породы нет — проверьте огласовку. | Qutrub lugʻatida bunday I bob feʼli yoʻq — harakatlarni tekshiring. |
-| 476 | `conj.anyBad` | Qutrub не смог проспрягать этот глагол. Проверьте, что он в прошедшем времени (3-е л. ед. ч. м. р.) и с огласовками. | Qutrub bu feʼlni tuslay olmadi. Feʼl oʻtgan zamonda (III shaxs, birlik, muzakkar) va harakatlari bilan yozilganini tekshiring. |
-| 477 | `conj.anyNeedAr` | Введите глагол арабскими буквами. | Feʼlni arab harflarida kiriting. |
-| 478 | `conj.anyNeedBab` | Выберите огласовку настоящего-будущего времени. | Hozirgi-kelasi zamon harakatini tanlang. |
-| 479 | `conj.anyNeedVowels` | Поставьте огласовки: у трёхбуквенного глагола они нужны (например, نَصَرَ, а не نصر). | Harakatlarni qoʻying: uch harfli feʼlda ular kerak (masalan, نَصَرَ, نصر emas). |
-| 480 | `conj.anyNote` | Результат не проверен преподавателем. Для глаголов из списка выше лучше открыть их страницу. | Natija oʻqituvchi tomonidan tekshirilmagan. Yuqoridagi roʻyxatdagi feʼllar uchun ularning sahifasini ochgan maʼqul. |
-| 481 | `conj.inList` | Этот глагол есть в списке: | Bu feʼl roʻyxatda bor: |
-| 482 | `conj.creditQutrub` | Спряжение: Qutrub © Taha Zerrouki, GPL | Tuslash: Qutrub © Taha Zerrouki, GPL |
-| 483 | `conj.creditArramooz` | Огласовка настоящего времени и переходность: словарь Arramooz © Taha Zerrouki, GPL | Hozirgi zamon harakati va oʻtimlilik: Arramooz lugʻati © Taha Zerrouki, GPL |
-| 484 | `conj.creditCode` | исходный код | manba kodi |
-| 485 | `conj.creditPyodide` | Python в браузере: Pyodide (MPL-2.0) | Brauzerda Python: Pyodide (MPL-2.0) |
-| 486 | `conj.homeLabel` | Спряжение глагола | Feʼl tuslanishi |
-| 487 | `conj.homePh` | введите глагол: كتب или «писать» | feʼlni kiriting: كتب |
-| 488 | `conj.homeGo` | Показать | Koʻrsatish |
-| 489 | `conj.dictLink` | спряжение | tuslanish |
+| 401 | `conj.title` | Спряжение глаголов | Feʼllar tuslanishi |
+| 402 | `conj.description` | Таблицы спряжения арабских глаголов: прошедшее и настоящее-будущее время, наклонения, повелительная форма, страдательный залог. С огласовками. | Arab feʼllarining tuslanish jadvallari: oʻtgan va hozirgi-kelasi zamon, mayllar, buyruq shakli, majhul nisbat. Harakatlari bilan. |
+| 403 | `conj.lead` | Таблицы спряжения {n} употребительных глаголов I породы — с огласовками, по всем 13 лицам. Любой другой глагол можно проспрягать ниже. | Keng qoʻllaniladigan {n} ta I bob feʼlining tuslanish jadvallari — harakatlari bilan, barcha 13 shaxs boʻyicha. Boshqa istalgan feʼlni quyida tuslash mumkin. |
+| 404 | `conj.count` | {n} глагола | {n} ta feʼl |
+| 405 | `conj.searchLabel` | Найти глагол | Feʼlni topish |
+| 406 | `conj.searchPh` | например: писать, كتب, يكتب | masalan: كتب, يكتب |
+| 407 | `conj.found` | Найдено: {n} | Topildi: {n} |
+| 408 | `conj.notFound` | Такого глагола в списке нет. Попробуйте режим «Любой глагол» ниже. | Roʻyxatda bunday feʼl yoʻq. Quyidagi «Istalgan feʼl» rejimini sinab koʻring. |
+| 409 | `conj.allTypes` | Все | Hammasi |
+| 410 | `conj.types.sound` | правильные | salim |
+| 411 | `conj.types.hamzated` | хамзованные | mahmuz |
+| 412 | `conj.types.assimilated` | подобные правильным | misol |
+| 413 | `conj.types.hollow` | пустые | ajvaf |
+| 414 | `conj.types.defective` | недостаточные | noqis |
+| 415 | `conj.types.doubled` | удвоенные | muzoaf |
+| 416 | `conj.types.lafif` | дважды слабые | lafif |
+| 417 | `conj.typesOne.sound` | правильный | salim |
+| 418 | `conj.typesOne.hamzated` | хамзованный | mahmuz |
+| 419 | `conj.typesOne.assimilated` | подобный правильному | misol |
+| 420 | `conj.typesOne.hollow` | пустой | ajvaf |
+| 421 | `conj.typesOne.defective` | недостаточный | noqis |
+| 422 | `conj.typesOne.doubled` | удвоенный | muzoaf |
+| 423 | `conj.typesOne.lafif` | дважды слабый | lafif |
+| 424 | `conj.bab.فتحة` | фатха | fatha |
+| 425 | `conj.bab.ضمة` | дамма | zamma |
+| 426 | `conj.bab.كسرة` | кясра | kasra |
+| 427 | `conj.babLabel` | Огласовка в настоящем-будущем | Hozirgi-kelasi zamondagi harakat |
+| 428 | `conj.root` | Корень | Oʻzak |
+| 429 | `conj.type` | Тип | Turi |
+| 430 | `conj.form1` | I порода | I bob |
+| 431 | `conj.transitive` | переходный | oʻtimli |
+| 432 | `conj.intransitive` | непереходный | oʻtimsiz |
+| 433 | `conj.print` | Печать | Chop etish |
+| 434 | `conj.allVerbs` | Все глаголы | Barcha feʼllar |
+| 435 | `conj.prev` | Предыдущий | Oldingi |
+| 436 | `conj.next` | Следующий | Keyingi |
+| 437 | `conj.auto` | Таблица построена автоматически (Qutrub). | Jadval avtomatik tuzilgan (Qutrub). |
+| 438 | `conj.unchecked` | Формы ещё не проверены преподавателем. | Shakllar hali oʻqituvchi tomonidan tekshirilmagan. |
+| 439 | `conj.checked` | Формы проверены преподавателем. | Shakllar oʻqituvchi tomonidan tekshirilgan. |
+| 440 | `conj.doubtTitle` | Для преподавателя: что проверить | Oʻqituvchi uchun: nimani tekshirish kerak |
+| 441 | `conj.report` | Заметили ошибку? Напишите нам: | Xato koʻrdingizmi? Bizga yozing: |
+| 442 | `conj.pageTitle` | {verb} – {present}: спряжение глаголов | {verb} – {present}: feʼl tuslanishi |
+| 443 | `conj.pageDesc` | Спряжение глагола {verb} ({present}){gloss}: прошедшее и настоящее-будущее время, наклонения, повелительная форма, страдательный залог. Все 13 лиц, с огласовками. | {verb} ({present}){gloss} feʼlining tuslanishi: oʻtgan va hozirgi-kelasi zamon, mayllar, buyruq shakli, majhul nisbat. Barcha 13 shaxs, harakatlari bilan. |
+| 444 | `conj.active` | Действительный залог | Maʼlum nisbat |
+| 445 | `conj.passive` | Страдательный залог | Majhul nisbat |
+| 446 | `conj.person` | Лицо | Shaxs |
+| 447 | `conj.past` | Прошедшее время | Oʻtgan zamon |
+| 448 | `conj.present` | Настоящее-будущее время | Hozirgi-kelasi zamon |
+| 449 | `conj.moods.present` | изъявительное | marfuʼ |
+| 450 | `conj.moods.subjunctive` | сослагательное | mansub |
+| 451 | `conj.moods.jussive` | повелительное (усечённое) | majzum |
+| 452 | `conj.moodsLead` | Наклонения настоящего-будущего времени | Hozirgi-kelasi zamon mayllari |
+| 453 | `conj.short.past` | Прош. | Oʻtgan |
+| 454 | `conj.short.present` | Изъяв. | Marfuʼ |
+| 455 | `conj.short.subjunctive` | Сослаг. | Mansub |
+| 456 | `conj.short.jussive` | Усеч. | Majzum |
+| 457 | `conj.short.passive_past` | Прош. | Oʻtgan |
+| 458 | `conj.short.passive_present` | Наст.-буд. | Hoz.-kel. |
+| 459 | `conj.showCol` | Показать колонку | Ustunni koʻrsatish |
+| 460 | `conj.imperative` | Повелительная форма | Buyruq shakli |
+| 461 | `conj.impersonal` | Непереходный глагол: в страдательном залоге только безличная форма (3-е лицо ед. ч. м. р., обычно с предлогом): | Oʻtimsiz feʼl: majhul nisbatda faqat shaxssiz shakl bor (III shaxs, birlik, muzakkar; odatda jar harfi bilan): |
+| 462 | `conj.noForm` | нет формы | shakl yoʻq |
+| 463 | `conj.persons` | я · ты м. · ты ж. · он · она · вы двое · они двое м. · они двое ж. · мы · вы м. · вы ж. · они м. · они ж. | men · sen (muz.) · sen (muan.) · u (muz.) · u (muan.) · siz ikkovingiz · ular ikkovi (muz.) · ular ikkovi (muan.) · biz · sizlar (muz.) · sizlar (muan.) · ular (muz.) · ular (muan.) |
+| 464 | `conj.any` | Любой глагол | Istalgan feʼl |
+| 465 | `conj.anyLead` | Проспрягать глагол, которого нет в списке: Qutrub запускается прямо в браузере. | Roʻyxatda yoʻq feʼlni tuslash: Qutrub toʻgʻridan-toʻgʻri brauzerda ishlaydi. |
+| 466 | `conj.anyLoad` | Загрузить движок спряжения | Tuslash dasturini yuklash |
+| 467 | `conj.anySize` | Загрузка около 7 МБ (Pyodide с cdn.jsdelivr.net и пакеты Qutrub с pypi.org), один раз — потом из кэша браузера. | Taxminan 7 MB yuklanadi (Pyodide — cdn.jsdelivr.net saytidan, Qutrub paketlari — pypi.org saytidan), bir marta — keyin brauzer keshidan olinadi. |
+| 468 | `conj.anyLoading` | Загружаю Python и Qutrub… | Python va Qutrub yuklanmoqda… |
+| 469 | `conj.anySteps` | Загружаю Python (Pyodide)… · Ставлю пакеты Qutrub… · Готово. | Python (Pyodide) yuklanmoqda… · Qutrub paketlari oʻrnatilmoqda… · Tayyor. |
+| 470 | `conj.anyFail` | Не удалось загрузить движок. Проверьте интернет и попробуйте ещё раз. | Dasturni yuklab boʻlmadi. Internetni tekshirib, qaytadan urinib koʻring. |
+| 471 | `conj.anyVerb` | Глагол в прошедшем времени, 3-е лицо ед. ч. м. р., с огласовками | Oʻtgan zamondagi feʼl (III shaxs, birlik, muzakkar), harakatlari bilan |
+| 472 | `conj.anyVerbPh` | например: نَصَرَ | masalan: نَصَرَ |
+| 473 | `conj.anyBab` | Огласовка второго корневого в настоящем-будущем (для глаголов I породы) | Hozirgi-kelasi zamonda ikkinchi oʻzak harfining harakati (I bob feʼllari uchun) |
+| 474 | `conj.transBoth` | переходный и непереходный | oʻtimli va oʻtimsiz |
+| 475 | `conj.anyTrans` | Переходность | Oʻtimlilik |
+| 476 | `conj.anyGo` | Проспрягать | Tuslash |
+| 477 | `conj.anyHint` | Глаголы II–X пород (например, عَلَّمَ، اِسْتَخْرَجَ) тоже можно; огласовка для них не важна. | II–X bob feʼllarini ham (masalan, عَلَّمَ، اِسْتَخْرَجَ) tuslash mumkin; ular uchun harakat muhim emas. |
+| 478 | `conj.anyDict` | В словаре Qutrub есть: | Qutrub lugʻatida bor: |
+| 479 | `conj.anyNoDict` | В словаре Qutrub такого глагола I породы нет — проверьте огласовку. | Qutrub lugʻatida bunday I bob feʼli yoʻq — harakatlarni tekshiring. |
+| 480 | `conj.anyBad` | Qutrub не смог проспрягать этот глагол. Проверьте, что он в прошедшем времени (3-е л. ед. ч. м. р.) и с огласовками. | Qutrub bu feʼlni tuslay olmadi. Feʼl oʻtgan zamonda (III shaxs, birlik, muzakkar) va harakatlari bilan yozilganini tekshiring. |
+| 481 | `conj.anyNeedAr` | Введите глагол арабскими буквами. | Feʼlni arab harflarida kiriting. |
+| 482 | `conj.anyNeedBab` | Выберите огласовку настоящего-будущего времени. | Hozirgi-kelasi zamon harakatini tanlang. |
+| 483 | `conj.anyNeedVowels` | Поставьте огласовки: у трёхбуквенного глагола они нужны (например, نَصَرَ, а не نصر). | Harakatlarni qoʻying: uch harfli feʼlda ular kerak (masalan, نَصَرَ, نصر emas). |
+| 484 | `conj.anyNote` | Результат не проверен преподавателем. Для глаголов из списка выше лучше открыть их страницу. | Natija oʻqituvchi tomonidan tekshirilmagan. Yuqoridagi roʻyxatdagi feʼllar uchun ularning sahifasini ochgan maʼqul. |
+| 485 | `conj.inList` | Этот глагол есть в списке: | Bu feʼl roʻyxatda bor: |
+| 486 | `conj.creditQutrub` | Спряжение: Qutrub © Taha Zerrouki, GPL | Tuslash: Qutrub © Taha Zerrouki, GPL |
+| 487 | `conj.creditArramooz` | Огласовка настоящего времени и переходность: словарь Arramooz © Taha Zerrouki, GPL | Hozirgi zamon harakati va oʻtimlilik: Arramooz lugʻati © Taha Zerrouki, GPL |
+| 488 | `conj.creditCode` | исходный код | manba kodi |
+| 489 | `conj.creditPyodide` | Python в браузере: Pyodide (MPL-2.0) | Brauzerda Python: Pyodide (MPL-2.0) |
+| 490 | `conj.homeLabel` | Спряжение глагола | Feʼl tuslanishi |
+| 491 | `conj.homePh` | введите глагол: كتب или «писать» | feʼlni kiriting: كتب |
+| 492 | `conj.homeGo` | Показать | Koʻrsatish |
+| 493 | `conj.dictLink` | спряжение | tuslanish |
 
 ## Панель учителя
 
 | № | Ключ | Русский | Oʻzbekcha |
 |---|---|---|---|
-| 490 | `teacher.title` | Панель учителя | Oʻqituvchi paneli |
-| 491 | `teacher.logout` | Выйти | Chiqish |
-| 492 | `teacher.classLabel` | Класс | Sinf |
-| 493 | `teacher.newClassBtn` | + Новый класс | + Yangi sinf |
-| 494 | `teacher.newClass` | Новый класс | Yangi sinf |
-| 495 | `teacher.ncName` | Название | Nomi |
-| 496 | `teacher.ncNamePh` | 2 курс ТГУВ, группа 1 | TDShU 2-kurs, 1-guruh |
-| 497 | `teacher.ncYear` | Учебный год | Oʻquv yili |
-| 498 | `teacher.ncYearPh` | 2026–2027 | 2026–2027 |
-| 499 | `teacher.ncCount` | Сколько учеников | Oʻquvchilar soni |
-| 500 | `teacher.ncNote` | Ученикам будут выданы коды 01, 02, … и случайные ПИН. ПИН показываются &lt;b&gt;один раз&lt;/b&gt; — сразу распечатайте лист с ПИН. | Oʻquvchilarga 01, 02, … kodlari va tasodifiy PIN beriladi. PIN &lt;b&gt;bir marta&lt;/b&gt; koʻrsatiladi — PIN varaqasini darhol chop eting. |
-| 501 | `teacher.ncCreate` | Создать класс | Sinf yaratish |
-| 502 | `teacher.tabs.stats` | Статистика | Statistika |
-| 503 | `teacher.tabs.quizzes` | Викторины | Viktorinalar |
-| 504 | `teacher.tabs.people` | Ученики и ПИН | Oʻquvchilar va PIN |
-| 505 | `teacher.tabs.admin` | Администратор | Administrator |
-| 506 | `teacher.period` | Период | Davr |
-| 507 | `teacher.periods.d7` | Последние 7 дней | Oxirgi 7 kun |
-| 508 | `teacher.periods.d30` | Последние 30 дней | Oxirgi 30 kun |
-| 509 | `teacher.periods.sem` | С 1 сентября | 1-sentabrdan |
-| 510 | `teacher.periods.all` | Всё время | Butun vaqt |
-| 511 | `teacher.reload` | Обновить | Yangilash |
-| 512 | `teacher.csv` | Скачать таблицу (CSV) | Jadvalni yuklab olish (CSV) |
-| 513 | `teacher.print` | Печать | Chop etish |
-| 514 | `teacher.pickClass` | Выберите класс. | Sinfni tanlang. |
-| 515 | `teacher.quiz` | Викторина | Viktorina |
-| 516 | `teacher.boardLink` | Табло для проектора ↗ | Proyektor uchun tablo ↗ |
-| 517 | `teacher.allAnswersCsv` | Все ответы (CSV) | Barcha javoblar (CSV) |
-| 518 | `teacher.quizNote` | Период — тот же, что во вкладке «Статистика». Табло показывает только псевдонимы и лучший результат каждого за 3 часа; откройте его на компьютере у проектора. | Davr «Statistika» boʻlimidagi bilan bir xil. Tabloda faqat taxalluslar va har kimning 3 soatdagi eng yaxshi natijasi koʻrsatiladi; uni proyektorga ulangan kompyuterda oching. |
-| 519 | `teacher.addN` | Сколько добавить | Nechta qoʻshish |
-| 520 | `teacher.addBtn` | Добавить учеников | Oʻquvchi qoʻshish |
-| 521 | `teacher.resetSel` | Новый ПИН отмеченным | Belgilanganlarga yangi PIN |
-| 522 | `teacher.namesBtn` | Настоящие имена… | Haqiqiy ismlar… |
-| 523 | `teacher.namesNote` | Настоящие имена хранятся только в этом браузере, не на сервере. Чтобы видеть их на другом компьютере или в другом браузере, сохраните их в файл и загрузите там. | Haqiqiy ismlar serverda emas, faqat shu brauzerda saqlanadi. Ularni boshqa kompyuter yoki brauzerda koʻrish uchun faylga saqlang va u yerda yuklang. |
-| 524 | `teacher.expBtn` | Сохранить имена в файл | Ismlarni faylga saqlash |
-| 525 | `teacher.impBtn` | Загрузить имена из файла | Ismlarni fayldan yuklash |
-| 526 | `teacher.expNone` | В этом браузере пока нет сохранённых имён. | Bu brauzerda hali saqlangan ismlar yoʻq. |
-| 527 | `teacher.impReadFail` | Не удалось прочитать файл. Нужен файл, сохранённый кнопкой «Сохранить имена в файл». | Faylni oʻqib boʻlmadi. «Ismlarni faylga saqlash» tugmasi bilan saqlangan fayl kerak. |
-| 528 | `teacher.impNoNames` | В файле нет имён учеников. | Faylda oʻquvchilar ismlari yoʻq. |
-| 529 | `teacher.impConfirm` | Загрузить имена: классов — {c}, учеников — {n}? | Ismlar yuklansinmi: sinflar — {c}, oʻquvchilar — {n}? |
-| 530 | `teacher.impClash` | Внимание: для классов ({n}) в этом браузере уже есть другие имена. Они будут заменены именами из файла. | Diqqat: {n} ta sinf uchun bu brauzerda boshqa ismlar bor. Ular fayldagi ismlar bilan almashtiriladi. |
-| 531 | `teacher.impStoreFail` | Браузер не дал сохранить данные. | Brauzer maʼlumotlarni saqlashga ruxsat bermadi. |
-| 532 | `teacher.impDone` | Готово: имена загружены. | Tayyor: ismlar yuklandi. |
-| 533 | `teacher.namesTitle` | Настоящие имена (только на этом компьютере) | Haqiqiy ismlar (faqat shu kompyuterda) |
-| 534 | `teacher.namesHelp` | По одной строке: код; имя и фамилия. Например: &lt;code&gt;07; Азиза Каримова&lt;/code&gt; | Har bir qatorda: kod; ism va familiya. Masalan: &lt;code&gt;07; Aziza Karimova&lt;/code&gt; |
-| 535 | `teacher.save` | Сохранить | Saqlash |
-| 536 | `teacher.roleTitle` | Сделать пользователя учителем | Foydalanuvchini oʻqituvchi qilish |
-| 537 | `teacher.roleNote` | Пользователь сначала должен быть создан в Supabase → Authentication → Users. | Avval foydalanuvchi Supabase → Authentication → Users boʻlimida yaratilishi kerak. |
-| 538 | `teacher.email` | Email | Email |
-| 539 | `teacher.role` | Роль | Rol |
-| 540 | `teacher.roles.teacher` | учитель | oʻqituvchi |
-| 541 | `teacher.roles.user` | обычный пользователь | oddiy foydalanuvchi |
-| 542 | `teacher.roles.admin` | администратор | administrator |
-| 543 | `teacher.close` | Закрыть | Yopish |
-| 544 | `teacher.pinsTitle` | ПИН учеников | Oʻquvchilarning PIN kodlari |
-| 545 | `teacher.pinsWarn` | &lt;b&gt;Распечатайте или перепишите сейчас:&lt;/b&gt; после закрытия окна ПИН больше не будет видно (в базе хранится только зашифрованный вариант). Если потеряете — выдайте новый ПИН. | &lt;b&gt;Hozir chop eting yoki koʻchirib oling:&lt;/b&gt; oyna yopilgach PIN boshqa koʻrinmaydi (bazada faqat shifrlangan varianti saqlanadi). Yoʻqotsangiz — yangi PIN bering. |
-| 546 | `teacher.pinsPrint` | Печать листа с ПИН | PIN varaqasini chop etish |
-| 547 | `teacher.gateLogin` | Войдите по email учителя. | Oʻqituvchi emaili orqali kiring. |
-| 548 | `teacher.login` | Войти | Kirish |
-| 549 | `teacher.noRights` | У аккаунта {email} нет прав учителя. Обратитесь к администратору сайта. | {email} hisobida oʻqituvchi huquqlari yoʻq. Sayt administratoriga murojaat qiling. |
-| 550 | `teacher.stale` | Вход устарел или нет связи. | Kirish muddati tugagan yoki aloqa yoʻq. |
-| 551 | `teacher.loginAgain` | Войти снова | Qaytadan kirish |
-| 552 | `teacher.archived` |  (архив) |  (arxiv) |
-| 553 | `teacher.noClasses` | — классов пока нет — | — hozircha sinflar yoʻq — |
-| 554 | `teacher.createFail` | Не удалось создать класс | Sinf yaratib boʻlmadi |
-| 555 | `teacher.joinInfo` | Код класса для учеников: &lt;b class="join"&gt;{join}&lt;/b&gt; · вход: &lt;a href="{url}"&gt;{url}&lt;/a&gt; | Oʻquvchilar uchun sinf kodi: &lt;b class="join"&gt;{join}&lt;/b&gt; · kirish: &lt;a href="{url}"&gt;{url}&lt;/a&gt; |
-| 556 | `teacher.th.all` | Отметить всех | Hammasini belgilash |
-| 557 | `teacher.th.code` | Код | Kod |
-| 558 | `teacher.th.nameLocal` | Имя (только у вас) | Ism (faqat sizda) |
-| 559 | `teacher.th.nick` | Псевдоним (видят другие) | Taxallus (boshqalar koʻradi) |
-| 560 | `teacher.th.sex` | Пол | Jins |
-| 561 | `teacher.th.active` | Активен | Faol |
-| 562 | `teacher.th.name` | Имя | Ism |
-| 563 | `teacher.th.pin` | ПИН | PIN |
-| 564 | `teacher.markOne` | Отметить {code} | Belgilash: {code} |
-| 565 | `teacher.nickOf` | Псевдоним {code} | Taxallus: {code} |
-| 566 | `teacher.sexOf` | Пол {code} | Jins: {code} |
-| 567 | `teacher.activeOf` | Активен {code} | Faol: {code} |
-| 568 | `teacher.sex.m` | м | yigit |
-| 569 | `teacher.sex.f` | ж | qiz |
-| 570 | `teacher.saved` | Сохранено ✓ | Saqlandi ✓ |
-| 571 | `teacher.error` | Ошибка | Xato |
-| 572 | `teacher.markFirst` | Отметьте учеников галочкой. | Oʻquvchilarni belgilang. |
-| 573 | `teacher.resetConfirm` | Выдать новый ПИН {n} ученикам? Старые ПИН перестанут работать. | {n} ta oʻquvchiga yangi PIN berilsinmi? Eski PIN kodlar ishlamay qoladi. |
-| 574 | `teacher.strip.classCode` | Код класса | Sinf kodi |
-| 575 | `teacher.strip.myCode` | Мой код | Mening kodim |
-| 576 | `teacher.strip.pin` | ПИН | PIN |
-| 577 | `teacher.closePinsConfirm` | Вы распечатали или записали ПИН? После закрытия их не будет видно. | PIN kodlarni chop etdingizmi yoki yozib oldingizmi? Oyna yopilgach ular koʻrinmaydi. |
-| 578 | `teacher.printTitle` | ПИН учеников — {name} | Oʻquvchilarning PIN kodlari — {name} |
-| 579 | `teacher.printHint` | Если печать не открылась сама — нажмите Ctrl+P (на телефоне: «Поделиться» → «Печать» или «Сохранить в Файлы»). | Chop etish oʻzi ochilmasa — Ctrl+P ni bosing (telefonda: «Ulashish» → «Chop etish» yoki «Fayllarga saqlash»). |
-| 580 | `teacher.popupBlocked` | Браузер заблокировал новое окно. Разрешите всплывающие окна для этого сайта и нажмите кнопку ещё раз. | Brauzer yangi oynani blokladi. Bu sayt uchun qalqib chiquvchi oynalarga ruxsat bering va tugmani yana bosing. |
-| 581 | `teacher.createClass` | Создайте класс. | Sinf yarating. |
-| 582 | `teacher.reportFail` | Не удалось загрузить отчёт. Проверьте интернет. | Hisobotni yuklab boʻlmadi. Internetni tekshiring. |
-| 583 | `teacher.cols.name` | Имя | Ism |
-| 584 | `teacher.cols.sex` | Пол | Jins |
-| 585 | `teacher.cols.sessions` | Входов | Kirishlar |
-| 586 | `teacher.cols.minutes` | Минут | Daqiqa |
-| 587 | `teacher.cols.days` | Дней | Kunlar |
-| 588 | `teacher.cols.known` | Знает слов | Biladigan soʻzlari |
-| 589 | `teacher.cols.answers` | Ответов | Javoblar |
-| 590 | `teacher.cols.acc` | Верно % | Toʻgʻri % |
-| 591 | `teacher.cols.bad` | Ошибок | Xatolar |
-| 592 | `teacher.cols.ct` | Тесты % | Testlar % |
-| 593 | `teacher.cols.qz` | Викторины % | Viktorinalar % |
-| 594 | `teacher.cols.qn` | Попыток викторин | Viktorina urinishlari |
-| 595 | `teacher.cols.last` | Последний вход | Oxirgi kirish |
-| 596 | `teacher.colTitle` | {l}: {v} мин. | {l}: {v} daq. |
-| 597 | `teacher.noData` | пока нет данных | hozircha maʼlumot yoʻq |
-| 598 | `teacher.units.min` | мин. | daq. |
-| 599 | `teacher.units.words` | сл. | soʻz |
-| 600 | `teacher.units.days` | дн. | kun |
-| 601 | `teacher.units.times` | раз | marta |
-| 602 | `teacher.units.errPct` | % ошибок | % xato |
-| 603 | `teacher.units.people` | чел. | kishi |
-| 604 | `teacher.noms.time` | ⏱ Больше всех времени | ⏱ Eng koʻp vaqt sarflagan |
-| 605 | `teacher.noms.words` | 📚 Выучил больше слов | 📚 Eng koʻp soʻz oʻrgangan |
-| 606 | `teacher.noms.acc` | 🎯 Самый точный (от 50 ответов) | 🎯 Eng aniq (50 ta javobdan) |
-| 607 | `teacher.noms.days` | 📅 Больше всех дней занятий | 📅 Eng koʻp kun shugʻullangan |
-| 608 | `teacher.noms.sessions` | 🔁 Чаще всех заходил | 🔁 Eng koʻp kirgan |
-| 609 | `teacher.noms.ct` | 🧪 Лучший в тестах по словам | 🧪 Soʻzlar testlarida eng yaxshi |
-| 610 | `teacher.noms.qz` | 🏆 Лучший в викторинах (средний %) | 🏆 Viktorinalarda eng yaxshi (oʻrtacha %) |
-| 611 | `teacher.noms.help` | ⚠ Нужна помощь: низкая точность | ⚠ Yordam kerak: aniqlik past |
-| 612 | `teacher.noms.idle` | 💤 Не занимались | 💤 Shugʻullanmaganlar |
-| 613 | `teacher.allActive` | все занимались | hamma shugʻullangan |
-| 614 | `teacher.kpi.active` | занимались | shugʻullangan |
-| 615 | `teacher.kpi.minutes` | минут всего | jami daqiqa |
-| 616 | `teacher.kpi.perLearner` | минут на ученика | bir oʻquvchiga daqiqa |
-| 617 | `teacher.kpi.answers` | ответов | javob |
-| 618 | `teacher.kpi.correct` | верных ответов | toʻgʻri javoblar |
-| 619 | `teacher.kpi.sessions` | входов | kirish |
-| 620 | `teacher.ofN` | {a} из {b} | {a}/{b} |
-| 621 | `teacher.nominations` | Номинации | Nominatsiyalar |
-| 622 | `teacher.nomsNote` | «Нужна помощь» и «Не занимались» видите только вы. Ученикам показываются только положительные номинации. | «Yordam kerak» va «Shugʻullanmaganlar»ni faqat siz koʻrasiz. Oʻquvchilarga faqat ijobiy nominatsiyalar koʻrsatiladi. |
-| 623 | `teacher.learners` | Ученики | Oʻquvchilar |
-| 624 | `teacher.learnersNote` | Нажмите на заголовок столбца, чтобы отсортировать, или на строку — чтобы открыть подробности. | Saralash uchun ustun sarlavhasini, batafsil maʼlumot uchun qatorni bosing. |
-| 625 | `teacher.hardWords` | Трудные слова класса | Sinf uchun qiyin soʻzlar |
-| 626 | `teacher.themes` | Темы: доля ошибок | Mavzular: xatolar ulushi |
-| 627 | `teacher.when` | Когда занимаются | Qachon shugʻullanishadi |
-| 628 | `teacher.byWeekday` | По дням недели, минуты | Hafta kunlari boʻyicha, daqiqa |
-| 629 | `teacher.weekdays` | пн · вт · ср · чт · пт · сб · вс | du · se · ch · pa · ju · sh · ya |
-| 630 | `teacher.byHour` | По часам, минуты | Soatlar boʻyicha, daqiqa |
-| 631 | `teacher.last30` | Последние 30 дней, минуты | Oxirgi 30 kun, daqiqa |
-| 632 | `teacher.sexTitle` | Юноши и девушки | Yigitlar va qizlar |
-| 633 | `teacher.sexCols.group` | Группа | Guruh |
-| 634 | `teacher.sexCols.n` | Чел. | Kishi |
-| 635 | `teacher.sexCols.minutes` | Минут | Daqiqa |
-| 636 | `teacher.sexCols.known` | Знает слов | Biladigan soʻzlari |
-| 637 | `teacher.sexCols.acc` | Точность % | Aniqlik % |
-| 638 | `teacher.sexCols.ct` | Тесты % | Testlar % |
-| 639 | `teacher.boys` | Юноши | Yigitlar |
-| 640 | `teacher.girls` | Девушки | Qizlar |
-| 641 | `teacher.sexMissing` | Не у всех указан пол: заполните его во вкладке «Ученики и ПИН». | Hammaning jinsi koʻrsatilmagan: uni «Oʻquvchilar va PIN» boʻlimida toʻldiring. |
-| 642 | `teacher.sexNote` | Группа небольшая (n = {n}), поэтому разница даже в 10–15% может быть случайной. Это описание группы, а не вывод о юношах и девушках. | Guruh kichik (n = {n}), shuning uchun hatto 10–15% farq ham tasodifiy boʻlishi mumkin. Bu guruhning tavsifi, yigitlar va qizlar haqidagi xulosa emas. |
-| 643 | `teacher.reportAt` | Отчёт на {t}. Подробно о викторинах — во вкладке «Викторины». | Hisobot vaqti: {t}. Viktorinalar haqida batafsil — «Viktorinalar» boʻlimida. |
-| 644 | `teacher.wcols.word` | Слово | Soʻz |
-| 645 | `teacher.wcols.tr` | Перевод | Tarjima |
-| 646 | `teacher.wcols.studs` | Ошиблись | Xato qilganlar |
-| 647 | `teacher.wcols.pct` | Ошибок % | Xato % |
-| 648 | `teacher.noErrors` | Пока ошибок нет. | Hozircha xatolar yoʻq. |
-| 649 | `teacher.noDataYet` | Пока нет данных. | Hozircha maʼlumot yoʻq. |
-| 650 | `teacher.detail.head` | {name} · код {code} | {name} · kod {code} |
-| 651 | `teacher.detail.boy` | юноша ·  | yigit ·  |
-| 652 | `teacher.detail.girl` | девушка ·  | qiz ·  |
-| 653 | `teacher.detail.line` | псевдоним «{nick}» · входов: &lt;b&gt;{s}&lt;/b&gt; · минут: &lt;b&gt;{m}&lt;/b&gt; · дней: &lt;b&gt;{d}&lt;/b&gt; · ответов: &lt;b&gt;{a}&lt;/b&gt; (верно {acc}%) · последний вход: {last} | taxallus «{nick}» · kirishlar: &lt;b&gt;{s}&lt;/b&gt; · daqiqa: &lt;b&gt;{m}&lt;/b&gt; · kunlar: &lt;b&gt;{d}&lt;/b&gt; · javoblar: &lt;b&gt;{a}&lt;/b&gt; (toʻgʻri {acc}%) · oxirgi kirish: {last} |
-| 654 | `teacher.detail.decks` | Слова по наборам | Toʻplamlar boʻyicha soʻzlar |
-| 655 | `teacher.detail.deckCols.deck` | Набор | Toʻplam |
-| 656 | `teacher.detail.deckCols.seen` | Видел | Koʻrgan |
-| 657 | `teacher.detail.deckCols.learn` | Учит | Oʻrganmoqda |
-| 658 | `teacher.detail.deckCols.good` | Знает | Biladi |
-| 659 | `teacher.detail.deckCols.done` | Выучил | Oʻrgangan |
-| 660 | `teacher.detail.tests` | Тесты по словам | Soʻzlar testlari |
-| 661 | `teacher.detail.testsLine` | {n} · средний {avg}% · лучший {best}% | {n} · oʻrtacha {avg}% · eng yaxshisi {best}% |
-| 662 | `teacher.detail.noTests` | Тестов нет. | Testlar yoʻq. |
-| 663 | `teacher.detail.themes` | Темы: доля ошибок | Mavzular: xatolar ulushi |
-| 664 | `teacher.detail.pctOf` | {p}% из {n} | {p}% ({n} tadan) |
-| 665 | `teacher.detail.noAnswers` | Нет ответов. | Javoblar yoʻq. |
-| 666 | `teacher.detail.hard` | Самые трудные слова | Eng qiyin soʻzlar |
-| 667 | `teacher.detail.errors` | ошибок: {n} | xatolar: {n} |
-| 668 | `teacher.detail.noErr` | Ошибок нет. | Xatolar yoʻq. |
-| 669 | `teacher.detail.daily` | Минуты по дням | Kunlar boʻyicha daqiqa |
-| 670 | `teacher.detail.noDays` | Нет занятий. | Mashgʻulotlar yoʻq. |
-| 671 | `teacher.detail.quizzes` | Викторины | Viktorinalar |
-| 672 | `teacher.att.none` | Попыток нет. | Urinishlar yoʻq. |
-| 673 | `teacher.att.when` | Когда | Qachon |
-| 674 | `teacher.att.learner` | Ученик | Oʻquvchi |
-| 675 | `teacher.att.quiz` | Викторина | Viktorina |
-| 676 | `teacher.att.correct` | Верно | Toʻgʻri |
-| 677 | `teacher.att.points` | Очки | Ball |
-| 678 | `teacher.att.time` | Время | Vaqt |
-| 679 | `teacher.att.level` | Уровень | Daraja |
-| 680 | `teacher.att.exits` | Выходы | Chiqishlar |
-| 681 | `teacher.att.review` | Разбор | Tahlil |
-| 682 | `teacher.att.reviewBest` | Разбор лучшей | Eng yaxshisi tahlili |
-| 683 | `teacher.reviewLine` | {at} · верно &lt;b&gt;{c} из {t}&lt;/b&gt; ({pct}%) · {p} очков · {time} · {lvl} | {at} · toʻgʻri: &lt;b&gt;{c}/{t}&lt;/b&gt; ({pct}%) · {p} ball · {time} · {lvl} |
-| 684 | `teacher.reviewLineMock` | {at} · верно &lt;b&gt;{c} из {t}&lt;/b&gt; ({pct}%) · {time} · выходов из окна: {x} | {at} · toʻgʻri: &lt;b&gt;{c}/{t}&lt;/b&gt; ({pct}%) · {time} · oynadan chiqishlar: {x} |
-| 685 | `teacher.reviewFail` | Не удалось загрузить разбор. | Tahlilni yuklab boʻlmadi. |
-| 686 | `teacher.noQData` | Нет данных. | Maʼlumot yoʻq. |
-| 687 | `teacher.testMark` |  (тест) |  (test) |
-| 688 | `teacher.mockMark` |  (пробный экзамен) |  (mock imtihon) |
-| 689 | `teacher.attemptsN` | {title}{test} — попыток: {n} | {title}{test} — urinishlar: {n} |
-| 690 | `teacher.qkpi.done` | прошли | topshirgan |
-| 691 | `teacher.qkpi.attempts` | попыток | urinish |
-| 692 | `teacher.qkpi.avgBest` | средний лучший результат | oʻrtacha eng yaxshi natija |
-| 693 | `teacher.qcols.name` | Имя | Ism |
-| 694 | `teacher.qcols.n` | Попыток | Urinishlar |
-| 695 | `teacher.qcols.best` | Лучший | Eng yaxshisi |
-| 696 | `teacher.qcols.points` | Очки | Ball |
-| 697 | `teacher.qcols.exits` | Выходы из окна | Oynadan chiqishlar |
-| 698 | `teacher.qcols.last` | Последняя | Oxirgisi |
-| 699 | `teacher.qParts` | Части викторины: доля верных | Viktorina qismlari: toʻgʻri javoblar ulushi |
-| 700 | `teacher.noAnswersYet` | Пока нет ответов. | Hozircha javoblar yoʻq. |
-| 701 | `teacher.allAttempts` | Все попытки | Barcha urinishlar |
-| 702 | `teacher.hardQ` | Трудные вопросы | Qiyin savollar |
-| 703 | `teacher.hardQNote` | Сверху — вопросы, в которых ошиблось больше всего учеников. | Yuqorida — eng koʻp oʻquvchi xato qilgan savollar. |
-| 704 | `teacher.hq.q` | Вопрос | Savol |
-| 705 | `teacher.hq.c` | Правильный ответ | Toʻgʻri javob |
-| 706 | `teacher.hq.studs` | Ошиблись | Xato qilganlar |
-| 707 | `teacher.hq.pct` | Ошибок % | Xato % |
-| 708 | `teacher.exportFail` | Не удалось выгрузить. | Yuklab boʻlmadi. |
-| 709 | `teacher.csvQ` | Код · Имя · Когда · Попытка · № · Часть · Вопрос · Ответ · Правильный · Верно · Секунд | Kod · Ism · Qachon · Urinish · № · Qism · Savol · Javob · Toʻgʻri javob · Toʻgʻrimi · Soniya |
-| 710 | `teacher.csvCode` | Код | Kod |
-| 711 | `teacher.yes` | да | ha |
-| 712 | `teacher.no` | нет | yoʻq |
-| 713 | `teacher.roleSaved` | Сохранено. | Saqlandi. |
-| 714 | `teacher.noUser` | Такого пользователя нет. Сначала создайте его в Supabase → Authentication → Users. | Bunday foydalanuvchi yoʻq. Avval uni Supabase → Authentication → Users boʻlimida yarating. |
-| 715 | `teacher.roleFail` | Не удалось сохранить. | Saqlab boʻlmadi. |
+| 494 | `teacher.title` | Панель учителя | Oʻqituvchi paneli |
+| 495 | `teacher.logout` | Выйти | Chiqish |
+| 496 | `teacher.classLabel` | Класс | Sinf |
+| 497 | `teacher.newClassBtn` | + Новый класс | + Yangi sinf |
+| 498 | `teacher.newClass` | Новый класс | Yangi sinf |
+| 499 | `teacher.ncName` | Название | Nomi |
+| 500 | `teacher.ncNamePh` | 2 курс ТГУВ, группа 1 | TDShU 2-kurs, 1-guruh |
+| 501 | `teacher.ncYear` | Учебный год | Oʻquv yili |
+| 502 | `teacher.ncYearPh` | 2026–2027 | 2026–2027 |
+| 503 | `teacher.ncCount` | Сколько учеников | Oʻquvchilar soni |
+| 504 | `teacher.ncNote` | Ученикам будут выданы коды 01, 02, … и случайные ПИН. ПИН показываются &lt;b&gt;один раз&lt;/b&gt; — сразу распечатайте лист с ПИН. | Oʻquvchilarga 01, 02, … kodlari va tasodifiy PIN beriladi. PIN &lt;b&gt;bir marta&lt;/b&gt; koʻrsatiladi — PIN varaqasini darhol chop eting. |
+| 505 | `teacher.ncCreate` | Создать класс | Sinf yaratish |
+| 506 | `teacher.tabs.stats` | Статистика | Statistika |
+| 507 | `teacher.tabs.quizzes` | Викторины | Viktorinalar |
+| 508 | `teacher.tabs.people` | Ученики и ПИН | Oʻquvchilar va PIN |
+| 509 | `teacher.tabs.admin` | Администратор | Administrator |
+| 510 | `teacher.period` | Период | Davr |
+| 511 | `teacher.periods.d7` | Последние 7 дней | Oxirgi 7 kun |
+| 512 | `teacher.periods.d30` | Последние 30 дней | Oxirgi 30 kun |
+| 513 | `teacher.periods.sem` | С 1 сентября | 1-sentabrdan |
+| 514 | `teacher.periods.all` | Всё время | Butun vaqt |
+| 515 | `teacher.reload` | Обновить | Yangilash |
+| 516 | `teacher.csv` | Скачать таблицу (CSV) | Jadvalni yuklab olish (CSV) |
+| 517 | `teacher.print` | Печать | Chop etish |
+| 518 | `teacher.pickClass` | Выберите класс. | Sinfni tanlang. |
+| 519 | `teacher.quiz` | Викторина | Viktorina |
+| 520 | `teacher.boardLink` | Табло для проектора ↗ | Proyektor uchun tablo ↗ |
+| 521 | `teacher.allAnswersCsv` | Все ответы (CSV) | Barcha javoblar (CSV) |
+| 522 | `teacher.quizNote` | Период — тот же, что во вкладке «Статистика». Табло показывает только псевдонимы и лучший результат каждого за 3 часа; откройте его на компьютере у проектора. | Davr «Statistika» boʻlimidagi bilan bir xil. Tabloda faqat taxalluslar va har kimning 3 soatdagi eng yaxshi natijasi koʻrsatiladi; uni proyektorga ulangan kompyuterda oching. |
+| 523 | `teacher.addN` | Сколько добавить | Nechta qoʻshish |
+| 524 | `teacher.addBtn` | Добавить учеников | Oʻquvchi qoʻshish |
+| 525 | `teacher.resetSel` | Новый ПИН отмеченным | Belgilanganlarga yangi PIN |
+| 526 | `teacher.namesBtn` | Настоящие имена… | Haqiqiy ismlar… |
+| 527 | `teacher.namesNote` | Настоящие имена хранятся только в этом браузере, не на сервере. Чтобы видеть их на другом компьютере или в другом браузере, сохраните их в файл и загрузите там. | Haqiqiy ismlar serverda emas, faqat shu brauzerda saqlanadi. Ularni boshqa kompyuter yoki brauzerda koʻrish uchun faylga saqlang va u yerda yuklang. |
+| 528 | `teacher.expBtn` | Сохранить имена в файл | Ismlarni faylga saqlash |
+| 529 | `teacher.impBtn` | Загрузить имена из файла | Ismlarni fayldan yuklash |
+| 530 | `teacher.expNone` | В этом браузере пока нет сохранённых имён. | Bu brauzerda hali saqlangan ismlar yoʻq. |
+| 531 | `teacher.impReadFail` | Не удалось прочитать файл. Нужен файл, сохранённый кнопкой «Сохранить имена в файл». | Faylni oʻqib boʻlmadi. «Ismlarni faylga saqlash» tugmasi bilan saqlangan fayl kerak. |
+| 532 | `teacher.impNoNames` | В файле нет имён учеников. | Faylda oʻquvchilar ismlari yoʻq. |
+| 533 | `teacher.impConfirm` | Загрузить имена: классов — {c}, учеников — {n}? | Ismlar yuklansinmi: sinflar — {c}, oʻquvchilar — {n}? |
+| 534 | `teacher.impClash` | Внимание: для классов ({n}) в этом браузере уже есть другие имена. Они будут заменены именами из файла. | Diqqat: {n} ta sinf uchun bu brauzerda boshqa ismlar bor. Ular fayldagi ismlar bilan almashtiriladi. |
+| 535 | `teacher.impStoreFail` | Браузер не дал сохранить данные. | Brauzer maʼlumotlarni saqlashga ruxsat bermadi. |
+| 536 | `teacher.impDone` | Готово: имена загружены. | Tayyor: ismlar yuklandi. |
+| 537 | `teacher.namesTitle` | Настоящие имена (только на этом компьютере) | Haqiqiy ismlar (faqat shu kompyuterda) |
+| 538 | `teacher.namesHelp` | По одной строке: код; имя и фамилия. Например: &lt;code&gt;07; Азиза Каримова&lt;/code&gt; | Har bir qatorda: kod; ism va familiya. Masalan: &lt;code&gt;07; Aziza Karimova&lt;/code&gt; |
+| 539 | `teacher.save` | Сохранить | Saqlash |
+| 540 | `teacher.roleTitle` | Сделать пользователя учителем | Foydalanuvchini oʻqituvchi qilish |
+| 541 | `teacher.roleNote` | Пользователь сначала должен быть создан в Supabase → Authentication → Users. | Avval foydalanuvchi Supabase → Authentication → Users boʻlimida yaratilishi kerak. |
+| 542 | `teacher.email` | Email | Email |
+| 543 | `teacher.role` | Роль | Rol |
+| 544 | `teacher.roles.teacher` | учитель | oʻqituvchi |
+| 545 | `teacher.roles.user` | обычный пользователь | oddiy foydalanuvchi |
+| 546 | `teacher.roles.admin` | администратор | administrator |
+| 547 | `teacher.close` | Закрыть | Yopish |
+| 548 | `teacher.pinsTitle` | ПИН учеников | Oʻquvchilarning PIN kodlari |
+| 549 | `teacher.pinsWarn` | &lt;b&gt;Распечатайте или перепишите сейчас:&lt;/b&gt; после закрытия окна ПИН больше не будет видно (в базе хранится только зашифрованный вариант). Если потеряете — выдайте новый ПИН. | &lt;b&gt;Hozir chop eting yoki koʻchirib oling:&lt;/b&gt; oyna yopilgach PIN boshqa koʻrinmaydi (bazada faqat shifrlangan varianti saqlanadi). Yoʻqotsangiz — yangi PIN bering. |
+| 550 | `teacher.pinsPrint` | Печать листа с ПИН | PIN varaqasini chop etish |
+| 551 | `teacher.gateLogin` | Войдите по email учителя. | Oʻqituvchi emaili orqali kiring. |
+| 552 | `teacher.login` | Войти | Kirish |
+| 553 | `teacher.noRights` | У аккаунта {email} нет прав учителя. Обратитесь к администратору сайта. | {email} hisobida oʻqituvchi huquqlari yoʻq. Sayt administratoriga murojaat qiling. |
+| 554 | `teacher.stale` | Вход устарел или нет связи. | Kirish muddati tugagan yoki aloqa yoʻq. |
+| 555 | `teacher.loginAgain` | Войти снова | Qaytadan kirish |
+| 556 | `teacher.archived` |  (архив) |  (arxiv) |
+| 557 | `teacher.noClasses` | — классов пока нет — | — hozircha sinflar yoʻq — |
+| 558 | `teacher.createFail` | Не удалось создать класс | Sinf yaratib boʻlmadi |
+| 559 | `teacher.joinInfo` | Код класса для учеников: &lt;b class="join"&gt;{join}&lt;/b&gt; · вход: &lt;a href="{url}"&gt;{url}&lt;/a&gt; | Oʻquvchilar uchun sinf kodi: &lt;b class="join"&gt;{join}&lt;/b&gt; · kirish: &lt;a href="{url}"&gt;{url}&lt;/a&gt; |
+| 560 | `teacher.th.all` | Отметить всех | Hammasini belgilash |
+| 561 | `teacher.th.code` | Код | Kod |
+| 562 | `teacher.th.nameLocal` | Имя (только у вас) | Ism (faqat sizda) |
+| 563 | `teacher.th.nick` | Псевдоним (видят другие) | Taxallus (boshqalar koʻradi) |
+| 564 | `teacher.th.sex` | Пол | Jins |
+| 565 | `teacher.th.active` | Активен | Faol |
+| 566 | `teacher.th.name` | Имя | Ism |
+| 567 | `teacher.th.pin` | ПИН | PIN |
+| 568 | `teacher.markOne` | Отметить {code} | Belgilash: {code} |
+| 569 | `teacher.nickOf` | Псевдоним {code} | Taxallus: {code} |
+| 570 | `teacher.sexOf` | Пол {code} | Jins: {code} |
+| 571 | `teacher.activeOf` | Активен {code} | Faol: {code} |
+| 572 | `teacher.sex.m` | м | yigit |
+| 573 | `teacher.sex.f` | ж | qiz |
+| 574 | `teacher.saved` | Сохранено ✓ | Saqlandi ✓ |
+| 575 | `teacher.error` | Ошибка | Xato |
+| 576 | `teacher.markFirst` | Отметьте учеников галочкой. | Oʻquvchilarni belgilang. |
+| 577 | `teacher.resetConfirm` | Выдать новый ПИН {n} ученикам? Старые ПИН перестанут работать. | {n} ta oʻquvchiga yangi PIN berilsinmi? Eski PIN kodlar ishlamay qoladi. |
+| 578 | `teacher.strip.classCode` | Код класса | Sinf kodi |
+| 579 | `teacher.strip.myCode` | Мой код | Mening kodim |
+| 580 | `teacher.strip.pin` | ПИН | PIN |
+| 581 | `teacher.closePinsConfirm` | Вы распечатали или записали ПИН? После закрытия их не будет видно. | PIN kodlarni chop etdingizmi yoki yozib oldingizmi? Oyna yopilgach ular koʻrinmaydi. |
+| 582 | `teacher.printTitle` | ПИН учеников — {name} | Oʻquvchilarning PIN kodlari — {name} |
+| 583 | `teacher.printHint` | Если печать не открылась сама — нажмите Ctrl+P (на телефоне: «Поделиться» → «Печать» или «Сохранить в Файлы»). | Chop etish oʻzi ochilmasa — Ctrl+P ni bosing (telefonda: «Ulashish» → «Chop etish» yoki «Fayllarga saqlash»). |
+| 584 | `teacher.popupBlocked` | Браузер заблокировал новое окно. Разрешите всплывающие окна для этого сайта и нажмите кнопку ещё раз. | Brauzer yangi oynani blokladi. Bu sayt uchun qalqib chiquvchi oynalarga ruxsat bering va tugmani yana bosing. |
+| 585 | `teacher.createClass` | Создайте класс. | Sinf yarating. |
+| 586 | `teacher.reportFail` | Не удалось загрузить отчёт. Проверьте интернет. | Hisobotni yuklab boʻlmadi. Internetni tekshiring. |
+| 587 | `teacher.cols.name` | Имя | Ism |
+| 588 | `teacher.cols.sex` | Пол | Jins |
+| 589 | `teacher.cols.sessions` | Входов | Kirishlar |
+| 590 | `teacher.cols.minutes` | Минут | Daqiqa |
+| 591 | `teacher.cols.days` | Дней | Kunlar |
+| 592 | `teacher.cols.known` | Знает слов | Biladigan soʻzlari |
+| 593 | `teacher.cols.answers` | Ответов | Javoblar |
+| 594 | `teacher.cols.acc` | Верно % | Toʻgʻri % |
+| 595 | `teacher.cols.bad` | Ошибок | Xatolar |
+| 596 | `teacher.cols.ct` | Тесты % | Testlar % |
+| 597 | `teacher.cols.qz` | Викторины % | Viktorinalar % |
+| 598 | `teacher.cols.qn` | Попыток викторин | Viktorina urinishlari |
+| 599 | `teacher.cols.last` | Последний вход | Oxirgi kirish |
+| 600 | `teacher.colTitle` | {l}: {v} мин. | {l}: {v} daq. |
+| 601 | `teacher.noData` | пока нет данных | hozircha maʼlumot yoʻq |
+| 602 | `teacher.units.min` | мин. | daq. |
+| 603 | `teacher.units.words` | сл. | soʻz |
+| 604 | `teacher.units.days` | дн. | kun |
+| 605 | `teacher.units.times` | раз | marta |
+| 606 | `teacher.units.errPct` | % ошибок | % xato |
+| 607 | `teacher.units.people` | чел. | kishi |
+| 608 | `teacher.noms.time` | ⏱ Больше всех времени | ⏱ Eng koʻp vaqt sarflagan |
+| 609 | `teacher.noms.words` | 📚 Выучил больше слов | 📚 Eng koʻp soʻz oʻrgangan |
+| 610 | `teacher.noms.acc` | 🎯 Самый точный (от 50 ответов) | 🎯 Eng aniq (50 ta javobdan) |
+| 611 | `teacher.noms.days` | 📅 Больше всех дней занятий | 📅 Eng koʻp kun shugʻullangan |
+| 612 | `teacher.noms.sessions` | 🔁 Чаще всех заходил | 🔁 Eng koʻp kirgan |
+| 613 | `teacher.noms.ct` | 🧪 Лучший в тестах по словам | 🧪 Soʻzlar testlarida eng yaxshi |
+| 614 | `teacher.noms.qz` | 🏆 Лучший в викторинах (средний %) | 🏆 Viktorinalarda eng yaxshi (oʻrtacha %) |
+| 615 | `teacher.noms.help` | ⚠ Нужна помощь: низкая точность | ⚠ Yordam kerak: aniqlik past |
+| 616 | `teacher.noms.idle` | 💤 Не занимались | 💤 Shugʻullanmaganlar |
+| 617 | `teacher.allActive` | все занимались | hamma shugʻullangan |
+| 618 | `teacher.kpi.active` | занимались | shugʻullangan |
+| 619 | `teacher.kpi.minutes` | минут всего | jami daqiqa |
+| 620 | `teacher.kpi.perLearner` | минут на ученика | bir oʻquvchiga daqiqa |
+| 621 | `teacher.kpi.answers` | ответов | javob |
+| 622 | `teacher.kpi.correct` | верных ответов | toʻgʻri javoblar |
+| 623 | `teacher.kpi.sessions` | входов | kirish |
+| 624 | `teacher.ofN` | {a} из {b} | {a}/{b} |
+| 625 | `teacher.nominations` | Номинации | Nominatsiyalar |
+| 626 | `teacher.nomsNote` | «Нужна помощь» и «Не занимались» видите только вы. Ученикам показываются только положительные номинации. | «Yordam kerak» va «Shugʻullanmaganlar»ni faqat siz koʻrasiz. Oʻquvchilarga faqat ijobiy nominatsiyalar koʻrsatiladi. |
+| 627 | `teacher.learners` | Ученики | Oʻquvchilar |
+| 628 | `teacher.learnersNote` | Нажмите на заголовок столбца, чтобы отсортировать, или на строку — чтобы открыть подробности. | Saralash uchun ustun sarlavhasini, batafsil maʼlumot uchun qatorni bosing. |
+| 629 | `teacher.hardWords` | Трудные слова класса | Sinf uchun qiyin soʻzlar |
+| 630 | `teacher.themes` | Темы: доля ошибок | Mavzular: xatolar ulushi |
+| 631 | `teacher.when` | Когда занимаются | Qachon shugʻullanishadi |
+| 632 | `teacher.byWeekday` | По дням недели, минуты | Hafta kunlari boʻyicha, daqiqa |
+| 633 | `teacher.weekdays` | пн · вт · ср · чт · пт · сб · вс | du · se · ch · pa · ju · sh · ya |
+| 634 | `teacher.byHour` | По часам, минуты | Soatlar boʻyicha, daqiqa |
+| 635 | `teacher.last30` | Последние 30 дней, минуты | Oxirgi 30 kun, daqiqa |
+| 636 | `teacher.sexTitle` | Юноши и девушки | Yigitlar va qizlar |
+| 637 | `teacher.sexCols.group` | Группа | Guruh |
+| 638 | `teacher.sexCols.n` | Чел. | Kishi |
+| 639 | `teacher.sexCols.minutes` | Минут | Daqiqa |
+| 640 | `teacher.sexCols.known` | Знает слов | Biladigan soʻzlari |
+| 641 | `teacher.sexCols.acc` | Точность % | Aniqlik % |
+| 642 | `teacher.sexCols.ct` | Тесты % | Testlar % |
+| 643 | `teacher.boys` | Юноши | Yigitlar |
+| 644 | `teacher.girls` | Девушки | Qizlar |
+| 645 | `teacher.sexMissing` | Не у всех указан пол: заполните его во вкладке «Ученики и ПИН». | Hammaning jinsi koʻrsatilmagan: uni «Oʻquvchilar va PIN» boʻlimida toʻldiring. |
+| 646 | `teacher.sexNote` | Группа небольшая (n = {n}), поэтому разница даже в 10–15% может быть случайной. Это описание группы, а не вывод о юношах и девушках. | Guruh kichik (n = {n}), shuning uchun hatto 10–15% farq ham tasodifiy boʻlishi mumkin. Bu guruhning tavsifi, yigitlar va qizlar haqidagi xulosa emas. |
+| 647 | `teacher.reportAt` | Отчёт на {t}. Подробно о викторинах — во вкладке «Викторины». | Hisobot vaqti: {t}. Viktorinalar haqida batafsil — «Viktorinalar» boʻlimida. |
+| 648 | `teacher.wcols.word` | Слово | Soʻz |
+| 649 | `teacher.wcols.tr` | Перевод | Tarjima |
+| 650 | `teacher.wcols.studs` | Ошиблись | Xato qilganlar |
+| 651 | `teacher.wcols.pct` | Ошибок % | Xato % |
+| 652 | `teacher.noErrors` | Пока ошибок нет. | Hozircha xatolar yoʻq. |
+| 653 | `teacher.noDataYet` | Пока нет данных. | Hozircha maʼlumot yoʻq. |
+| 654 | `teacher.detail.head` | {name} · код {code} | {name} · kod {code} |
+| 655 | `teacher.detail.boy` | юноша ·  | yigit ·  |
+| 656 | `teacher.detail.girl` | девушка ·  | qiz ·  |
+| 657 | `teacher.detail.line` | псевдоним «{nick}» · входов: &lt;b&gt;{s}&lt;/b&gt; · минут: &lt;b&gt;{m}&lt;/b&gt; · дней: &lt;b&gt;{d}&lt;/b&gt; · ответов: &lt;b&gt;{a}&lt;/b&gt; (верно {acc}%) · последний вход: {last} | taxallus «{nick}» · kirishlar: &lt;b&gt;{s}&lt;/b&gt; · daqiqa: &lt;b&gt;{m}&lt;/b&gt; · kunlar: &lt;b&gt;{d}&lt;/b&gt; · javoblar: &lt;b&gt;{a}&lt;/b&gt; (toʻgʻri {acc}%) · oxirgi kirish: {last} |
+| 658 | `teacher.detail.decks` | Слова по наборам | Toʻplamlar boʻyicha soʻzlar |
+| 659 | `teacher.detail.deckCols.deck` | Набор | Toʻplam |
+| 660 | `teacher.detail.deckCols.seen` | Видел | Koʻrgan |
+| 661 | `teacher.detail.deckCols.learn` | Учит | Oʻrganmoqda |
+| 662 | `teacher.detail.deckCols.good` | Знает | Biladi |
+| 663 | `teacher.detail.deckCols.done` | Выучил | Oʻrgangan |
+| 664 | `teacher.detail.tests` | Тесты по словам | Soʻzlar testlari |
+| 665 | `teacher.detail.testsLine` | {n} · средний {avg}% · лучший {best}% | {n} · oʻrtacha {avg}% · eng yaxshisi {best}% |
+| 666 | `teacher.detail.noTests` | Тестов нет. | Testlar yoʻq. |
+| 667 | `teacher.detail.themes` | Темы: доля ошибок | Mavzular: xatolar ulushi |
+| 668 | `teacher.detail.pctOf` | {p}% из {n} | {p}% ({n} tadan) |
+| 669 | `teacher.detail.noAnswers` | Нет ответов. | Javoblar yoʻq. |
+| 670 | `teacher.detail.hard` | Самые трудные слова | Eng qiyin soʻzlar |
+| 671 | `teacher.detail.errors` | ошибок: {n} | xatolar: {n} |
+| 672 | `teacher.detail.noErr` | Ошибок нет. | Xatolar yoʻq. |
+| 673 | `teacher.detail.daily` | Минуты по дням | Kunlar boʻyicha daqiqa |
+| 674 | `teacher.detail.noDays` | Нет занятий. | Mashgʻulotlar yoʻq. |
+| 675 | `teacher.detail.quizzes` | Викторины | Viktorinalar |
+| 676 | `teacher.att.none` | Попыток нет. | Urinishlar yoʻq. |
+| 677 | `teacher.att.when` | Когда | Qachon |
+| 678 | `teacher.att.learner` | Ученик | Oʻquvchi |
+| 679 | `teacher.att.quiz` | Викторина | Viktorina |
+| 680 | `teacher.att.correct` | Верно | Toʻgʻri |
+| 681 | `teacher.att.points` | Очки | Ball |
+| 682 | `teacher.att.time` | Время | Vaqt |
+| 683 | `teacher.att.level` | Уровень | Daraja |
+| 684 | `teacher.att.exits` | Выходы | Chiqishlar |
+| 685 | `teacher.att.review` | Разбор | Tahlil |
+| 686 | `teacher.att.reviewBest` | Разбор лучшей | Eng yaxshisi tahlili |
+| 687 | `teacher.reviewLine` | {at} · верно &lt;b&gt;{c} из {t}&lt;/b&gt; ({pct}%) · {p} очков · {time} · {lvl} | {at} · toʻgʻri: &lt;b&gt;{c}/{t}&lt;/b&gt; ({pct}%) · {p} ball · {time} · {lvl} |
+| 688 | `teacher.reviewLineMock` | {at} · верно &lt;b&gt;{c} из {t}&lt;/b&gt; ({pct}%) · {time} · выходов из окна: {x} | {at} · toʻgʻri: &lt;b&gt;{c}/{t}&lt;/b&gt; ({pct}%) · {time} · oynadan chiqishlar: {x} |
+| 689 | `teacher.reviewFail` | Не удалось загрузить разбор. | Tahlilni yuklab boʻlmadi. |
+| 690 | `teacher.noQData` | Нет данных. | Maʼlumot yoʻq. |
+| 691 | `teacher.testMark` |  (тест) |  (test) |
+| 692 | `teacher.mockMark` |  (пробный экзамен) |  (mock imtihon) |
+| 693 | `teacher.attemptsN` | {title}{test} — попыток: {n} | {title}{test} — urinishlar: {n} |
+| 694 | `teacher.qkpi.done` | прошли | topshirgan |
+| 695 | `teacher.qkpi.attempts` | попыток | urinish |
+| 696 | `teacher.qkpi.avgBest` | средний лучший результат | oʻrtacha eng yaxshi natija |
+| 697 | `teacher.qcols.name` | Имя | Ism |
+| 698 | `teacher.qcols.n` | Попыток | Urinishlar |
+| 699 | `teacher.qcols.best` | Лучший | Eng yaxshisi |
+| 700 | `teacher.qcols.points` | Очки | Ball |
+| 701 | `teacher.qcols.exits` | Выходы из окна | Oynadan chiqishlar |
+| 702 | `teacher.qcols.last` | Последняя | Oxirgisi |
+| 703 | `teacher.qParts` | Части викторины: доля верных | Viktorina qismlari: toʻgʻri javoblar ulushi |
+| 704 | `teacher.noAnswersYet` | Пока нет ответов. | Hozircha javoblar yoʻq. |
+| 705 | `teacher.allAttempts` | Все попытки | Barcha urinishlar |
+| 706 | `teacher.hardQ` | Трудные вопросы | Qiyin savollar |
+| 707 | `teacher.hardQNote` | Сверху — вопросы, в которых ошиблось больше всего учеников. | Yuqorida — eng koʻp oʻquvchi xato qilgan savollar. |
+| 708 | `teacher.hq.q` | Вопрос | Savol |
+| 709 | `teacher.hq.c` | Правильный ответ | Toʻgʻri javob |
+| 710 | `teacher.hq.studs` | Ошиблись | Xato qilganlar |
+| 711 | `teacher.hq.pct` | Ошибок % | Xato % |
+| 712 | `teacher.exportFail` | Не удалось выгрузить. | Yuklab boʻlmadi. |
+| 713 | `teacher.csvQ` | Код · Имя · Когда · Попытка · № · Часть · Вопрос · Ответ · Правильный · Верно · Секунд | Kod · Ism · Qachon · Urinish · № · Qism · Savol · Javob · Toʻgʻri javob · Toʻgʻrimi · Soniya |
+| 714 | `teacher.csvCode` | Код | Kod |
+| 715 | `teacher.yes` | да | ha |
+| 716 | `teacher.no` | нет | yoʻq |
+| 717 | `teacher.roleSaved` | Сохранено. | Saqlandi. |
+| 718 | `teacher.noUser` | Такого пользователя нет. Сначала создайте его в Supabase → Authentication → Users. | Bunday foydalanuvchi yoʻq. Avval uni Supabase → Authentication → Users boʻlimida yarating. |
+| 719 | `teacher.roleFail` | Не удалось сохранить. | Saqlab boʻlmadi. |
 
 ## Подвал
 
 | № | Ключ | Русский | Oʻzbekcha |
 |---|---|---|---|
-| 716 | `footer.author` | Автор | Muallif |
-| 717 | `footer.authorRole` | преподаватель арабского языка | arab tili oʻqituvchisi |
-| 718 | `footer.contacts` | Связаться | Bogʻlanish |
-| 719 | `footer.about` | О сайте | Sayt haqida |
-| 720 | `footer.privacy` | Конфиденциальность | Maxfiylik |
+| 720 | `footer.author` | Автор | Muallif |
+| 721 | `footer.authorRole` | преподаватель арабского языка | arab tili oʻqituvchisi |
+| 722 | `footer.contacts` | Связаться | Bogʻlanish |
+| 723 | `footer.about` | О сайте | Sayt haqida |
+| 724 | `footer.privacy` | Конфиденциальность | Maxfiylik |

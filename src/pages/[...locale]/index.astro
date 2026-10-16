@@ -6,6 +6,7 @@ import { SECTION_AR } from '../../config/nav';
 import { useI18n, localeParams, tf, plural } from '../../i18n';
 import dictionary from '../../data/dictionary.json';
 import { getVerbs } from '../../lib/verbs';
+import { mockHref } from '../../lib/mock';
 export const getStaticPaths = localeParams;
 const { locale, t, l, intl } = useI18n(Astro.url);
 
@@ -33,7 +34,7 @@ const contents = [
 const title = (d: Record<string, any>) => tf(d, 'title', locale);
 const fresh = [
   ...decks.map(d => ({ ...title(d.data), added: d.data.added, href: `words/${d.data.key}/`, kind: t.kinds.deck })),
-  ...quizzes.map(q => ({ ...title(q.data), added: q.data.added, href: q.data.kind === 'mock' ? `mock/${q.data.key}/` : `quizzes/${q.data.key}/`, kind: t.kinds[q.data.kind] })),
+  ...quizzes.map(q => ({ ...title(q.data), added: q.data.added, href: q.data.kind === 'mock' ? mockHref(q.data) : `quizzes/${q.data.key}/`, kind: t.kinds[q.data.kind] })),
   ...exercises.map(e => ({ ...title(e.data), added: e.data.added, href: `exercises/${e.data.key}/`, kind: t.kinds.exercise })),
 ].sort((a, b) => b.added.localeCompare(a.added)).slice(0, 5);
 

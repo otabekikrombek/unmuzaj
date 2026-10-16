@@ -1,0 +1,11 @@
+---
+// Старые адреса раздела /mock/, которые переехали (src/config/moved.mjs) — переадресация на новый адрес.
+import MovedPage from '../../../components/MovedPage.astro';
+import { MOVED } from '../../../config/moved.mjs';
+import { withLocales } from '../../../i18n';
+export function getStaticPaths() {
+  return withLocales(MOVED.filter(m => /^mock\/[^/]+\/$/.test(m.from))
+    .map(m => ({ params: { moved: m.from.split('/')[1] }, props: { to: m.to } })));
+}
+---
+<MovedPage to={Astro.props.to} />

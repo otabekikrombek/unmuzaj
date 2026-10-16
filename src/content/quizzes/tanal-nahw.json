@@ -14,6 +14,7 @@
  ],
  "added": "2026-10-16",
  "kind": "mock",
+ "path": "tanal/nahw",
  "duration_min": 30,
  "max_exits": null,
  "courses": [],

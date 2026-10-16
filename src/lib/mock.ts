@@ -18,6 +18,9 @@ export type MockState = {
   end?: number; reason?: 'user' | 'time' | 'exits';
 };
 
+/** адрес экзамена внутри сайта (без языка): mock/<path>/, path — «книга/предмет» (tanal/nahw), по умолчанию key */
+export const mockHref = (q: { key: string; path?: string }) => `mock/${q.path ?? q.key}/`;
+
 /** буквы вариантов по месту после перемешивания */
 export const LETTERS = ['أ', 'ب', 'ج', 'د'];
 

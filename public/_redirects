@@ -6,10 +6,16 @@
 # Лимиты: 2000 статических и 100 динамических правил, строка до 1000 символов; верхнее правило важнее нижнего.
 # Список переездов — src/config/moved.mjs (там же — страница-переадресация для GitHub Pages); строки ниже должны с ним совпадать.
 
-# 2026-10-16: пробный экзамен At-Tanāl переехал в раздел «Пробные экзамены»
-/quizzes/tanal-nahw/     /mock/tanal-nahw/     301
-/quizzes/tanal-nahw      /mock/tanal-nahw/     301
-/uz/quizzes/tanal-nahw/  /uz/mock/tanal-nahw/  301
-/uz/quizzes/tanal-nahw   /uz/mock/tanal-nahw/  301
-/en/quizzes/tanal-nahw/  /en/mock/tanal-nahw/  301
-/en/quizzes/tanal-nahw   /en/mock/tanal-nahw/  301
+# 2026-10-16: пробный экзамен At-Tanāl переехал в раздел «Пробные экзамены» (адрес — книга/предмет)
+/quizzes/tanal-nahw/     /mock/tanal/nahw/     301
+/quizzes/tanal-nahw      /mock/tanal/nahw/     301
+/uz/quizzes/tanal-nahw/  /uz/mock/tanal/nahw/  301
+/uz/quizzes/tanal-nahw   /uz/mock/tanal/nahw/  301
+/en/quizzes/tanal-nahw/  /en/mock/tanal/nahw/  301
+/en/quizzes/tanal-nahw   /en/mock/tanal/nahw/  301
+/mock/tanal-nahw/     /mock/tanal/nahw/  301
+/mock/tanal-nahw     /mock/tanal/nahw/  301
+/uz/mock/tanal-nahw/  /uz/mock/tanal/nahw/  301
+/uz/mock/tanal-nahw  /uz/mock/tanal/nahw/  301
+/en/mock/tanal-nahw/  /en/mock/tanal/nahw/  301
+/en/mock/tanal-nahw  /en/mock/tanal/nahw/  301

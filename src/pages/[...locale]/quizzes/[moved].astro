@@ -1,37 +1,11 @@
 ---
-// Старый адрес материала, который переехал (src/config/moved.mjs): сразу переадресация на новый адрес
-// с сохранением ?параметров и #якоря. Страница закрыта от поиска и не попадает в sitemap; canonical — новый адрес.
-import '../../../styles/tokens.css';
+// Старые адреса раздела /quizzes/, которые переехали (src/config/moved.mjs) — переадресация на новый адрес.
+import MovedPage from '../../../components/MovedPage.astro';
 import { MOVED } from '../../../config/moved.mjs';
-import { useI18n, withLocales } from '../../../i18n';
+import { withLocales } from '../../../i18n';
 export function getStaticPaths() {
   return withLocales(MOVED.filter(m => /^quizzes\/[^/]+\/$/.test(m.from))
     .map(m => ({ params: { moved: m.from.split('/')[1] }, props: { to: m.to } })));
 }
-const { to } = Astro.props;
-const { t, l } = useI18n(Astro.url);
-const href = l(to);
-const abs = new URL(href, Astro.site).href;
 ---
-<!doctype html>
-<html lang={t.meta.lang}>
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{t.moved.title}</title>
-  <meta name="robots" content="noindex" />
-  <link rel="canonical" href={abs} />
-  <script is:inline define:vars={{ href }}>location.replace(href + location.search + location.hash);</script>
-  <meta http-equiv="refresh" content={`0; url=${href}`} />
-</head>
-<body>
-  <main>
-    <h1>{t.moved.title}</h1>
-    <p>{t.moved.text} <a href={href}>{abs}</a></p>
-  </main>
-</body>
-</html>
-<style>
-  body { font: 1.1rem/1.5 var(--sans); margin: 0; padding: 32px 16px; background: var(--paper); color: var(--ink); }
-  a { color: var(--link); overflow-wrap: anywhere; }
-</style>
+<MovedPage to={Astro.props.to} />
