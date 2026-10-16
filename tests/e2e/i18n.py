@@ -12,7 +12,7 @@ import os, re
 from playwright.sync_api import sync_playwright
 B = 'http://localhost:4322/'
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-PAGES = ['', 'words/', 'words/w100/', 'dictionary/', 'conjugation/', 'conjugation/kataba/', 'conjugation/jalasa/', 'quizzes/', 'quizzes/matn-10/', 'quizzes/izafa/', 'quizzes/mock-ekzamen/', 'tests/', 'exercises/',
+PAGES = ['', 'words/', 'words/w100/', 'dictionary/', 'conjugation/', 'conjugation/kataba/', 'conjugation/jalasa/', 'quizzes/', 'quizzes/matn-10/', 'quizzes/izafa/', 'quizzes/mock-ekzamen/', 'tests/', 'mock/', 'mock/tanal-nahw/', 'exercises/',
          'exercises/predlogi/', 'grammar/', 'texts/', 'courses/', 'courses/tsu-2-sem1/', 'login/', 'me/', 'teacher/', 'about/', 'privacy/',
          'board/matn-10/?class=XXXXXX']
 MARK = {'uz': '(rus tilida)', 'en': '(in Russian)'}

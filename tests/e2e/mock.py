@@ -21,8 +21,10 @@ def page(ctx):
     pg.on('dialog', lambda d: d.accept())  # «Начать новый экзамен?» и предупреждение при уходе со страницы
     return pg
 def noscroll(pg): return pg.evaluate('document.documentElement.scrollWidth <= window.innerWidth')
-def state(pg, key=SKEY): return pg.evaluate(f"JSON.parse(localStorage.getItem('{key}') || 'null')")
-def set_state(pg, st, key=SKEY): pg.evaluate("([k, v]) => localStorage.setItem(k, JSON.stringify(v))", [key, st])
+# состояние экзамена: у гостя — ключ …:guest, у ученика класса — …:pin:<класс>:<код>
+FIND = f"Object.keys(localStorage).find(k => k.startsWith('unmuzaj:mock:{KEY}:'))"
+def state(pg): return pg.evaluate(f"JSON.parse(localStorage.getItem({FIND}) || 'null')")
+def set_state(pg, st): pg.evaluate(f"v => localStorage.setItem({FIND} || '{SKEY}', JSON.stringify(v))", st)
 def visible(pg, sel): return pg.locator(sel).first.is_visible()
 def status(url):
     try: return urllib.request.urlopen(url, timeout=3).status
@@ -244,6 +246,7 @@ with sync_playwright() as p:
     # 7. с базой (если запущен эмулятор): ученик сдаёт экзамен, выходы видны в «Моём прогрессе» и у учителя
     if status('http://localhost:8787/__ctl?x=1') == 200:
         SQL = lambda q: subprocess.run(['psql', '-h', 'localhost', '-p', '54329', '-U', 'postgres', '-d', 'e2e', '-tAc', q], capture_output=True, text=True, env={'PGPASSWORD': 'pw', 'PATH': '/usr/bin:/bin'}).stdout.strip()
+        SQL('truncate classes, learners, pin_tokens, login_fails, card_state, card_steps, answers, visits, card_tests, quiz_attempts, quiz_answers cascade')
         tc = b.new_context(viewport={'width': 1280, 'height': 900}); t = page(tc)
         t.goto(B + 'login/'); t.fill('#email', 'teacher@x'); t.fill('#pass', 'secret123'); t.click('#fMail button'); t.wait_for_url('**/teacher/'); t.wait_for_selector('#app:not([hidden])')
         t.fill('#ncName', 'Группа экзамена'); t.fill('#ncCount', '2'); t.click('#newCls button[type=submit]')
