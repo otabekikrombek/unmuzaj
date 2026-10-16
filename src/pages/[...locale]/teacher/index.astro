@@ -407,12 +407,18 @@ const siteUrl = new URL(l(''), Astro.site).href;
     const qTitle = (k: string) => QM[k]?.title || k;
     const pct = (a: any) => (a.total ? Math.round(100 * a.correct / a.total) : 0);
     const learnerById = (id: number) => (R?.learners as any[] || []).find(l => l.id === id);
+    const isMock = (k: string) => QM[k]?.kind === 'mock';
     function attemptsTable(list: any[], withName: boolean) {
       const A = T.att;
       if (!list.length) return `<p class="muted">${A.none}</p>`;
-      return `<div class="tw"><table class="rep att"><thead><tr><th>${A.when}</th><th>${withName ? A.learner : A.quiz}</th><th>${A.correct}</th><th>%</th><th>${A.points}</th><th>${A.time}</th><th>${A.level}</th><th></th></tr></thead><tbody>` +
-        list.map(a => `<tr><td>${fmtD(a.at)}</td><td>${withName ? esc(label(learnerById(a.learner) || { code: '', nickname: '?' })) : esc(qTitle(a.quiz))}</td><td class="n">${a.correct}/${a.total}</td><td class="n">${pct(a)}%</td><td class="n">${a.points}</td><td class="n">${fmtTime(a.time || 0)}</td><td>${esc(a.level || '')}</td>` +
-          `<td><button class="btn ghost sm rvBtn" data-att="${esc(a.id)}">${A.review}</button></td></tr>`).join('') + '</tbody></table></div>';
+      // у пробных экзаменов нет очков и уровня — вместо них «выходы из окна»
+      const allMock = list.every(a => isMock(a.quiz)), anyMock = list.some(a => isMock(a.quiz));
+      return `<div class="tw"><table class="rep att"><thead><tr><th>${A.when}</th><th>${withName ? A.learner : A.quiz}</th><th>${A.correct}</th><th>%</th>${allMock ? '' : `<th>${A.points}</th>`}<th>${A.time}</th>${allMock ? '' : `<th>${A.level}</th>`}${anyMock ? `<th>${A.exits}</th>` : ''}<th></th></tr></thead><tbody>` +
+        list.map(a => { const mk = isMock(a.quiz);
+          return `<tr><td>${fmtD(a.at)}</td><td>${withName ? esc(label(learnerById(a.learner) || { code: '', nickname: '?' })) : esc(qTitle(a.quiz))}</td><td class="n">${a.correct}/${a.total}</td><td class="n">${pct(a)}%</td>` +
+            (allMock ? '' : `<td class="n">${mk ? '—' : a.points}</td>`) + `<td class="n">${fmtTime(a.time || 0)}</td>` + (allMock ? '' : `<td>${mk ? '—' : esc(a.level || '')}</td>`) +
+            (anyMock ? `<td class="n">${mk ? a.exits ?? 0 : '—'}</td>` : '') +
+            `<td><button class="btn ghost sm rvBtn" data-att="${esc(a.id)}">${A.review}</button></td></tr>`; }).join('') + '</tbody></table></div>';
     }
     function bindAttempts(root: HTMLElement) {
       root.querySelectorAll<HTMLButtonElement>('.rvBtn').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); review(b.dataset.att!); }));
@@ -425,7 +431,9 @@ const siteUrl = new URL(l(''), Astro.site).href;
         const r = await rpc<any>('teacher_quiz_attempt', { p_attempt: id }); if (!r.ok) throw 0;
         const a = r.attempt, m = QM[a.quiz] || { sections: {}, plan: [], explain: {} };
         const secRows = (m.plan as [string, number][]).map(([k]) => { const x = (a.answers as any[]).filter(y => y.s === k); return { s: k, ok: x.filter(y => y.ok).length, n: x.length }; }).filter(x => x.n);
-        $('dbody').innerHTML = `<p>${f(T.reviewLine, { at: fmtD(a.at), c: a.correct, t: a.total, pct: pct(a), p: a.points, time: fmtTime(a.time || 0), lvl: esc(a.level || '') })}</p>` +
+        const line = isMock(a.quiz) ? f(T.reviewLineMock, { at: fmtD(a.at), c: a.correct, t: a.total, pct: pct(a), time: fmtTime(a.time || 0), x: a.exits ?? 0 })
+          : f(T.reviewLine, { at: fmtD(a.at), c: a.correct, t: a.total, pct: pct(a), p: a.points, time: fmtTime(a.time || 0), lvl: esc(a.level || '') });
+        $('dbody').innerHTML = `<p>${line}</p>` +
           (secRows.length > 1 ? secBars(m.sections, secRows) : '') + reviewHTML(a.answers, m.sections, D.quiz, m.explain);
       } catch { $('dbody').innerHTML = `<p>${T.reviewFail}</p>`; }
     }
@@ -434,24 +442,28 @@ const siteUrl = new URL(l(''), Astro.site).href;
       const sel = $<HTMLSelectElement>('qzSel'), prev = sel.value;
       const cnt = (k: string) => (QR.attempts as any[]).filter(a => a.quiz === k).length;
       const keys = Object.keys(QM).sort((a, b) => cnt(b) - cnt(a));
-      sel.innerHTML = keys.map(k => `<option value="${esc(k)}">${f(T.attemptsN, { title: esc(QM[k].title), test: QM[k].kind === 'test' ? T.testMark : '', n: cnt(k) })}</option>`).join('');
+      sel.innerHTML = keys.map(k => `<option value="${esc(k)}">${f(T.attemptsN, { title: esc(QM[k].title), test: QM[k].kind === 'test' ? T.testMark : isMock(k) ? T.mockMark : '', n: cnt(k) })}</option>`).join('');
       if (prev && keys.includes(prev)) sel.value = prev;
       quizPart();
     }
     function quizPart() {
       if (!QR || !cur) return;
       const k = $<HTMLSelectElement>('qzSel').value, m = QM[k], A = (QR.attempts as any[]).filter(a => a.quiz === k);
+      const mock = isMock(k);
       $<HTMLAnchorElement>('qzBoard').href = `${D.site}board/${k}/?class=${encodeURIComponent(cur.join)}&hours=3`;
+      $('qzBoard').style.display = mock ? 'none' : ''; // у пробных экзаменов табло нет (.btn перекрывает [hidden])
       const S = R.learners as any[];
-      const per = S.map(s => { const my = A.filter(a => a.learner === s.id); const best = my.slice().sort((x, y) => y.points - x.points)[0]; return { s, n: my.length, best, last: my[0] }; });
+      // лучшая попытка: у викторины — по очкам, у пробного экзамена — по числу верных (при равенстве — быстрее)
+      const better = (x: any, y: any) => mock ? y.correct - x.correct || x.time - y.time : y.points - x.points;
+      const per = S.map(s => { const my = A.filter(a => a.learner === s.id); const best = my.slice().sort(better)[0]; return { s, n: my.length, best, last: my[0] }; });
       const done = per.filter(p => p.n);
       const avgBest = done.length ? Math.round(done.reduce((x, p) => x + pct(p.best), 0) / done.length) : null;
       const secRows = (m.plan as [string, number][]).map(([s]) => { const x = (QR.sections as any[]).find(y => y.quiz === k && y.s === s); return { s, ok: x?.ok || 0, n: x?.n || 0 }; }).filter(x => x.n);
       const hard = (QR.hard as any[]).filter(h => h.quiz === k).slice(0, 15);
       const QC = T.qcols;
       $('qzRep').innerHTML = `<div class="kpis">${[[f(T.ofN, { a: done.length, b: S.length }), T.qkpi.done], [A.length, T.qkpi.attempts], [avgBest == null ? '—' : avgBest + '%', T.qkpi.avgBest]].map(x => `<div class="kpi"><b>${x[0]}</b><span>${x[1]}</span></div>`).join('')}</div>
-        <h2>${T.learners}</h2><div class="tw"><table class="rep"><thead><tr><th>${QC.name}</th><th>${QC.n}</th><th>${QC.best}</th><th>%</th><th>${QC.points}</th><th>${QC.last}</th><th></th></tr></thead><tbody>` +
-        per.sort((a, b) => (b.best?.points ?? -1) - (a.best?.points ?? -1)).map(p => `<tr><td>${esc(label(p.s))}</td><td class="n">${p.n || '—'}</td><td class="n">${p.best ? `${p.best.correct}/${p.best.total}` : '—'}</td><td class="n">${p.best ? pct(p.best) + '%' : '—'}</td><td class="n">${p.best?.points ?? '—'}</td><td>${p.last ? fmtD(p.last.at) : '—'}</td>` +
+        <h2>${T.learners}</h2><div class="tw"><table class="rep"><thead><tr><th>${QC.name}</th><th>${QC.n}</th><th>${QC.best}</th><th>%</th><th>${mock ? QC.exits : QC.points}</th><th>${QC.last}</th><th></th></tr></thead><tbody>` +
+        per.sort((a, b) => a.best && b.best ? better(a.best, b.best) : a.best ? -1 : b.best ? 1 : 0).map(p => `<tr><td>${esc(label(p.s))}</td><td class="n">${p.n || '—'}</td><td class="n">${p.best ? `${p.best.correct}/${p.best.total}` : '—'}</td><td class="n">${p.best ? pct(p.best) + '%' : '—'}</td><td class="n">${p.best ? (mock ? p.best.exits ?? 0 : p.best.points) : '—'}</td><td>${p.last ? fmtD(p.last.at) : '—'}</td>` +
           `<td>${p.best ? `<button class="btn ghost sm rvBtn" data-att="${esc(p.best.id)}">${T.att.reviewBest}</button>` : ''}</td></tr>`).join('') + `</tbody></table></div>
         <div class="g2"><div><h2>${T.qParts}</h2>${secRows.length ? secBars(m.sections, secRows) : `<p class="muted">${T.noAnswersYet}</p>`}</div>
         <div><h2>${T.allAttempts}</h2>${attemptsTable(A, true)}</div></div>

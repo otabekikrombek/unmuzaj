@@ -7,7 +7,7 @@ import { localizeQuiz, explainOf } from '../../../lib/quizLocale';
 export const getStaticPaths = localeParams;
 const { locale, t, l, intl } = useI18n(Astro.url);
 const quizMeta = Object.fromEntries((await getCollection('quizzes')).map(q => { const L = localizeQuiz(q.data, locale);
-  return [q.data.key, { title: L.title.text, ru: L.title.ru, href: l(`quizzes/${q.data.key}/`), plan: q.data.plan, sections: L.sections, explain: explainOf(q.data, locale) }]; }));
+  return [q.data.key, { title: L.title.text, ru: L.title.ru, kind: q.data.kind, href: l(`${q.data.kind === 'mock' ? 'mock' : 'quizzes'}/${q.data.key}/`), plan: q.data.plan, sections: L.sections, explain: explainOf(q.data, locale) }]; }));
 const decks = (await getCollection('decks')).map(d => { const ti = tf(d.data, 'title', locale); return { key: d.data.key, title: ti.text, ru: ti.ru, n: d.data.items.length, href: l(`words/${d.data.key}/`) }; });
 ---
 <Base title={t.me.title} noindex>
@@ -36,7 +36,7 @@ const decks = (await getCollection('decks')).map(d => { const ti = tf(d.data, 't
           return `<li><a class="row" href="${d.href}"><span class="row-title">${tl(d)}</span><span class="row-side">${f(T.know, { k: known, n: d.n })}</span><span class="row-meta">${f(T.deckMeta, { seen: s.seen || 0, learn: s.learn || 0, done: s.done || 0 })}</span></a></li>`; }).join('');
         const tests = o.tests.length ? `<ul>${o.tests.map((x: any) => `<li>${f(T.testLine, { date: date(x.at), c: x.correct, t: x.total })}</li>`).join('')}</ul>` : `<p class="muted">${T.noTests}</p>`;
         const QM = D.quizMeta;
-        const quizzes = o.quizzes?.length ? `<ul class="qlist">${o.quizzes.map((a: any) => `<li><a href="${QM[a.quiz]?.href || '#'}">${QM[a.quiz] ? tl(QM[a.quiz]) : esc(a.quiz)}</a> — ${f(T.quizLine, { date: date(a.at), c: a.correct, t: a.total, p: a.points, time: fmtTime(a.time || 0) })} <button class="btn ghost sm" data-quiz="${esc(a.quiz)}" data-id="${esc(a.id)}">${T.review}</button></li>`).join('')}</ul>` : `<p class="muted">${T.noQuizzes}</p>`;
+        const quizzes = o.quizzes?.length ? `<ul class="qlist">${o.quizzes.map((a: any) => `<li><a href="${QM[a.quiz]?.href || '#'}">${QM[a.quiz] ? tl(QM[a.quiz]) : esc(a.quiz)}</a> — ${QM[a.quiz]?.kind === 'mock' ? f(T.quizLineMock, { date: date(a.at), c: a.correct, t: a.total, time: fmtTime(a.time || 0), x: a.exits ?? 0 }) : f(T.quizLine, { date: date(a.at), c: a.correct, t: a.total, p: a.points, time: fmtTime(a.time || 0) })} <button class="btn ghost sm" data-quiz="${esc(a.quiz)}" data-id="${esc(a.id)}">${T.review}</button></li>`).join('')}</ul>` : `<p class="muted">${T.noQuizzes}</p>`;
         box.innerHTML = head + `<p>${f(T.totals, { v: o.visits, m: o.minutes })}</p><h2>${T.words}</h2><ul class="list">${rows}</ul><h2 style="margin-top:28px">${T.lastTests}</h2>${tests}<h2 style="margin-top:28px">${T.quizzes}</h2>${quizzes}<div id="rvBox"></div>` +
           (who!.kind === 'email' && /teacher|admin/.test((who as any).role) ? `<p><a class="btn" href="${D.teacher}">${T.teacher}</a></p>` : '') +
           `<p style="margin-top:28px"><button class="btn ghost" id="out">${T.logout}</button></p>`;
