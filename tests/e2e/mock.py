@@ -66,7 +66,7 @@ with sync_playwright() as p:
     check('старт: правила и честная оговорка', 'Выход из окна' in txt and 'не может полностью запретить' in txt)
     if DATA.get('book'):
         bk = pg.inner_text('#sStart .book')
-        check('старт: источник — книга и авторы', DATA['book']['title'] in bk and all(x in bk for x in DATA['book']['authors']), bk)
+        check('старт: источник — книга, издатель, депозит', DATA['book']['title'] in bk and DATA['book']['publisher'] in bk and DATA['book']['deposit'] in bk and all(x in bk for x in DATA['book'].get('authors', [])), bk)
     else: print('SKIP источник: в данных нет поля book')
     check('старт: гость — результат только на устройстве', 'гость' in pg.inner_text('#who'))
     check('старт: шапка сайта видна', visible(pg, 'header.site-head'))

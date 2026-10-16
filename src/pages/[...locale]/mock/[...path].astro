@@ -14,6 +14,7 @@ const { locale, t, l, intl } = useI18n(Astro.url);
 const T = t.mock;
 const N = total(q);
 const title = tf(q, 'title', locale), description = tf(q, 'description', locale);
+const place = tf(q.book ?? {}, 'place', locale);
 const nq = plural(locale, T.questions, N), nm = plural(locale, T.minutes, q.duration_min!);
 const data = {
   exam: { key: q.key, plan: q.plan, durationMin: q.duration_min, maxExits: q.max_exits, pool: q.pool.map(p => ({ id: p.id, s: p.s, topic: p.topic, q: p.q, o: p.o })) },
@@ -25,7 +26,8 @@ const ld = {
   educationalLevel: q.level, about: q.topics, numberOfQuestions: N, timeRequired: `PT${q.duration_min}M`, learningResourceType: 'Mock exam',
   educationalUse: 'assessment', isAccessibleForFree: true, url: new URL(l(mockHref(q)), Astro.site).href,
   ...(q.book ? { isBasedOn: { '@type': 'Book', name: q.book.title, ...(q.book.title_ar ? { alternateName: q.book.title_ar } : {}),
-    author: q.book.authors.map(name => ({ '@type': 'Person', name })), ...(q.book.publisher ? { publisher: q.book.publisher } : {}), ...(q.book.year ? { datePublished: q.book.year } : {}) } } : {}),
+    ...(q.book.authors?.length ? { author: q.book.authors.map(name => ({ '@type': 'Person', name })) } : {}),
+    ...(q.book.publisher ? { publisher: { '@type': 'Organization', name: q.book.publisher } } : {}), ...(q.book.year ? { datePublished: q.book.year } : {}) } } : {}),
 };
 ---
 <Base title={title.text} description={`${description.text} ${nq} · ${nm}.`} group="tasks">
@@ -46,8 +48,11 @@ const ld = {
         {q.book && <div class="book">
           <p class="book-h">{T.bookH}</p>
           {q.book.title_ar && <p class="book-ar" lang="ar" dir="rtl">{q.book.title_ar}</p>}
-          <p class="book-t"><cite>{q.book.title}</cite>{q.book.publisher || q.book.year ? ` — ${[q.book.publisher, q.book.year].filter(Boolean).join(', ')}` : ''}</p>
-          <p>{fmt(q.book.authors.length > 1 ? T.bookAuthors : T.bookAuthor, { list: q.book.authors.join(', ') })}</p>
+          <p class="book-t"><cite lang="ar-Latn">{q.book.title}</cite></p>
+          {q.book.authors?.length && <p>{fmt(q.book.authors.length > 1 ? T.bookAuthors : T.bookAuthor, { list: q.book.authors.join(', ') })}</p>}
+          {(q.book.publisher || q.book.publisher_ar) && <p>{fmt(T.bookPublisher, { x: '' })}{q.book.publisher_ar && <span lang="ar" dir="rtl">{q.book.publisher_ar}</span>}{q.book.publisher && <> (<span lang="en">{q.book.publisher}</span>)</>}{place.text && <span lang={place.ru ? 'ru' : undefined}>, {place.text}</span>}{q.book.year && <>. {fmt(T.bookEdition, { x: q.book.year })}</>}.</p>}
+          {q.book.deposit && <p class="small">{fmt(T.bookDeposit, { x: q.book.deposit })}</p>}
+          {q.book.part_ar && <p class="small">{T.bookPart.split('{part}')[0]}«<span lang="ar" dir="rtl">{q.book.part_ar}</span>»{fmt(T.bookPart.split('{part}')[1], { ch: q.book.chapters ?? '' })}</p>}
           <p class="muted small">{T.bookRights}</p>
         </div>}
         <h2>{T.rulesH}</h2>
@@ -311,7 +316,7 @@ const ld = {
       $('sRes').innerHTML = `<div class="card">
         <h1>${esc(T.resultH)}</h1>
         <p class="rtitle">${esc(D.title)}</p>
-        ${D.book ? `<p class="rsrc">${esc(T.bookH)}: <cite>${esc(D.book.title)}</cite>${D.book.title_ar ? ' (' + AR(D.book.title_ar) + ')' : ''} — ${esc(D.book.authors.join(', '))}</p>` : ''}
+        ${D.book ? `<p class="rsrc">${esc(T.bookH)}: ${D.book.title_ar ? AR(D.book.title_ar) + ' — ' : ''}<cite>${esc(D.book.title_short ?? D.book.title)}</cite>${D.book.authors?.length ? ' — ' + esc(D.book.authors.join(', ')) : ''}${D.book.year ? ', ' + esc(D.book.year) : ''}</p>` : ''}
         <p class="print-only">${esc(f(T.printDate, { d: new Date(st.end!).toLocaleString(D.intl) }))}${who ? ' · ' + esc(who.nickname) : ''}</p>
         ${reason ? `<p class="reason">${esc(reason)}</p>` : ''}
         <dl class="sum">${sum.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
