@@ -21,6 +21,7 @@ const contents = [
   { k: 'words', href: 'words/', count: `${plural(locale, t.common.decks, decks.length)} · ${plural(locale, t.common.words, nWords)}` },
   { k: 'quizzes', href: 'quizzes/', count: plural(locale, t.common.items, quizzes.filter(q => q.data.kind === 'quiz').length) },
   { k: 'tests', href: 'tests/', count: plural(locale, t.common.items, quizzes.filter(q => q.data.kind === 'test').length) },
+  { k: 'mock', href: 'mock/', count: plural(locale, t.common.items, quizzes.filter(q => q.data.kind === 'mock').length) },
   { k: 'exercises', href: 'exercises/', count: plural(locale, t.common.items, exercises.length) },
   { k: 'grammar', href: 'grammar/', count: t.common.soon },
   { k: 'texts', href: 'texts/', count: t.common.soon },
@@ -32,7 +33,7 @@ const contents = [
 const title = (d: Record<string, any>) => tf(d, 'title', locale);
 const fresh = [
   ...decks.map(d => ({ ...title(d.data), added: d.data.added, href: `words/${d.data.key}/`, kind: t.kinds.deck })),
-  ...quizzes.map(q => ({ ...title(q.data), added: q.data.added, href: `quizzes/${q.data.key}/`, kind: q.data.kind === 'test' ? t.kinds.test : t.kinds.quiz })),
+  ...quizzes.map(q => ({ ...title(q.data), added: q.data.added, href: q.data.kind === 'mock' ? `mock/${q.data.key}/` : `quizzes/${q.data.key}/`, kind: t.kinds[q.data.kind] })),
   ...exercises.map(e => ({ ...title(e.data), added: e.data.added, href: `exercises/${e.data.key}/`, kind: t.kinds.exercise })),
 ].sort((a, b) => b.added.localeCompare(a.added)).slice(0, 5);
 

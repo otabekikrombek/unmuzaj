@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import { MOVED } from './src/config/moved.mjs';
 
 // Адрес сайта: собственный домен (Cloudflare DNS → GitHub Pages), с 2026-10-14.
 // Домен задаётся в настройках репозитория (Settings → Pages → Custom domain);
@@ -14,8 +15,9 @@ export default defineConfig({
   trailingSlash: 'always',
   output: 'static',
   // В sitemap — у каждой страницы ссылки на её версии на других языках (xhtml:link hreflang).
+  // Старые адреса переехавших страниц (src/config/moved.mjs) в sitemap не попадают.
   integrations: [sitemap({
-    filter: (p) => !/\/(teacher|me|login|board)\//.test(p),
+    filter: (p) => !/\/(teacher|me|login|board)\//.test(p) && !MOVED.some(m => p.endsWith('/' + m.from)),
     i18n: { defaultLocale: 'ru', locales: { ru: 'ru', uz: 'uz', en: 'en' } },
   })],
   // Языки интерфейса (src/i18n): русский без префикса, /uz/…, /en/…. Страницы — src/pages/[...locale]/.
