@@ -1,12 +1,12 @@
 // Навигация сайта — одно место для шапки, мобильного меню, подвала и «хлебных крошек».
 // Ключи разделов совпадают с t.nav и t.sectionsDesc (src/i18n/ru.ts); арабские названия — SECTION_AR (не переводятся).
-export type SectionKey = 'words' | 'dictionary' | 'conjugation' | 'quizzes' | 'tests' | 'exercises' | 'grammar' | 'texts' | 'courses';
+export type SectionKey = 'words' | 'dictionary' | 'conjugation' | 'quizzes' | 'tests' | 'mock' | 'exercises' | 'grammar' | 'texts' | 'courses';
 export type GroupKey = 'learn' | 'tasks' | 'read' | 'courses';
 
 /** группы меню по смыслу: учить → делать задания → читать → курсы */
 export const NAV: { group: GroupKey; items: { key: SectionKey; href: string }[] }[] = [
   { group: 'learn', items: [{ key: 'words', href: 'words/' }, { key: 'dictionary', href: 'dictionary/' }, { key: 'conjugation', href: 'conjugation/' }] },
-  { group: 'tasks', items: [{ key: 'quizzes', href: 'quizzes/' }, { key: 'tests', href: 'tests/' }, { key: 'exercises', href: 'exercises/' }] },
+  { group: 'tasks', items: [{ key: 'quizzes', href: 'quizzes/' }, { key: 'tests', href: 'tests/' }, { key: 'mock', href: 'mock/' }, { key: 'exercises', href: 'exercises/' }] },
   { group: 'read', items: [{ key: 'grammar', href: 'grammar/' }, { key: 'texts', href: 'texts/' }] },
   { group: 'courses', items: [{ key: 'courses', href: 'courses/' }] },
 ];
@@ -16,6 +16,7 @@ export const SECTION_AR: Record<SectionKey, string> = {
   words: 'الْمُفْرَدَاتُ',
   quizzes: 'الْمُسَابَقَاتُ',
   tests: 'الِاخْتِبَارَاتُ',
+  mock: 'الِاخْتِبَارَاتُ التَّجْرِيبِيَّةُ',
   exercises: 'التَّمَارِينُ',
   grammar: 'النَّحْوُ وَالصَّرْفُ',
   texts: 'النُّصُوصُ',
