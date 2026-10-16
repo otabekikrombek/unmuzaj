@@ -31,7 +31,12 @@ const quizzes = defineCollection({
   schema: z
     .object({
       ...base,
-      kind: z.enum(['quiz', 'test']).default('quiz'),
+      // quiz — викторина, test — тест (раздел «Тесты»), mock — пробный экзамен (раздел «Пробные экзамены», /mock/<key>/)
+      kind: z.enum(['quiz', 'test', 'mock']).default('quiz'),
+      // только для mock: время на весь экзамен, сколько выходов из окна допускается (null — не ограничено), названия тем
+      duration_min: z.number().int().positive().max(240).optional(),
+      max_exits: z.number().int().positive().nullable().default(null),
+      topic_names: z.record(z.string(), z.string()).optional(),
       legacy: z.string().optional(),
       title_ar: z.string().optional(),
       // план: части по порядку и сколько вопросов из каждой берётся
@@ -42,9 +47,10 @@ const quizzes = defineCollection({
       para: z.array(z.object({ label: z.string(), sentences: z.array(z.string()) })).optional(),
       lis: z.array(z.object({ who: z.string(), text: z.string() })).optional(),
       audio: z.string().optional(), // файл записи диалога в public/ (если есть)
-      levels: z.array(z.object({ min: z.number().int(), label: z.string(), label_uz: opt, label_en: opt })),
+      levels: z.array(z.object({ min: z.number().int(), label: z.string(), label_uz: opt, label_en: opt })).default([]), // у mock не используются
       pool: z.array(z.object({
         id: z.number().int(), s: z.string(), q: z.string(), o: z.array(z.string()).min(2), e: z.string().default(''),
+        topic: z.number().int().positive().optional(), // номер темы (у mock — номер мабхаса), название — в topic_names
         // переводы вопроса, вариантов (в том же порядке, первый — правильный) и пояснения
         q_uz: opt, q_en: opt, o_uz: z.array(z.string()).optional(), o_en: z.array(z.string()).optional(), e_uz: opt, e_en: opt,
       })),
@@ -65,6 +71,15 @@ const quizzes = defineCollection({
         const have = q.pool.filter(p => p.s === s).length;
         if (have < n) ctx.addIssue({ code: 'custom', message: `часть ${s}: в плане ${n} вопросов, а в pool только ${have}` });
       }
+      if (q.kind !== 'mock' && !q.levels.length) ctx.addIssue({ code: 'custom', message: 'нет levels (уровней по числу верных ответов)' });
+      if (q.kind === 'mock') {
+        if (!q.duration_min) ctx.addIssue({ code: 'custom', message: 'пробный экзамен: нужно duration_min — минут на весь экзамен' });
+        for (const p of q.pool) {
+          if (p.topic == null) ctx.addIssue({ code: 'custom', message: `вопрос ${p.id}: нет topic (номер темы)` });
+          else if (!q.topic_names?.[String(p.topic)]) ctx.addIssue({ code: 'custom', message: `вопрос ${p.id}: темы ${p.topic} нет в topic_names` });
+          if (p.o.length > 4) ctx.addIssue({ code: 'custom', message: `вопрос ${p.id}: в пробном экзамене не больше 4 вариантов (أ ب ج د)` });
+        }
+      }
     }),
 });
 
@@ -84,7 +99,7 @@ const courses = defineCollection({
     audience_uz: opt,
     audience_en: opt,
     added: z.string(),
-    items: z.array(z.object({ kind: z.enum(['deck', 'quiz', 'test', 'exercise', 'grammar', 'text']), key: z.string(), note: z.string().optional() })),
+    items: z.array(z.object({ kind: z.enum(['deck', 'quiz', 'test', 'mock', 'exercise', 'grammar', 'text']), key: z.string(), note: z.string().optional() })),
   }),
 });
 

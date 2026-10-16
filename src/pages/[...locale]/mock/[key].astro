@@ -1,0 +1,482 @@
+---
+// Пробный экзамен: стартовый экран с правилами → экзамен (общий таймер, режим концентрации) → результаты.
+// Логика — src/lib/mock.ts; состояние экзамена хранится в localStorage, перезагрузка его не сбрасывает.
+import Base from '../../../layouts/Base.astro';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
+import { getCollection } from 'astro:content';
+import { useI18n, withLocales, tf, plural, fmt } from '../../../i18n';
+import { total } from '../../../lib/mock';
+export async function getStaticPaths() {
+  return withLocales((await getCollection('quizzes')).filter(q => q.data.kind === 'mock').map(q => ({ params: { key: q.data.key }, props: { q: q.data } })));
+}
+const { q } = Astro.props;
+const { locale, t, l, intl } = useI18n(Astro.url);
+const T = t.mock;
+const N = total(q);
+const title = tf(q, 'title', locale), description = tf(q, 'description', locale);
+const nq = plural(locale, T.questions, N), nm = plural(locale, T.minutes, q.duration_min!);
+const data = {
+  exam: { key: q.key, plan: q.plan, durationMin: q.duration_min, maxExits: q.max_exits, pool: q.pool.map(p => ({ id: p.id, s: p.s, topic: p.topic, q: p.q, o: p.o })) },
+  topics: q.topic_names, title: title.text, T, Q: { whoPin: t.quiz.whoPin, whoEmail: t.quiz.whoEmail, login: t.quiz.login, saved: t.quiz.saved, pending: t.quiz.pending, offline: t.quiz.offline, relogin: t.quiz.relogin },
+  login: l('login/') + '#class', list: l('mock/'), lang: t.meta.lang, intl,
+};
+const ld = {
+  '@context': 'https://schema.org', '@type': 'Quiz', name: title.text, description: description.text, inLanguage: ['ar', t.meta.lang],
+  educationalLevel: q.level, about: q.topics, numberOfQuestions: N, timeRequired: `PT${q.duration_min}M`, learningResourceType: 'Mock exam',
+  educationalUse: 'assessment', isAccessibleForFree: true, url: new URL(l(`mock/${q.key}/`), Astro.site).href,
+};
+---
+<Base title={title.text} description={`${description.text} ${nq} · ${nm}.`} group="tasks">
+  <!-- экзамен уже идёт (перезагрузка) — шапка и подвал скрываются сразу, до отрисовки -->
+  <script is:inline define:vars={{ KEY: q.key }}>
+    try { if (localStorage.getItem('unmuzaj:mock-active') === KEY) document.documentElement.classList.add('exam-on'); } catch (e) {}
+  </script>
+  <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+  <section class="mkx">
+    <div class="wrap">
+      <div class="mk-top no-print" data-pagefind-ignore><Breadcrumbs title={title.text} titleRu={title.ru} /></div>
+
+      <div id="sStart" class="card">
+        <h1><span lang={title.ru ? 'ru' : undefined}>{title.text}</span>{title.ru && <small class="ru-mark">{t.meta.inRussian}</small>}</h1>
+        {q.title_ar && <p class="har" lang="ar" dir="rtl">{q.title_ar}</p>}
+        <p class="facts"><b>{nq}</b> · <b>{nm}</b></p>
+        <p class="muted"><span lang={description.ru ? 'ru' : undefined}>{description.text}</span></p>
+        <h2>{T.rulesH}</h2>
+        <ul class="rules">
+          <li>{fmt(T.ruleTimer, { m: nm })}</li>
+          <li>{T.ruleNav}</li>
+          <li>{T.ruleFocus}</li>
+          <li>{T.ruleExit}{q.max_exits != null && <> {plural(locale, T.ruleExitMax, q.max_exits)}</>}</li>
+          <li>{T.ruleReload}</li>
+        </ul>
+        <p class="honest">{T.ruleHonest}</p>
+        <p class="who" id="who" aria-live="polite" data-pagefind-ignore></p>
+        <p class="resume" id="resume" hidden data-pagefind-ignore><b>{T.resumeH}.</b> <span id="resumeText"></span></p>
+        <button class="btn go" id="start" type="button" data-pagefind-ignore>{T.start}</button>
+      </div>
+
+      <div id="sExam" hidden data-pagefind-ignore>
+        <div class="bar">
+          <span class="clock" id="clock" role="timer" aria-label={T.timeLeft}></span>
+          <span class="bar-i"><span id="qn"></span><span class="bar-sub" id="ansN"></span><span class="bar-sub" id="exitsN" hidden></span></span>
+          <button class="btn ghost sm" id="finishBtn" type="button">{T.finish}</button>
+        </div>
+        <p class="warn" id="warn" role="status" aria-live="assertive" hidden></p>
+        <div class="qbox">
+          <p class="q" id="qText" lang="ar" dir="rtl"></p>
+          <div class="opts" id="opts" role="group" aria-label={T.options} lang="ar" dir="rtl"></div>
+        </div>
+        <div class="navrow">
+          <button class="btn ghost" id="prev" type="button">{T.prev}</button>
+          <button class="btn ghost" id="markBtn" type="button" aria-pressed="false"><span aria-hidden="true">⚑</span> {T.mark}</button>
+          <button class="btn" id="next" type="button">{T.next}</button>
+        </div>
+        <nav class="pal" aria-labelledby="palH">
+          <h2 class="pal-h" id="palH">{T.palette}</h2>
+          <div class="pal-grid" id="pal"></div>
+          <p class="legend small muted"><span class="lg"><span class="sw ans" aria-hidden="true"></span>{T.legendAnswered}</span> <span class="lg"><span class="sw" aria-hidden="true"></span>{T.legendEmpty}</span> <span class="lg"><span class="sw mk" aria-hidden="true">⚑</span>{T.legendMarked}</span></p>
+        </nav>
+      </div>
+
+      <div id="sRes" hidden data-pagefind-ignore></div>
+    </div>
+  </section>
+
+  <dialog id="dConfirm" aria-labelledby="cH" data-pagefind-ignore>
+    <h2 id="cH">{T.confirmH}</h2>
+    <p id="cText"></p>
+    <p class="muted">{T.confirmNote}</p>
+    <div class="dbtns"><button class="btn ghost" id="cNo" type="button">{T.confirmNo}</button><button class="btn" id="cYes" type="button">{T.confirmYes}</button></div>
+  </dialog>
+  <dialog id="dExit" aria-labelledby="xH" data-pagefind-ignore>
+    <h2 id="xH">{T.exitH}</h2>
+    <p id="xText"></p>
+    <div class="dbtns"><button class="btn" id="xBack" type="button">{T.exitBack}</button></div>
+  </dialog>
+  <noscript data-pagefind-ignore><p class="wrap">{T.noscript}</p></noscript>
+
+  <script type="application/json" id="mk-data" set:html={JSON.stringify(data)} />
+  <script>
+    import { getWho, device, uid } from '../../../lib/api';
+    import { submitAttempt, flushQuizzes, type SendState, type Attempt } from '../../../lib/quizStore';
+    import { esc } from '../../../lib/quizView';
+    import * as M from '../../../lib/mock';
+
+    const D = JSON.parse(document.getElementById('mk-data')!.textContent!);
+    const X: M.MockData = D.exam, T = D.T, Q = D.Q, TOP: Record<string, string> = D.topics || {};
+    const f = (s: string, v: Record<string, unknown>) => s.replace(/\{(\w+)\}/g, (_, k) => String(v[k] ?? ''));
+    const pl = (forms: Record<string, string>, n: number) => { let k = 'other'; try { k = new Intl.PluralRules(D.lang).select(n); } catch {} return f(forms[k] ?? forms.other, { n }); };
+    const $ = <E extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as E;
+    const html = document.documentElement;
+    const N = M.total(X);
+    const dConfirm = $<HTMLDialogElement>('dConfirm'), dExit = $<HTMLDialogElement>('dExit');
+
+    // ---------- кто сдаёт: у каждого свой экзамен на этом устройстве ----------
+    const who = getWho();
+    const owner = who?.kind === 'pin' ? `pin:${who.join}:${who.code}` : who?.kind === 'email' ? `email:${who.email}` : 'guest';
+    const KEY = `unmuzaj:mock:${X.key}:${owner}`, ACTIVE = 'unmuzaj:mock-active';
+    type St = M.MockState & { guest?: boolean };
+    let st: St | null = null;
+    const parse = (v: string | null) => { try { const s = JSON.parse(v || 'null'); return M.valid(s, X) ? (s as St) : null; } catch { return null; } };
+    const save = () => { try { if (st) localStorage.setItem(KEY, JSON.stringify(st)); } catch {} };
+    try { st = parse(localStorage.getItem(KEY)); } catch {}
+
+    $('who').innerHTML = who?.kind === 'pin' ? f(Q.whoPin, { name: esc(who.nickname), cls: esc(who.className) })
+      : who?.kind === 'email' ? f(Q.whoEmail, { name: esc(who.email) }) : `${esc(T.whoGuest)} <a href="${D.login}">${esc(Q.login)}</a>`;
+    const firstFlush = who ? flushQuizzes() : null; // вдруг остались неотправленные попытки
+
+    // ---------- режим концентрации ----------
+    const active = () => !!st && !st.end;
+    const fsEl = () => document.fullscreenElement || (document as any).webkitFullscreenElement;
+    function enterFs() {
+      const el: any = html, req = el.requestFullscreen || el.webkitRequestFullscreen; // на iPhone полноэкранного режима нет
+      if (!req || fsEl()) return;
+      try { req.call(el, { navigationUI: 'hide' })?.catch?.(() => {}); } catch {}
+    }
+    function exitFs() { const d: any = document; try { if (fsEl()) (d.exitFullscreen || d.webkitExitFullscreen).call(d)?.catch?.(() => {}); } catch {} }
+    function focusMode(on: boolean) {
+      html.classList.toggle('exam-on', on);
+      document.body.dataset.noprint = on ? T.noPrint : '';
+      try { if (on) localStorage.setItem(ACTIVE, X.key); else if (localStorage.getItem(ACTIVE) === X.key) localStorage.removeItem(ACTIVE); } catch {}
+    }
+    const block = (e: Event) => { if (active()) e.preventDefault(); };
+    ['copy', 'cut', 'paste', 'contextmenu', 'selectstart', 'dragstart'].forEach(ev => document.addEventListener(ev, block));
+    addEventListener('beforeunload', e => { if (active()) { e.preventDefault(); (e as any).returnValue = ''; } }); // returnValue — для старых Safari
+
+    // ---------- выходы из окна: один уход (вкладка, приложение, выход из полноэкранного режима) — один выход ----------
+    let away = false, grace = 0, graceTimer = 0, wasFs = false;
+    // hide — вкладка скрыта или страница закрыта: считается всегда. blur и выход из полноэкранного режима в первые 1,5 с
+    // после входа в него могут быть ложными (переход экрана) — тогда проверяем ещё раз после паузы.
+    function leave(kind: 'hide' | 'blur' | 'fs') {
+      if (!active() || away) return;
+      const now = Date.now();
+      if (kind !== 'hide' && now < grace) {
+        clearTimeout(graceTimer);
+        graceTimer = window.setTimeout(() => { if (document.hidden || !document.hasFocus() || (wasFs && !fsEl())) leave('hide'); }, grace - now + 50);
+        return;
+      }
+      if (M.left(st!, now) <= 0) return void done('time');
+      away = true; sync();
+      if (M.addExit(st!, X.maxExits)) { save(); return void done('exits'); }
+      save(); showExits();
+      if (!dExit.open) dExit.showModal();
+    }
+    function showExits() {
+      if (!st) return;
+      $('exitsN').hidden = !st.exits; $('exitsN').textContent = `${T.sumExits}: ${st.exits}`;
+      $('xText').textContent = f(T.exitText, { n: st.exits }) + (X.maxExits != null ? ' ' + f(T.exitLimit, { max: X.maxExits }) : '');
+    }
+    // вернулся: окно видно и в фокусе (и снова во весь экран, если он был) — следующий уход посчитается заново
+    function backHere() { loop(); if (!document.hidden && document.hasFocus() && (!wasFs || fsEl()) && !dExit.open) away = false; }
+    document.addEventListener('visibilitychange', () => (document.hidden ? leave('hide') : backHere()));
+    addEventListener('blur', () => leave('blur'));
+    addEventListener('pagehide', () => leave('hide')); // закрыли или перезагрузили страницу (Safari не всегда шлёт visibilitychange)
+    addEventListener('focus', backHere);
+    const onFs = () => { if (fsEl()) { wasFs = true; return; } if (wasFs && active()) leave('fs'); };
+    document.addEventListener('fullscreenchange', onFs);
+    document.addEventListener('webkitfullscreenchange', onFs);
+    dExit.addEventListener('close', () => { grace = Date.now() + 1500; away = false; });
+    $('xBack').addEventListener('click', () => { dExit.close(); if (wasFs) enterFs(); });
+
+    // ---------- таймер: оставшееся время — от отметки начала (Date.now), а не суммой интервалов ----------
+    let timer = 0, lastTick = 0, lastSave = 0, warnTimer = 0;
+    function sync() { if (!st) return; const now = Date.now(); M.tick(st, lastTick || now, now); lastTick = now; }
+    function loop() {
+      if (!active()) return;
+      const now = Date.now(), l = M.left(st!, now);
+      sync();
+      const c = M.clock(l);
+      if ($('clock').textContent !== c) $('clock').textContent = c;
+      $('clock').classList.toggle('low', l <= M.WARN_AT[0]);
+      if (!$('resume').hidden) $('resumeText').textContent = f(T.resumeText, { t: c });
+      const w = M.dueWarning(st!, now);
+      if (w != null) { st!.warned.push(...M.WARN_AT.filter(x => x >= w)); warn(w === M.WARN_AT[0] ? T.warn5 : T.warn1); save(); }
+      if (l <= 0) return void done('time');
+      if (now - lastSave > 5000) { lastSave = now; save(); }
+    }
+    function warn(text: string) {
+      const w = $('warn'); w.textContent = text; w.hidden = false;
+      clearTimeout(warnTimer); warnTimer = window.setTimeout(() => (w.hidden = true), 8000);
+    }
+    const run = () => { clearInterval(timer); timer = window.setInterval(loop, 250); loop(); };
+
+    // ---------- экраны ----------
+    const SCREENS = ['sStart', 'sExam', 'sRes'];
+    const show = (id: string) => { SCREENS.forEach(s => ($(s).hidden = s !== id)); scrollTo(0, 0); };
+
+    function begin() {
+      if (!st || st.end) { st = M.newExam(X, Date.now(), uid() + uid()); st.guest = !who; save(); }
+      focusMode(true); grace = Date.now() + 1500; enterFs();
+      lastTick = Date.now(); show('sExam'); render(); showExits(); run();
+      $('o0')?.focus({ preventScroll: true });
+    }
+    $('start').addEventListener('click', begin);
+
+    function render() {
+      if (!st) return;
+      const v = M.view(st, X, st.cur), picked = st.ans[st.cur];
+      $('qn').textContent = f(T.qOf, { i: st.cur + 1, n: N });
+      $('ansN').textContent = f(T.answered, { a: N - M.unanswered(st), n: N });
+      $('qText').textContent = v.q;
+      $('opts').innerHTML = v.options.map((o, k) => `<button type="button" class="opt" id="o${k}" data-k="${k}" aria-pressed="${picked === k}">` +
+        `<span class="ol" aria-hidden="true">${M.LETTERS[k]}</span><span class="ot">${esc(o)}</span></button>`).join('');
+      $('markBtn').setAttribute('aria-pressed', String(st.marked[st.cur]));
+      $<HTMLButtonElement>('prev').disabled = st.cur === 0;
+      $<HTMLButtonElement>('next').disabled = st.cur === N - 1;
+      $('pal').innerHTML = st.ids.map((_, i) => {
+        const a = st!.ans[i] !== null, m = st!.marked[i];
+        const s = [a ? T.legendAnswered : T.legendEmpty, ...(m ? [T.legendMarked] : [])].join(', ');
+        return `<button type="button" class="pq${a ? ' ans' : ''}${m ? ' mk' : ''}" data-i="${i}" aria-label="${esc(f(T.qState, { n: i + 1, s }))}"${i === st!.cur ? ' aria-current="step"' : ''}>${i + 1}</button>`;
+      }).join('');
+    }
+    function pick(k: number) {
+      if (!active()) return;
+      sync(); M.choose(st!, k); save(); render(); $(`o${k}`)?.focus({ preventScroll: true });
+    }
+    function goTo(i: number) {
+      if (!active() || i < 0 || i >= N) return;
+      sync(); M.go(st!, i); save(); render(); scrollTo(0, 0);
+    }
+    $('opts').addEventListener('click', e => { const b = (e.target as HTMLElement).closest<HTMLElement>('.opt'); if (b) pick(+b.dataset.k!); });
+    $('pal').addEventListener('click', e => { const b = (e.target as HTMLElement).closest<HTMLElement>('.pq'); if (b) goTo(+b.dataset.i!); });
+    $('prev').addEventListener('click', () => st && goTo(st.cur - 1));
+    $('next').addEventListener('click', () => st && goTo(st.cur + 1));
+    $('markBtn').addEventListener('click', () => { if (!active()) return; st!.marked[st!.cur] = !st!.marked[st!.cur]; save(); render(); });
+
+    // клавиши: 1–4 — вариант, ← → — соседний вопрос (по направлению письма страницы); поиск, печать, копирование закрыты
+    const DIGITS: Record<string, number> = { '1': 0, '2': 1, '3': 2, '4': 3, '١': 0, '٢': 1, '٣': 2, '٤': 3 };
+    addEventListener('keydown', e => {
+      if (!active()) return;
+      const k = e.key, mod = e.ctrlKey || e.metaKey;
+      if (k === '/' || (mod && /^[kKлЛpPзЗcCсСxXчЧaAфФsSыЫuUгГ]$/.test(k))) { e.preventDefault(); e.stopPropagation(); return; }
+      if (dConfirm.open || dExit.open || $('sExam').hidden || mod || e.altKey) return;
+      if (k in DIGITS && DIGITS[k] < M.view(st!, X, st!.cur).options.length) { e.preventDefault(); e.stopPropagation(); return pick(DIGITS[k]); }
+      if (k === 'ArrowLeft' || k === 'ArrowRight') {
+        const rtl = getComputedStyle($('sExam')).direction === 'rtl';
+        e.preventDefault(); e.stopPropagation();
+        goTo(st!.cur + ((k === 'ArrowRight') !== rtl ? 1 : -1));
+      }
+    }, true);
+
+    // ---------- сдача ----------
+    $('finishBtn').addEventListener('click', () => {
+      if (!active()) return;
+      const u = M.unanswered(st!);
+      $('cText').textContent = u ? pl(T.confirmEmpty, u) : T.confirmAll;
+      dConfirm.showModal(); $('cNo').focus();
+    });
+    $('cNo').addEventListener('click', () => dConfirm.close());
+    $('cYes').addEventListener('click', () => { dConfirm.close(); done('user'); });
+
+    async function done(reason: M.MockState['reason']) {
+      if (!st || st.end) return;
+      clearInterval(timer); sync();
+      M.finish(st, Date.now(), reason); st.guest = !who; save();
+      [dConfirm, dExit].forEach(d => d.open && d.close());
+      focusMode(false); exitFs();
+      results();
+      if (!who) return netShow('guest');
+      netShow('pending');
+      await firstFlush?.catch(() => {}); // иначе очередь занята отправкой при открытии страницы и попытка ждала бы следующего раза
+      netShow(await submitAttempt(M.attempt(st, X, device()) as Attempt));
+    }
+    function netShow(s: SendState) {
+      const el = document.getElementById('rNet'); if (!el) return;
+      el.innerHTML = s === 'guest' ? esc(T.guestSaved) : esc(Q[s]) + (s === 'relogin' ? ` <a href="${D.login}">${esc(Q.login)}</a>` : '');
+    }
+
+    // ---------- результаты ----------
+    const AR = (s: string) => `<span lang="ar" dir="rtl">${esc(s)}</span>`;
+    const topicName = (n: number) => `<span class="tnum">${esc(f(T.topic, { n }))}</span>${TOP[n] ? ' <span class="tar" lang="ar" dir="rtl">' + esc(TOP[n]) + '</span>' : ''}`;
+    const short = (s: string, max = 70) => { if (s.length <= max) return s; const c = s.slice(0, max); return c.slice(0, Math.max(c.lastIndexOf(' '), 40)) + ' …'; };
+    const opt = (r: M.Row, k: number) => AR(`${M.LETTERS[k]} — ${r.options[k]}`);
+    const small = (s: string) => ` <small lang="${D.lang}" dir="auto">${esc(s)}</small>`;
+    function results() {
+      if (!st) return;
+      const R = M.results(st, X), C = T.cols, TC = T.topicCols;
+      const btns = `<div class="btns no-print"><button class="btn" type="button" data-act="print">${esc(T.print)}</button>` +
+        `<button class="btn ghost" type="button" data-act="again">${esc(T.again)}</button><a class="btn ghost" href="${D.list}">${esc(T.toList)}</a></div>`;
+      const reason = st.reason === 'time' ? T.doneTime : st.reason === 'exits' ? T.doneExits : '';
+      const sum = [[T.sumAnswered, f(T.ofN, { a: R.answered, n: R.total })], [T.sumCorrect, String(R.correct)], [T.sumTime, M.clock(R.timeSec * 1000)], [T.sumExits, String(R.exits)]];
+      const mark = (r: M.Row) => `<span class="mark" aria-hidden="true">${r.ok ? '✓' : '✗'}</span>`;
+      $('sRes').innerHTML = `<div class="card">
+        <h1>${esc(T.resultH)}</h1>
+        <p class="rtitle">${esc(D.title)}</p>
+        <p class="print-only">${esc(f(T.printDate, { d: new Date(st.end!).toLocaleString(D.intl) }))}${who ? ' · ' + esc(who.nickname) : ''}</p>
+        ${reason ? `<p class="reason">${esc(reason)}</p>` : ''}
+        <dl class="sum">${sum.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
+        <p class="net no-print" id="rNet" aria-live="polite"></p>${btns}</div>
+        <h2>${esc(T.tableH)}</h2>
+        <table class="rt"><thead><tr>${[C.n, C.q, C.yours, C.right, C.topic].map(h => `<th scope="col">${esc(h)}</th>`).join('')}</tr></thead><tbody>` +
+        R.rows.map(r => `<tr class="${r.ok ? 'ok' : 'bad'}"><td class="c-no" data-l="${esc(C.n)}">${r.no}</td><td class="c-q" data-l="${esc(C.q)}">${AR(short(r.q))}</td>` +
+          `<td data-l="${esc(C.yours)}">${mark(r)}<span class="sr-only">${esc(r.ok ? T.isOk : T.isBad)}: </span>${r.picked === null ? `<span>${esc(T.noAnswer)}</span>` : opt(r, r.picked)}</td>` +
+          `<td data-l="${esc(C.right)}">${r.ok ? '' : opt(r, r.right)}</td><td class="c-t" data-l="${esc(C.topic)}">${topicName(r.topic)}</td></tr>`).join('') + `</tbody></table>
+        <h2>${esc(T.topicsH)}</h2>
+        <table class="tt"><thead><tr>${[TC.topic, TC.n, TC.ok].map(h => `<th scope="col">${esc(h)}</th>`).join('')}</tr></thead><tbody>` +
+        R.topics.map(x => `<tr><td>${topicName(x.topic)}</td><td class="n">${x.n}</td><td class="n">${x.ok}</td></tr>`).join('') + `</tbody></table>
+        <h2>${esc(T.detailH)}</h2>
+        <ol class="full">` + R.rows.map(r => `<li class="fq ${r.ok ? 'ok' : 'bad'}">
+          <p class="fq-h"><span>${esc(f(T.qOf, { i: r.no, n: R.total }))} · ${topicName(r.topic)}</span><span>${mark(r)}${esc(r.ok ? T.isOk : r.picked === null ? T.noAnswer : T.isBad)}</span></p>
+          <p class="fq-q" lang="ar" dir="rtl">${esc(r.q)}</p>
+          <ul class="fq-o" lang="ar" dir="rtl">${r.options.map((o, k) => {
+            const me = r.picked === k, right = k === r.right && !r.ok;
+            return `<li class="${me ? 'me' : ''}${right ? ' right' : ''}"><span class="ol" aria-hidden="true">${M.LETTERS[k]}</span><span class="ot">${esc(o)}</span>` +
+              (me ? small(T.yourMark) : '') + (right ? small(T.rightMark) : '') + '</li>';
+          }).join('')}</ul></li>`).join('') + `</ol>${btns}`;
+      show('sRes');
+    }
+    $('sRes').addEventListener('click', e => {
+      const a = (e.target as HTMLElement).closest<HTMLElement>('[data-act]')?.dataset.act;
+      if (a === 'print') print();
+      if (a === 'again' && confirm(T.newConfirm)) {
+        try { localStorage.removeItem(KEY); } catch {}
+        st = null; $('resume').hidden = true; $('start').textContent = T.start; show('sStart');
+      }
+    });
+
+    // экзамен открыт в двух вкладках: состояние общее, берём последнее сохранённое
+    addEventListener('storage', e => {
+      if (e.key !== KEY) return;
+      const s = parse(e.newValue);
+      if (!s) return;
+      st = s;
+      if (st.end) { clearInterval(timer); focusMode(false); exitFs(); results(); netShow(st.guest ? 'guest' : 'pending'); }
+      else if (!$('sExam').hidden) { render(); showExits(); }
+    });
+
+    // ---------- открытие страницы: новый экзамен, продолжение или результаты ----------
+    if (st?.end) {
+      results();
+      if (st.guest || !who) netShow('guest');
+      else { netShow('pending'); firstFlush?.then(s => netShow(s)); }
+    } else if (st) {
+      if (M.left(st, Date.now()) <= 0) done('time');
+      else { focusMode(true); lastTick = Date.now(); $('resume').hidden = false; $('start').textContent = T.resume; run(); }
+    } else focusMode(false);
+  </script>
+</Base>
+
+<style>
+  .mkx { padding: 18px 0 40px; }
+  .mkx .wrap { max-width: 860px; display: flex; flex-direction: column; gap: 16px; }
+  .card { background: var(--sheet); border: 1px solid var(--line); border-radius: var(--r-l); padding: 22px; }
+  .card[hidden], #sExam[hidden], #sRes[hidden] { display: none; }
+  h1 { font-size: clamp(1.6rem, 5vw, 2.3rem); margin: 0; }
+  .har { font-family: var(--ar); font-size: calc(clamp(1.5rem, 5vw, 2rem) * var(--ar-scale)); text-align: start; margin: 8px 0 0; line-height: 1.8; }
+  .facts { font-size: 1.15rem; margin: 12px 0 6px; }
+  .rules { padding-inline-start: 1.2em; margin: 0 0 12px; }
+  .rules li { margin: 6px 0; }
+  .honest { border-inline-start: 4px solid var(--gold); background: var(--notice-bg); padding: 10px 14px; border-radius: var(--r-s); font-size: .95rem; }
+  .who { color: var(--ink-soft); }
+  .resume { background: var(--surface-2); padding: 10px 14px; border-radius: var(--r-s); }
+  .go { width: 100%; min-height: 56px; font-size: 1.2rem; }
+  .sm { min-height: 44px; padding: 0 14px; }
+
+  /* экзамен */
+  .bar { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; background: var(--sheet); border: 1px solid var(--line); border-radius: var(--r-m); padding: 8px 10px; box-shadow: var(--shadow); }
+  .clock { font: 800 1.6rem/1 var(--sans); font-variant-numeric: tabular-nums; min-width: 4.2ch; }
+  #finishBtn { padding: 0 10px; font-size: .92rem; }
+  .clock.low { color: var(--bad-ink); }
+  .bar-i { display: flex; flex-direction: column; font-weight: 600; margin-inline-end: auto; font-size: .95rem; min-width: 0; }
+  .bar-i > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #finishBtn { flex: none; }
+  .bar-sub { font-weight: 400; font-size: .85rem; color: var(--ink-soft); }
+  .warn { margin: 0; border-inline-start: 4px solid var(--gold); background: var(--notice-bg); color: var(--ink); padding: 10px 14px; border-radius: var(--r-s); font-weight: 700; }
+  .warn[hidden], .bar-sub[hidden] { display: none; }
+  .qbox { background: var(--sheet); border: 1px solid var(--line); border-radius: var(--r-l); padding: 18px 16px 20px; }
+  .q { font-family: var(--ar); font-size: calc(clamp(26px, 1.2rem + 1.4vw, 36px) * var(--ar-scale)); line-height: 2; margin: 0; padding-block: .15em; text-align: start; overflow-wrap: anywhere; }
+  .opts { display: flex; flex-direction: column; gap: 10px; margin-block-start: 16px; }
+  .opts :global(.opt) { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 56px; padding: 6px 14px; border: 2px solid var(--line-strong); border-radius: var(--r-m);
+    background: var(--sheet); color: var(--ink); font-family: var(--ar); font-size: calc(clamp(22px, 1.1rem + .9vw, 30px) * var(--ar-scale)); line-height: 1.9; text-align: start; cursor: pointer; overflow-wrap: anywhere; }
+  @media (hover: hover) { .opts :global(.opt:hover) { background: var(--hover); } } /* на телефоне :hover «залипает» после нажатия */
+  .opts :global(.opt[aria-pressed='true']) { border-color: var(--accent); background: var(--surface-2); box-shadow: inset 0 0 0 2px var(--accent); }
+  .opts :global(.ol), .fq-o :global(.ol) { flex: none; display: inline-grid; place-items: center; width: 1.7em; height: 1.7em; border-radius: 50%; border: 2px solid var(--line-strong); font-size: .8em; line-height: 1; }
+  .opts :global(.opt[aria-pressed='true'] .ol) { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .opts :global(.ot) { padding-block: .1em; }
+  .navrow { display: grid; grid-template-columns: 1fr auto 1fr; gap: 10px; }
+  .navrow .btn { min-height: 48px; }
+  #markBtn[aria-pressed='true'] { background: var(--surface-2); box-shadow: inset 0 0 0 2px var(--accent); }
+  .pal { background: var(--sheet); border: 1px solid var(--line); border-radius: var(--r-m); padding: 12px; }
+  .pal-h { font-size: 1rem; margin: 0 0 8px; font-family: var(--sans); }
+  .pal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); gap: 6px; }
+  .pal-grid :global(.pq) { position: relative; min-height: 44px; border: 2px solid var(--line-strong); background: var(--sheet); color: var(--ink); border-radius: var(--r-s); font: 600 1rem var(--sans); cursor: pointer; }
+  .pal-grid :global(.pq.ans) { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .pal-grid :global(.pq.mk) { border-style: dashed; border-width: 3px; }
+  .pal-grid :global(.pq.mk)::after { content: '⚑'; position: absolute; inset-block-start: 0; inset-inline-end: 3px; font-size: .7rem; line-height: 1.2; }
+  .pal-grid :global(.pq[aria-current]) { outline: 3px solid var(--focus); outline-offset: 2px; }
+  .legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; margin: 10px 0 0; }
+  .lg { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .sw { display: inline-block; flex: none; box-sizing: border-box; width: 18px; height: 18px; border: 2px solid var(--line-strong); border-radius: 4px; background: var(--sheet); color: var(--ink); font: 400 10px/14px var(--sans); text-align: center; overflow: hidden; }
+  .sw.ans { background: var(--accent); border-color: var(--accent); }
+  .sw.mk { border-style: dashed; }
+  dialog { border: 1px solid var(--line); border-radius: var(--r-l); padding: 20px; width: min(520px, 94vw); box-shadow: var(--shadow); }
+  dialog::backdrop { background: rgba(5, 15, 25, .72); }
+  dialog h2 { font-size: 1.35rem; }
+  .dbtns { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; }
+  @media (max-width: 480px) { .navrow { grid-template-columns: 1fr 1fr; } #markBtn { grid-column: 1 / -1; grid-row: 2; } .card { padding: 16px; } .clock { font-size: 1.35rem; min-width: 3.6ch; } }
+
+  /* режим концентрации: только экзамен, без шапки, меню, поиска, крошек и подвала */
+  :global(html.exam-on .site-head), :global(html.exam-on .site-foot), :global(html.exam-on .skip), :global(html.exam-on) .mk-top { display: none !important; }
+  :global(html.exam-on) .mkx { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+  :global(html.exam-on body) { background: var(--paper); }
+  :global(html.exam-on) { overscroll-behavior-y: contain; } /* без «потяните, чтобы обновить» на телефоне */
+
+  /* результаты */
+  #sRes :global(h2) { margin: 10px 0 4px; }
+  #sRes :global(.rtitle) { color: var(--ink-soft); margin: 4px 0 10px; }
+  #sRes :global(.reason) { font-weight: 700; }
+  #sRes :global(.sum) { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 12px 0; }
+  #sRes :global(.sum div) { background: var(--surface-2); border-radius: var(--r-m); padding: 10px 12px; }
+  #sRes :global(.sum dt) { font-size: .9rem; color: var(--ink-soft); }
+  #sRes :global(.sum dd) { margin: 2px 0 0; font: 800 1.6rem var(--sans); font-variant-numeric: tabular-nums; }
+  #sRes :global(.btns) { display: flex; flex-wrap: wrap; gap: 10px; }
+  #sRes :global(table) { width: 100%; border-collapse: collapse; background: var(--sheet); }
+  #sRes :global(th), #sRes :global(td) { border-block-end: 1px solid var(--line); padding: 8px; text-align: start; vertical-align: top; }
+  #sRes :global(th) { font-size: .9rem; color: var(--ink-soft); }
+  #sRes :global(td [lang='ar']) { font-size: calc(1.2em * var(--ar-scale)); line-height: 1.9; }
+  #sRes :global(td .tar) { display: block; }
+  #sRes :global(.tnum) { white-space: nowrap; }
+  #sRes :global(td.n) { font-variant-numeric: tabular-nums; }
+  #sRes :global(.mark) { font-weight: 800; margin-inline-end: 6px; }
+  #sRes :global(tr.ok .mark), #sRes :global(.fq.ok .mark) { color: var(--ok); }
+  #sRes :global(tr.bad .mark), #sRes :global(.fq.bad .mark) { color: var(--bad-ink); }
+  #sRes :global(.full) { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+  #sRes :global(.fq) { background: var(--sheet); border: 1px solid var(--line); border-radius: var(--r-m); padding: 12px 14px; break-inside: avoid; }
+  #sRes :global(.fq-h) { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; font-size: .92rem; color: var(--ink-soft); margin: 0; }
+  #sRes :global(.fq-q) { font-family: var(--ar); font-size: calc(clamp(22px, 1.1rem + 1vw, 30px) * var(--ar-scale)); line-height: 2; margin: 6px 0; text-align: start; }
+  #sRes :global(.fq-o) { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+  #sRes :global(.fq-o li) { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 12px; border: 2px solid var(--line); border-radius: var(--r-s); padding: 4px 10px; font-size: calc(1.3rem * var(--ar-scale)); line-height: 1.9; }
+  #sRes :global(.fq-o li.me) { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+  #sRes :global(.fq-o li.right) { border-color: var(--ok); border-style: dashed; }
+  #sRes :global(.fq-o small) { font-family: var(--sans); font-size: .8rem; color: var(--ink-soft); }
+  #sRes :global(.print-only) { display: none; }
+  /* телефон: строка таблицы — компактный блок «№ · вопрос · ваш ответ · правильный · тема» */
+  @media (max-width: 700px) {
+    #sRes :global(.rt thead) { display: none; }
+    #sRes :global(.rt), #sRes :global(.rt tbody), #sRes :global(.rt tr), #sRes :global(.rt td) { display: block; }
+    #sRes :global(.rt tr) { border-block-end: 2px solid var(--line-strong); padding: 8px 2px; }
+    #sRes :global(.rt td) { border: 0; padding: 1px 0; }
+    #sRes :global(.rt td::before) { content: attr(data-l) ': '; font-size: .85rem; color: var(--ink-soft); }
+    #sRes :global(.rt td.c-no) { font-weight: 700; }
+    #sRes :global(.rt td.c-no::before) { content: attr(data-l) ' '; }
+    #sRes :global(.rt td.c-q::before), #sRes :global(.rt td.c-t::before) { content: none; }
+    #sRes :global(.rt td.c-t) { font-size: .9rem; color: var(--ink-soft); }
+    #sRes :global(.rt td:empty) { display: none; }
+  }
+
+  /* печать: результаты — аккуратно, без меню и кнопок; во время экзамена — ничего */
+  @media print {
+    :global(.site-head), :global(.site-foot), :global(.skip), .no-print, #sRes :global(.no-print) { display: none !important; }
+    .mkx { padding: 0; }
+    .card, #sRes :global(.fq), #sRes :global(table) { border-color: #999; box-shadow: none; }
+    #sRes :global(.print-only) { display: block; }
+    #sRes :global(.sum div) { background: none; border: 1px solid #999; }
+    #sRes :global(tr) { break-inside: avoid; }
+    :global(html.exam-on body > *) { display: none !important; }
+    :global(html.exam-on body)::after { content: attr(data-noprint); display: block; padding: 2em; font: 1.2rem var(--sans); }
+  }
+  @media print and (max-width: 700px) {
+    #sRes :global(.rt) { display: table; } #sRes :global(.rt thead) { display: table-header-group; } #sRes :global(.rt tbody) { display: table-row-group; }
+    #sRes :global(.rt tr) { display: table-row; } #sRes :global(.rt td) { display: table-cell; } #sRes :global(.rt td::before) { content: none !important; }
+  }
+</style>

@@ -40,6 +40,9 @@ jobs:
       - name: Строки интерфейса (ru / uz / en)
         run: npm run test:i18n
 
+      - name: Пробный экзамен — выборка, перемешивание, время (tests/mock.mjs)
+        run: npm run test:mock
+
       - name: Сборка
         run: npm run build
 

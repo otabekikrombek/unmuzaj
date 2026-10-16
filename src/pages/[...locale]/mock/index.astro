@@ -1,0 +1,22 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PageHead from '../../../components/PageHead.astro';
+import ItemList from '../../../components/ItemList.astro';
+import Soon from '../../../components/Soon.astro';
+import { getCollection } from 'astro:content';
+import { SECTION_AR } from '../../../config/nav';
+import { useI18n, localeParams, tf, fmt, plural } from '../../../i18n';
+import { total } from '../../../lib/mock';
+export const getStaticPaths = localeParams;
+const { locale, t } = useI18n(Astro.url);
+const T = t.mock;
+const q = (await getCollection('quizzes')).filter(x => x.data.kind === 'mock').sort((a, b) => b.data.added.localeCompare(a.data.added));
+---
+<Base title={t.nav.mock} description={t.pages.mock.desc}>
+  <PageHead title={t.nav.mock} ar={SECTION_AR.mock} lead={t.pages.mock.lead} />
+  <div class="wrap">
+    {q.length ? <ItemList items={q.map(x => { const ti = tf(x.data, 'title', locale), de = tf(x.data, 'description', locale);
+      const meta = fmt(T.meta, { q: plural(locale, T.questions, total(x.data)), m: plural(locale, T.minutes, x.data.duration_min!) });
+      return { title: ti.text, href: `mock/${x.data.key}/`, side: x.data.level, meta: `${meta}. ${de.text}`, ru: ti.ru || de.ru }; })} /> : <Soon />}
+  </div>
+</Base>

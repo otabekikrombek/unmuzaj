@@ -4,4 +4,12 @@
 # Правила «Правил Allimni 2.0» (CLAUDE.md, п. 3): любой изменённый адрес — 301 сразу на окончательный адрес
 # (без цепочек), плюс обновить sitemap и canonical. Не забыть версии /uz/… и /en/….
 # Лимиты: 2000 статических и 100 динамических правил, строка до 1000 символов; верхнее правило важнее нижнего.
-# Сейчас ни один адрес не менялся — правил нет.
+# Список переездов — src/config/moved.mjs (там же — страница-переадресация для GitHub Pages); строки ниже должны с ним совпадать.
+
+# 2026-10-16: пробный экзамен At-Tanāl переехал в раздел «Пробные экзамены»
+/quizzes/tanal-nahw/     /mock/tanal-nahw/     301
+/quizzes/tanal-nahw      /mock/tanal-nahw/     301
+/uz/quizzes/tanal-nahw/  /uz/mock/tanal-nahw/  301
+/uz/quizzes/tanal-nahw   /uz/mock/tanal-nahw/  301
+/en/quizzes/tanal-nahw/  /en/mock/tanal-nahw/  301
+/en/quizzes/tanal-nahw   /en/mock/tanal-nahw/  301

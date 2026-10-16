@@ -449,6 +449,14 @@ create table card_tests (id uuid primary key, learner_id int, deck text, correct
 - Слияние с `main` (спряжение, allimni.net, Allimni): раздел «Спряжение» — тоже на трёх языках (`src/pages/[...locale]/conjugation/`). Подписи таблицы берутся из словаря страницы: `renderConjugation(forms, { …, C: t.conj })`; арабские подписи (названия времён и типов, образцы يَفْعَلُ) — константа `CONJ_AR` в `src/lib/conjugation.ts`. Перевод глагола — необязательные поля `uz` / `en` рядом с `ru` в `src/data/verbs.json` (пока только `ru` → «(rus tilida)»); заметки для преподавателя (`doubt_note`) — по-русски. Узбекские термины спряжения (bob, maʼlum/majhul nisbat, marfuʼ/mansub/majzum, salim/mahmuz/misol/ajvaf/noqis/muzoaf/lafif, muz./muan.) вынесены в вопросы `docs/uz_tekshirish.md`.
 
 
+**2026-10-16 — раздел «Пробные экзамены» (`/mock/`):**
+- Пробный экзамен — файл в `src/content/quizzes/` с `"kind": "mock"`: `duration_min` (минут на весь экзамен), `max_exits` (`null` — выходы только считаются), `topic_names`, у вопросов `topic`. Первый — `tanal-nahw` (At-Tanāl, нахв, 400 вопросов, 30 случайных, 30 минут). Формат — «Пробный экзамен» в `SCHEMA.md`.
+- Страницы `/mock/` и `/mock/<key>/` на трёх языках (`src/pages/[...locale]/mock/`), логика — чистые функции `src/lib/mock.ts`; движок викторин не менялся. Без очков, уровней, звуков и подсказок; один таймер от отметки начала; вопросы и варианты перемешаны (`crypto.getRandomValues`), варианты подписаны أ ب ج د; «Назад / Далее», панель номеров, «Отметить», клавиши 1–4 и ← →; состояние — в `localStorage['unmuzaj:mock:<key>:<кто>']`, перезагрузка ничего не сбрасывает.
+- Режим концентрации: шапка, меню, поиск, крошки и подвал скрыты, полный экран (где можно); выделение, копирование, контекстное меню и печать закрыты; выход из окна (скрытие вкладки, `blur`, выход из полноэкранного режима, закрытие страницы) — предупреждение и счётчик. Честно: это сдерживание и учёт, а не прокторинг.
+- Сохранение — тем же `quiz_submit` (`points = 0`, уровень пустой) + `supabase/migrations/0003_mock_exits.sql` (`quiz_attempts.exits`). В панели учителя и «Моём прогрессе» у mock вместо «очки / уровень» — «выходы из окна»; табло и рейтинга у mock нет.
+- Старый адрес `/quizzes/tanal-nahw/` — страница-переадресация (GitHub Pages не умеет 301): список переездов `src/config/moved.mjs`, страница `src/pages/[...locale]/quizzes/[moved].astro`, правила 301 для Cloudflare — `public/_redirects`.
+- Тесты: `npm run test:mock` (в CI), `tests/e2e/mock.py`, `supabase/tests/30_mock_test.sql`; страницы раздела добавлены в `design.py` и `i18n.py`.
+
 **Временно:** упражнения открывают прежние страницы из `public/v1/` (этап 5). Старые страницы викторин `public/v1/viktorina_*.html` оставлены как запасной вариант, на них нет ссылок; удалить после проверки на занятии.
 
 **Решения этапа 4:**

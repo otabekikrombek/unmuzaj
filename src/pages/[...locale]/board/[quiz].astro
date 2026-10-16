@@ -4,7 +4,8 @@ import Base from '../../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
 import { useI18n, withLocales, tf } from '../../../i18n';
 export async function getStaticPaths() {
-  return withLocales((await getCollection('quizzes')).map(q => ({ params: { quiz: q.data.key }, props: { q: q.data } })));
+  // у пробных экзаменов нет табло и рейтинга
+  return withLocales((await getCollection('quizzes')).filter(q => q.data.kind !== 'mock').map(q => ({ params: { quiz: q.data.key }, props: { q: q.data } })));
 }
 const { q } = Astro.props;
 const { locale, t, l, intl } = useI18n(Astro.url);
