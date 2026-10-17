@@ -7,8 +7,10 @@ from playwright.sync_api import sync_playwright
 B = 'http://localhost:4322/'
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 KEY = 'tanal-nahw'
+PATH = 'tanal/nahw'  # адрес «книга/предмет»: /mock/tanal/nahw/
 SKEY = f'unmuzaj:mock:{KEY}:guest'
-POOL = {p['id']: p for p in json.load(open(os.path.join(ROOT, 'src/content/quizzes', KEY + '.json'), encoding='utf-8'))['pool']}
+DATA = json.load(open(os.path.join(ROOT, 'src/content/quizzes', KEY + '.json'), encoding='utf-8'))
+POOL = {p['id']: p for p in DATA['pool']}
 LETTERS = ['أ', 'ب', 'ج', 'د']
 errs, fails = [], []
 def check(name, cond, info=''):
@@ -32,7 +34,7 @@ def status(url):
     except Exception: return 0
 def away_and_back(pg, change):
     """уйти со страницы экзамена (она сохраняет состояние), изменить состояние «вне» её и вернуться"""
-    pg.goto(B + 'about/'); st = state(pg); change(st); set_state(pg, st); pg.goto(B + f'mock/{KEY}/'); pg.wait_for_load_state('networkidle')
+    pg.goto(B + 'about/'); st = state(pg); change(st); set_state(pg, st); pg.goto(B + f'mock/{PATH}/'); pg.wait_for_load_state('networkidle')
 def answer(pg, mode):
     """ответить на текущий вопрос: 'right' — правильный, 'wrong' — неверный, None — пропустить"""
     st = state(pg); i = st['cur']; perm = st['perm'][i]
@@ -48,7 +50,7 @@ with sync_playwright() as p:
     ctx = b.new_context(**phone); pg = page(ctx)
     pg.goto(B + 'mock/'); pg.wait_for_load_state('networkidle')
     check('/mock/: заголовок раздела', 'Пробные экзамены' in pg.inner_text('h1'))
-    check('/mock/: экзамен в списке', pg.locator(f'a[href="/mock/{KEY}/"]').count() == 1)
+    check('/mock/: экзамен в списке', pg.locator(f'a[href="/mock/{PATH}/"]').count() == 1)
     check('/mock/: арабское название раздела', 'الِاخْتِبَارَاتُ التَّجْرِيبِيَّةُ' in pg.inner_text('.page-head'))
     check('/mock/: 360 px без прокрутки', noscroll(pg))
     check('меню «Задания»: пункт «Пробные экзамены»', pg.locator('#g-tasks a[href="/mock/"]').count() == 1)
@@ -58,10 +60,14 @@ with sync_playwright() as p:
     check('табло для экзамена не собирается', status(B + f'board/{KEY}/') == 404)
 
     # 2. стартовый экран
-    pg.goto(B + f'mock/{KEY}/')
+    pg.goto(B + f'mock/{PATH}/')
     txt = pg.inner_text('#sStart')
     check('старт: 30 вопросов · 30 минут', '30 вопросов' in txt and '30 минут' in txt, txt[:200])
     check('старт: правила и честная оговорка', 'Выход из окна' in txt and 'не может полностью запретить' in txt)
+    if DATA.get('book'):
+        bk = pg.inner_text('#sStart .book')
+        check('старт: источник — книга, издатель, депозит', DATA['book']['title'] in bk and DATA['book']['publisher'] in bk and DATA['book']['deposit'] in bk and all(x in bk for x in DATA['book'].get('authors', [])), bk)
+    else: print('SKIP источник: в данных нет поля book')
     check('старт: гость — результат только на устройстве', 'гость' in pg.inner_text('#who'))
     check('старт: шапка сайта видна', visible(pg, 'header.site-head'))
     check('старт: 360 px без прокрутки', noscroll(pg))
@@ -199,8 +205,8 @@ with sync_playwright() as p:
     ctx = b.new_context(**phone); pg = page(ctx)
     def lim(r):
         resp = r.fetch(); r.fulfill(response=resp, body=resp.text().replace('"maxExits":null', '"maxExits":1'))
-    ctx.route(f'**/mock/{KEY}/', lim)
-    pg.goto(B + f'mock/{KEY}/')
+    ctx.route(f'**/mock/{PATH}/', lim)
+    pg.goto(B + f'mock/{PATH}/')
     pg.click('#start'); pg.wait_for_selector('#o0'); pg.wait_for_timeout(1700)
     pg.evaluate("window.dispatchEvent(new Event('blur'))"); pg.click('#xBack'); pg.wait_for_timeout(1700)
     check('предел 1: после 1-го выхода экзамен идёт', visible(pg, '#sExam'))
@@ -211,7 +217,7 @@ with sync_playwright() as p:
     # 5. языки: интерфейс на языке страницы, арабское не переводится
     for loc, words in [('uz', ['Imtihonni boshlash', 'Savol 1/30', 'Yakunlash']), ('en', ['Start the exam', 'Question 1 of 30', 'Finish'])]:
         ctx = b.new_context(**phone); pg = page(ctx)
-        pg.goto(B + f'{loc}/mock/{KEY}/')
+        pg.goto(B + f'{loc}/mock/{PATH}/')
         check(f'{loc}: lang и кнопка', pg.evaluate('document.documentElement.lang') == loc and words[0] in pg.inner_text('#start'))
         pg.click('#start'); pg.wait_for_selector('#o0')
         ex = pg.inner_text('#sExam')
@@ -219,25 +225,25 @@ with sync_playwright() as p:
         check(f'{loc}: нет кириллицы в экзамене', not re.search('[А-Яа-яЁё]', ex))
         check(f'{loc}: 360 px без прокрутки', noscroll(pg))
         pg.click('#finishBtn'); pg.click('#cYes'); pg.wait_for_selector('#sRes .sum')
-        check(f'{loc}: результаты без кириллицы', not re.search('[А-Яа-яЁё]', pg.inner_text('#sRes')))
+        check(f'{loc}: результаты без кириллицы', not re.search('[А-Яа-яЁё]', pg.evaluate("(() => { const c = document.getElementById('sRes').cloneNode(true); c.querySelectorAll('.rsrc').forEach(x => x.remove()); return c.innerText; })()")))  # строка источника — имена как в данных
         ctx.close()
 
     # 6. старый адрес /quizzes/tanal-nahw/ → /mock/tanal-nahw/ (с параметрами и якорем), на всех языках
     ctx = b.new_context(**phone); pg = page(ctx)
-    for loc in ['', 'uz/', 'en/']:
-        pg.goto(B + f'{loc}quizzes/{KEY}/?from=old#top'); pg.wait_for_url(f'**/{loc}mock/{KEY}/?from=old#top', timeout=5000)
-        check(f'переадресация /{loc}quizzes/{KEY}/', pg.url == B + f'{loc}mock/{KEY}/?from=old#top', pg.url)
-        html = urllib.request.urlopen(B + f'{loc}quizzes/{KEY}/').read().decode()
-        check(f'страница-переадресация /{loc}: noindex, canonical, refresh, без hreflang',
-              'name="robots" content="noindex"' in html and f'rel="canonical" href="https://allimni.net/{loc}mock/{KEY}/"' in html
-              and f'url=/{loc}mock/{KEY}/' in html and 'hreflang' not in html)
+    for loc, old in [(l, o) for l in ['', 'uz/', 'en/'] for o in ['quizzes', 'mock']]:
+        pg.goto(B + f'{loc}{old}/{KEY}/?from=old#top'); pg.wait_for_url(f'**/{loc}mock/{PATH}/?from=old#top', timeout=5000)
+        check(f'переадресация /{loc}{old}/{KEY}/', pg.url == B + f'{loc}mock/{PATH}/?from=old#top', pg.url)
+        html = urllib.request.urlopen(B + f'{loc}{old}/{KEY}/').read().decode()
+        check(f'страница-переадресация /{loc}{old}/: noindex, canonical, refresh, без hreflang',
+              'name="robots" content="noindex"' in html and f'rel="canonical" href="https://allimni.net/{loc}mock/{PATH}/"' in html
+              and f'url=/{loc}mock/{PATH}/' in html and 'hreflang' not in html)
     ctx.close()
     ctx = b.new_context(**phone, java_script_enabled=False); pg = ctx.new_page()
-    pg.goto(B + f'quizzes/{KEY}/'); pg.wait_for_url(f'**/mock/{KEY}/', timeout=5000)
-    check('без JavaScript — переадресация через meta refresh', pg.url == B + f'mock/{KEY}/', pg.url)
+    pg.goto(B + f'quizzes/{KEY}/'); pg.wait_for_url(f'**/mock/{PATH}/', timeout=5000)
+    check('без JavaScript — переадресация через meta refresh', pg.url == B + f'mock/{PATH}/', pg.url)
     ctx.close()
     sm = urllib.request.urlopen(B + 'sitemap-0.xml').read().decode()
-    check('sitemap: старого адреса нет, новый есть', f'quizzes/{KEY}/' not in sm and f'/mock/{KEY}/' in sm and f'/uz/mock/{KEY}/' in sm)
+    check('sitemap: старого адреса нет, новый есть', f'quizzes/{KEY}/' not in sm and f'mock/{KEY}/' not in sm and f'/mock/{PATH}/' in sm and f'/uz/mock/{PATH}/' in sm)
     moved = re.findall(r"from: '([^']+)', to: '([^']+)'", open(os.path.join(ROOT, 'src/config/moved.mjs'), encoding='utf-8').read())
     rules = {tuple(l.split()[:3]) for l in open(os.path.join(ROOT, 'public/_redirects'), encoding='utf-8') if l.strip() and not l.startswith('#')}
     need = {(f'/{loc}{a}', f'/{loc}{b_}', '301') for a, b_ in moved for loc in ['', 'uz/', 'en/']}
@@ -255,7 +261,7 @@ with sync_playwright() as p:
         join = SQL("select join_code from classes where name='Группа экзамена' order by id desc limit 1")
         sc = b.new_context(**phone); s = page(sc)
         s.goto(B + 'login/'); s.fill('#join', join); s.fill('#code', '1'); s.fill('#pin', pins['01']); s.click('#fClass button'); s.wait_for_url('**/words/')
-        s.goto(B + f'mock/{KEY}/'); check('ученик: «результат сохранится»', 'сохранится' in s.inner_text('#who'))
+        s.goto(B + f'mock/{PATH}/'); check('ученик: «результат сохранится»', 'сохранится' in s.inner_text('#who'))
         s.click('#start'); s.wait_for_selector('#o0'); s.wait_for_timeout(1700)
         okn = 0
         for i in range(30):
@@ -268,7 +274,7 @@ with sync_playwright() as p:
         check('база: points 0, верно, всего, уровень пустой, выходы 1', row == f'0|{okn}|30||1', row)
         check('база: 30 ответов', SQL(f"select count(*) from quiz_answers a join quiz_attempts q on q.id = a.attempt_id where q.quiz = '{KEY}' and q.created_at > now() - interval '5 minutes'") == '30')
         s.goto(B + 'me/'); s.wait_for_selector('.qlist')
-        check('/me: выходы из окна вместо очков', 'выходов из окна: 1' in s.inner_text('.qlist') and f'/mock/{KEY}/' in s.inner_html('.qlist'))
+        check('/me: выходы из окна вместо очков', 'выходов из окна: 1' in s.inner_text('.qlist') and f'/mock/{PATH}/' in s.inner_html('.qlist'))
         t.goto(B + 'teacher/'); t.wait_for_selector('#report .kpis'); t.click('[data-tab=quizzes]'); t.select_option('#qzSel', KEY); t.wait_for_timeout(300)
         rep = t.inner_text('#qzRep')
         check('учитель: столбец «выходы из окна», без очков', 'Выходы из окна' in rep and 'Очки' not in rep, rep[:300])

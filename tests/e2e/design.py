@@ -12,7 +12,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 AXE = os.path.join(ROOT, 'node_modules', 'axe-core', 'axe.min.js')
 OUT = os.path.join(ROOT, 'test-results', 'design'); os.makedirs(OUT, exist_ok=True)
 QUICK = '--quick' in sys.argv
-PAGES = ['', 'words/', 'words/w100/', 'dictionary/', 'conjugation/', 'conjugation/kataba/', 'conjugation/jalasa/', 'quizzes/', 'quizzes/matn-10/', 'quizzes/mock-ekzamen/', 'tests/', 'mock/', 'mock/tanal-nahw/', 'exercises/',
+PAGES = ['', 'words/', 'words/w100/', 'dictionary/', 'conjugation/', 'conjugation/kataba/', 'conjugation/jalasa/', 'quizzes/', 'quizzes/matn-10/', 'quizzes/mock-ekzamen/', 'tests/', 'mock/', 'mock/tanal/nahw/', 'exercises/',
          'exercises/predlogi/', 'grammar/', 'texts/', 'courses/', 'courses/tsu-2-sem1/', 'login/', 'me/', 'teacher/', 'about/', 'privacy/',
          'board/matn-10/?class=XXXXXX', '404.html']
 PALETTES = ['turquoise', 'lapis', 'parchment', 'contrast']
@@ -63,7 +63,7 @@ with sync_playwright() as p:
                 pg.goto(B + 'words/w100/'); pg.click('[data-tab=test]'); pg.wait_for_selector('.opt')
                 total += axe(pg, f'тест карточек [{pal}/{mode}/{w}]')
                 # пробный экзамен: вопрос с выбранным вариантом и отметкой, затем результаты
-                pg.goto(B + 'mock/tanal-nahw/'); pg.click('#start'); pg.wait_for_selector('#o0'); pg.click('#o1'); pg.click('#markBtn'); pg.click('#next')
+                pg.goto(B + 'mock/tanal/nahw/'); pg.click('#start'); pg.wait_for_selector('#o0'); pg.click('#o1'); pg.click('#markBtn'); pg.click('#next')
                 total += axe(pg, f'вопрос пробного экзамена [{pal}/{mode}/{w}]'); check(f'пробный экзамен без прокрутки [{pal}/{mode}/{w}]', noscroll(pg))
                 if w == 360: pg.screenshot(path=os.path.join(OUT, f'mock-question_{pal}_{mode}_{w}.png'))
                 pg.click('#finishBtn'); pg.click('#cYes'); pg.wait_for_selector('#sRes .sum')

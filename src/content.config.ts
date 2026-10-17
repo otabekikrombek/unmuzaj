@@ -37,6 +37,15 @@ const quizzes = defineCollection({
       duration_min: z.number().int().positive().max(240).optional(),
       max_exits: z.number().int().positive().nullable().default(null),
       topic_names: z.record(z.string(), z.string()).optional(),
+      // адрес пробного экзамена «книга/предмет»: tanal/nahw → /mock/tanal/nahw/ (латиницей; после публикации не менять)
+      path: z.string().regex(/^[a-z0-9-]+(\/[a-z0-9-]+)*$/).optional(),
+      // книга, по которой составлены вопросы: показывается на странице экзамена и в результатах
+      // place — по-русски, place_uz / place_en — переводы; авторы — только если указаны в книге (не придумывать)
+      book: z.object({
+        title: z.string(), title_short: opt, title_ar: opt, authors: z.array(z.string()).optional(),
+        publisher: opt, publisher_ar: opt, place: opt, place_uz: opt, place_en: opt, year: opt, deposit: opt,
+        part_ar: opt, chapters: opt,
+      }).optional(),
       legacy: z.string().optional(),
       title_ar: z.string().optional(),
       // план: части по порядку и сколько вопросов из каждой берётся

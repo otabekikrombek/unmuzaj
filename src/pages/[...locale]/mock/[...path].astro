@@ -5,25 +5,29 @@ import Base from '../../../layouts/Base.astro';
 import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 import { getCollection } from 'astro:content';
 import { useI18n, withLocales, tf, plural, fmt } from '../../../i18n';
-import { total } from '../../../lib/mock';
+import { total, mockHref } from '../../../lib/mock';
 export async function getStaticPaths() {
-  return withLocales((await getCollection('quizzes')).filter(q => q.data.kind === 'mock').map(q => ({ params: { key: q.data.key }, props: { q: q.data } })));
+  return withLocales((await getCollection('quizzes')).filter(q => q.data.kind === 'mock').map(q => ({ params: { path: q.data.path ?? q.data.key }, props: { q: q.data } })));
 }
 const { q } = Astro.props;
 const { locale, t, l, intl } = useI18n(Astro.url);
 const T = t.mock;
 const N = total(q);
 const title = tf(q, 'title', locale), description = tf(q, 'description', locale);
+const place = tf(q.book ?? {}, 'place', locale);
 const nq = plural(locale, T.questions, N), nm = plural(locale, T.minutes, q.duration_min!);
 const data = {
   exam: { key: q.key, plan: q.plan, durationMin: q.duration_min, maxExits: q.max_exits, pool: q.pool.map(p => ({ id: p.id, s: p.s, topic: p.topic, q: p.q, o: p.o })) },
   topics: q.topic_names, title: title.text, T, Q: { whoPin: t.quiz.whoPin, whoEmail: t.quiz.whoEmail, login: t.quiz.login, saved: t.quiz.saved, pending: t.quiz.pending, offline: t.quiz.offline, relogin: t.quiz.relogin },
-  login: l('login/') + '#class', list: l('mock/'), lang: t.meta.lang, intl,
+  login: l('login/') + '#class', list: l('mock/'), lang: t.meta.lang, intl, book: q.book ?? null,
 };
 const ld = {
   '@context': 'https://schema.org', '@type': 'Quiz', name: title.text, description: description.text, inLanguage: ['ar', t.meta.lang],
   educationalLevel: q.level, about: q.topics, numberOfQuestions: N, timeRequired: `PT${q.duration_min}M`, learningResourceType: 'Mock exam',
-  educationalUse: 'assessment', isAccessibleForFree: true, url: new URL(l(`mock/${q.key}/`), Astro.site).href,
+  educationalUse: 'assessment', isAccessibleForFree: true, url: new URL(l(mockHref(q)), Astro.site).href,
+  ...(q.book ? { isBasedOn: { '@type': 'Book', name: q.book.title, ...(q.book.title_ar ? { alternateName: q.book.title_ar } : {}),
+    ...(q.book.authors?.length ? { author: q.book.authors.map(name => ({ '@type': 'Person', name })) } : {}),
+    ...(q.book.publisher ? { publisher: { '@type': 'Organization', name: q.book.publisher } } : {}), ...(q.book.year ? { datePublished: q.book.year } : {}) } } : {}),
 };
 ---
 <Base title={title.text} description={`${description.text} ${nq} · ${nm}.`} group="tasks">
@@ -41,6 +45,16 @@ const ld = {
         {q.title_ar && <p class="har" lang="ar" dir="rtl">{q.title_ar}</p>}
         <p class="facts"><b>{nq}</b> · <b>{nm}</b></p>
         <p class="muted"><span lang={description.ru ? 'ru' : undefined}>{description.text}</span></p>
+        {q.book && <div class="book">
+          <p class="book-h">{T.bookH}</p>
+          {q.book.title_ar && <p class="book-ar" lang="ar" dir="rtl">{q.book.title_ar}</p>}
+          <p class="book-t"><cite lang="ar-Latn">{q.book.title}</cite></p>
+          {q.book.authors?.length && <p>{fmt(q.book.authors.length > 1 ? T.bookAuthors : T.bookAuthor, { list: q.book.authors.join(', ') })}</p>}
+          {(q.book.publisher || q.book.publisher_ar) && <p>{fmt(T.bookPublisher, { x: '' })}{q.book.publisher_ar && <span lang="ar" dir="rtl">{q.book.publisher_ar}</span>}{q.book.publisher && <> (<span lang="en">{q.book.publisher}</span>)</>}{place.text && <span lang={place.ru ? 'ru' : undefined}>, {place.text}</span>}{q.book.year && <>. {fmt(T.bookEdition, { x: q.book.year })}</>}.</p>}
+          {q.book.deposit && <p class="small">{fmt(T.bookDeposit, { x: q.book.deposit })}</p>}
+          {q.book.part_ar && <p class="small">{T.bookPart.split('{part}')[0]}«<span lang="ar" dir="rtl">{q.book.part_ar}</span>»{fmt(T.bookPart.split('{part}')[1], { ch: q.book.chapters ?? '' })}</p>}
+          <p class="muted small">{T.bookRights}</p>
+        </div>}
         <h2>{T.rulesH}</h2>
         <ul class="rules">
           <li>{fmt(T.ruleTimer, { m: nm })}</li>
@@ -302,6 +316,7 @@ const ld = {
       $('sRes').innerHTML = `<div class="card">
         <h1>${esc(T.resultH)}</h1>
         <p class="rtitle">${esc(D.title)}</p>
+        ${D.book ? `<p class="rsrc">${esc(T.bookH)}: ${D.book.title_ar ? AR(D.book.title_ar) + ' — ' : ''}<cite>${esc(D.book.title_short ?? D.book.title)}</cite>${D.book.authors?.length ? ' — ' + esc(D.book.authors.join(', ')) : ''}${D.book.year ? ', ' + esc(D.book.year) : ''}</p>` : ''}
         <p class="print-only">${esc(f(T.printDate, { d: new Date(st.end!).toLocaleString(D.intl) }))}${who ? ' · ' + esc(who.nickname) : ''}</p>
         ${reason ? `<p class="reason">${esc(reason)}</p>` : ''}
         <dl class="sum">${sum.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join('')}</dl>
@@ -366,6 +381,10 @@ const ld = {
   .facts { font-size: 1.15rem; margin: 12px 0 6px; }
   .rules { padding-inline-start: 1.2em; margin: 0 0 12px; }
   .rules li { margin: 6px 0; }
+  .book { border-inline-start: 4px solid var(--accent); background: var(--surface-2); padding: 10px 14px; border-radius: var(--r-s); margin: 12px 0; }
+  .book p { margin: 0 0 4px; }
+  .book-h { font-weight: 700; }
+  .book-ar { font-family: var(--ar); font-size: calc(1.4rem * var(--ar-scale)); line-height: 1.9; text-align: start; }
   .honest { border-inline-start: 4px solid var(--gold); background: var(--notice-bg); padding: 10px 14px; border-radius: var(--r-s); font-size: .95rem; }
   .who { color: var(--ink-soft); }
   .resume { background: var(--surface-2); padding: 10px 14px; border-radius: var(--r-s); }
@@ -424,6 +443,7 @@ const ld = {
   /* результаты */
   #sRes :global(h2) { margin: 10px 0 4px; }
   #sRes :global(.rtitle) { color: var(--ink-soft); margin: 4px 0 10px; }
+  #sRes :global(.rsrc) { font-size: .92rem; color: var(--ink-soft); }
   #sRes :global(.reason) { font-weight: 700; }
   #sRes :global(.sum) { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin: 12px 0; }
   #sRes :global(.sum div) { background: var(--surface-2); border-radius: var(--r-m); padding: 10px 12px; }
