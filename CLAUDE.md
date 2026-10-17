@@ -457,6 +457,12 @@ create table card_tests (id uuid primary key, learner_id int, deck text, correct
 - Старый адрес `/quizzes/tanal-nahw/` — страница-переадресация (GitHub Pages не умеет 301): список переездов `src/config/moved.mjs`, страница `src/pages/[...locale]/quizzes/[moved].astro`, правила 301 для Cloudflare — `public/_redirects`.
 - Тесты: `npm run test:mock` (в CI), `tests/e2e/mock.py`, `supabase/tests/30_mock_test.sql`; страницы раздела добавлены в `design.py` и `i18n.py`.
 
+**2026-10-17 — этап E8a (укрепление базы, внешний вид не менялся):**
+- Сделано заказчиком вручную: старое развёртывание Google Apps Script архивировано; в Supabase отключена регистрация; на GitHub — Dependabot alerts, Secret Protection, push protection; 2FA.
+- `supabase/migrations/0004_hardening.sql` (по Security Advisor): `search_path = public` у `_rand_pin` и `ping`; `_on_new_user` закрыт для `public/anon/authenticated` (триггер работает); у всех функций снято право `PUBLIC`, права выданы явным списком. Таблица «функция — кому доступна — проверка» — `docs/AUDIT_2026-10.md`, раздел 11.
+- Тест `supabase/tests/40_hardening_test.sql`: `search_path` у всех функций; права каждой функции сверяются с таблицей в тесте (**новая функция → добавить строку в таблицу `expect`**, иначе тест падает); триггер создаёт профиль при вставке ролью без EXECUTE. В `00_supabase_stub.sql` добавлены права по умолчанию, как в Supabase (EXECUTE для anon/authenticated на новые функции).
+- Ждут решения заказчика (AUDIT, 11.3 и 11.4): ПИН из 6 цифр и блокировка по ученику вместо класса; удаление `public/v1/viktorina_*` с переадресацией на `/quizzes/<key>/` (упражнения `/v1/` — до этапа 5).
+
 **Временно:** упражнения открывают прежние страницы из `public/v1/` (этап 5). Старые страницы викторин `public/v1/viktorina_*.html` оставлены как запасной вариант, на них нет ссылок; удалить после проверки на занятии.
 
 **Решения этапа 4:**
