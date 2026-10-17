@@ -11,9 +11,11 @@ psql -d t1 -c "insert into auth.users(email, created_at) values ('teacher@x', no
 psql -d t1 -v ON_ERROR_STOP=1 -f supabase/migrations/0001_init.sql
 psql -d t1 -v ON_ERROR_STOP=1 -f supabase/migrations/0002_quizzes.sql
 psql -d t1 -v ON_ERROR_STOP=1 -f supabase/migrations/0003_mock_exits.sql
+psql -d t1 -v ON_ERROR_STOP=1 -f supabase/migrations/0004_hardening.sql
 psql -d t1 -f supabase/tests/10_test.sql
 psql -d t1 -f supabase/tests/20_quiz_test.sql   # викторины; в конце печатает «quiz tests passed»
 psql -d t1 -f supabase/tests/30_mock_test.sql   # пробные экзамены (выходы из окна); в конце — «mock tests passed»
+psql -d t1 -f supabase/tests/40_hardening_test.sql   # права на функции (0004); в конце — «hardening tests passed»
 ```
 
 Что проверяется:
@@ -25,6 +27,7 @@ psql -d t1 -f supabase/tests/30_mock_test.sql   # пробные экзамен�
 - чужой учитель ничего не видит;
 - отчёт, сброс ПИН, роли;
 - викторины: сохранение попытки, повтор без дублей, чужой id, рейтинг и табло (только псевдонимы), отчёт и разбор для учителя, чужой учитель ничего не видит;
+- права (0004): у всех функций `public` задан `search_path`; кто может вызвать каждую функцию — ровно по таблице в тесте (новая функция без строки в таблице — ошибка); `PUBLIC` не имеет прав ни на одну; `_on_new_user` нельзя вызвать, но триггер создаёт профиль новому пользователю, вставленному ролью без права EXECUTE (как `supabase_auth_admin`);
 - пробные экзамены: число выходов из окна сохраняется (мусор → 0, не больше 999), видно ученику и учителю; попытка без `exits` (старая версия сайта) сохраняется как раньше.
 
 ## Сквозной тест (`tests/e2e/flow.py`)
