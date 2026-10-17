@@ -52,8 +52,9 @@
 ## Настройки GitHub (один раз, вручную)
 
 - [ ] **Settings → Code security:**
-  - **Secret Protection** (сканирование секретов) и **Push protection** — включить; для публичных репозиториев бесплатно;
-  - **Dependabot alerts** и **Dependabot security updates** — включить.
+  - [x] **Secret Protection** (сканирование секретов) и **Push protection** — включены заказчиком 2026-10-17;
+  - [x] **Dependabot alerts** — включены 2026-10-17;
+  - [ ] **Dependabot security updates** — не подтверждено, включить.
 - [ ] **Settings → Rules → Rulesets → New branch ruleset** для `main`:
   - «Require a pull request before merging»;
   - «Require status checks to pass» → проверка `checks` (она появится в списке после первого запуска «Проверок»);
