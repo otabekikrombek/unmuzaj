@@ -2,7 +2,7 @@
 
 ## База данных (`supabase/tests/`)
 
-Нужен локальный PostgreSQL 15+ (проверено на 17).
+Нужен локальный PostgreSQL 15+ (проверено на 17). Эти же шаги на каждом PR выполняет задание `sql` в `.github/workflows/checks.yml` (миграции берутся перебором `supabase/migrations/*.sql`; нет маркера «passed» или ошибка SQL — проверка красная).
 
 ```bash
 createdb t1
