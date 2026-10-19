@@ -5,7 +5,7 @@
 // tests/e2e/mock.py проверяет, что они совпадают.
 /** @type {{ from: string, to: string }[]} */
 export const MOVED = [
-  // 2026-10-16: пробный экзамен — в разделе «Пробные экзамены»; адрес книга/предмет — у At-Tanāl будут и другие предметы
+  // 2026-10-16: пробный экзамен — в разделе «Пробные экзамены»; адрес книга/предмет — у At-Tanal будут и другие предметы
   { from: 'quizzes/tanal-nahw/', to: 'mock/tanal/nahw/' },
   { from: 'mock/tanal-nahw/', to: 'mock/tanal/nahw/' },
 ];
