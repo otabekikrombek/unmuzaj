@@ -23,7 +23,8 @@ jobs:
   build:
     name: Сборка
     needs: gate
-    runs-on: ubuntu-latest
+    # закреплено: ubuntu-latest с 2026-10-19 переходит на Ubuntu 26; переход на 26 — отдельным решением (D25) после проверки Lighthouse, psql, Node
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
       - uses: withastro/action@v6
@@ -33,7 +34,8 @@ jobs:
     needs: build
     # запуск вручную с другой ветки проходит проверки и сборку, но не публикует
     if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
+    # закреплено: ubuntu-latest с 2026-10-19 переходит на Ubuntu 26; переход на 26 — отдельным решением (D25) после проверки Lighthouse, psql, Node
+    runs-on: ubuntu-24.04
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
