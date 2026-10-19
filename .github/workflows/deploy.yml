@@ -15,14 +15,24 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Те же проверки, что на PR (задания checks и sql из checks.yml). Не прошли — build и deploy не стартуют, сайт остаётся прежним.
+  gate:
+    name: Проверки
+    uses: ./.github/workflows/checks.yml
+
   build:
+    name: Сборка
+    needs: gate
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - uses: withastro/action@v6
 
   deploy:
+    name: Публикация
     needs: build
+    # запуск вручную с другой ветки проходит проверки и сборку, но не публикует
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
