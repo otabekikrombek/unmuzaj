@@ -1,5 +1,6 @@
 # Проверки каждого PR и main: уязвимости зависимостей, типы, строки интерфейса, сборка,
 # бюджет веса (size-limit) и Lighthouse (6 страниц, телефон). Пороги — «Правила Allimni 2.0» в CLAUDE.md.
+# Отдельное задание sql гоняет SQL-тесты (supabase/tests) на PostgreSQL 17 в контейнере: без секретов и без настоящей базы Supabase.
 # Сайт эта задача не публикует — публикация в deploy.yml.
 name: Проверки
 
@@ -62,3 +63,55 @@ jobs:
           name: lighthouse
           path: .lighthouseci/
           if-no-files-found: ignore
+
+  sql:
+    name: SQL-тесты (PostgreSQL 17)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres # пароль одноразового контейнера, не секрет
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGUSER: postgres
+      PGPASSWORD: postgres
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: База t1, имитация Supabase и два пользователя (tests/README.md)
+        run: |
+          createdb t1
+          psql -d t1 -v ON_ERROR_STOP=1 -f supabase/tests/00_supabase_stub.sql
+          psql -d t1 -v ON_ERROR_STOP=1 -c "insert into auth.users(email, created_at) values ('teacher@x', now() - interval '1 day'), ('other@x', now())"
+
+      - name: Миграции supabase/migrations/*.sql по порядку имён
+        run: |
+          files=(supabase/migrations/*.sql)
+          test -e "${files[0]}" || { echo "Миграции не найдены"; exit 1; }
+          for f in "${files[@]}"; do
+            echo "== $f"
+            psql -d t1 -v ON_ERROR_STOP=1 -f "$f"
+          done
+
+      - name: Тесты базы (ошибка SQL или нет маркера «passed» — задание красное)
+        run: |
+          set -euo pipefail
+          # 10_test.sql итогового маркера не печатает: для него проверяется только отсутствие ошибок SQL
+          echo "== supabase/tests/10_test.sql"
+          psql -d t1 -v ON_ERROR_STOP=1 -f supabase/tests/10_test.sql
+          for t in "20_quiz_test:quiz tests passed" "30_mock_test:mock tests passed" "40_hardening_test:hardening tests passed"; do
+            file="supabase/tests/${t%%:*}.sql"
+            marker="${t#*:}"
+            echo "== $file"
+            psql -d t1 -v ON_ERROR_STOP=1 -f "$file" 2>&1 | tee "/tmp/${t%%:*}.log"
+            grep -q "$marker" "/tmp/${t%%:*}.log" || { echo "::error::В выводе $file нет «$marker»"; exit 1; }
+          done
