@@ -79,10 +79,11 @@ curl -I https://<ветка>.allimni.pages.dev/words                       # 308
 
 ## Шаг 4. Переключить домен без простоя
 
-Перед началом **сохраните текущие DNS-записи** (снимок экрана **DNS → Records**). Сейчас там:
+Перед началом **сохраните копию DNS-записей**: в Cloudflare, **DNS → Records → Export** (и при желании снимок экрана). **TXT-запись `google-site-verification` не удалять** — это подтверждение Search Console. Сейчас там (по скриншотам от 2026-10-19):
 
 - 4 записи `A` для `allimni.net`: `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`;
-- `CNAME` `www` → `otabekikrombek.github.io`.
+- `CNAME` `www` → `otabekikrombek.github.io`;
+- `TXT` `google-site-verification` (не трогать).
 
 У всех серое облако («DNS only»).
 
