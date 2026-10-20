@@ -1,0 +1,32 @@
+{
+ "key": "ibrohimov",
+ "title": "Ibrohimov",
+ "title_uz": "Ibrohimov",
+ "title_en": "Ibrohimov",
+ "description": "Слова по урокам: уроки 1–4 и прилагательные.",
+ "description_uz": "Darslar boʻyicha soʻzlar: 1–4-darslar va sifatlar.",
+ "description_en": "Vocabulary by lesson: lessons 1–4 and adjectives.",
+ "added": "2026-10-20",
+ "items": [
+  {
+   "kind": "deck",
+   "key": "ibrohimov-dars-1"
+  },
+  {
+   "kind": "deck",
+   "key": "ibrohimov-dars-2"
+  },
+  {
+   "kind": "deck",
+   "key": "ibrohimov-dars-3"
+  },
+  {
+   "kind": "deck",
+   "key": "ibrohimov-dars-4"
+  },
+  {
+   "kind": "deck",
+   "key": "ibrohimov-sifatlar"
+  }
+ ]
+}

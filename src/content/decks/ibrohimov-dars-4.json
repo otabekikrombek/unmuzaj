@@ -1,0 +1,886 @@
+{
+ "key": "ibrohimov-dars-4",
+ "title": "Урок 4",
+ "title_uz": "4-dars",
+ "title_en": "Lesson 4",
+ "description": "Слова урока 4.",
+ "description_uz": "4-dars soʻzlari.",
+ "description_en": "Lesson 4 vocabulary.",
+ "topics": [
+  "Ibrohimov"
+ ],
+ "added": "2026-10-20",
+ "courses": [
+  "ibrohimov"
+ ],
+ "items": [
+  {
+   "a": "اِبْتِسَامَةٌ",
+   "r": "улыбка",
+   "r_uz": "bitta tabassum",
+   "r_en": "smile",
+   "t": "Урок 4"
+  },
+  {
+   "a": "أَثِيرٌ",
+   "r": "эфир",
+   "r_uz": "efir",
+   "r_en": "ether; broadcast",
+   "t": "Урок 4"
+  },
+  {
+   "a": "اِحْتِرَاقٌ",
+   "r": "горение; ожог",
+   "r_uz": "yonish; kuyish",
+   "r_en": "burning; burn",
+   "t": "Урок 4"
+  },
+  {
+   "a": "اِحْتِرَامٌ",
+   "r": "уважение",
+   "r_uz": "hurmat qilish",
+   "r_en": "respect",
+   "t": "Урок 4"
+  },
+  {
+   "a": "أَخْيَر",
+   "r": "наиболее подходящий",
+   "r_uz": "eng munosib",
+   "r_en": "most suitable",
+   "t": "Урок 4"
+  },
+  {
+   "a": "أَحْمَق",
+   "r": "глупец; дурак",
+   "r_uz": "ahmoq",
+   "r_en": "fool; stupid person",
+   "t": "Урок 4"
+  },
+  {
+   "a": "أَخَوِيٌّ",
+   "r": "братский; дружеский",
+   "r_uz": "birodarona; doʻstona",
+   "r_en": "brotherly; friendly",
+   "t": "Урок 4"
+  },
+  {
+   "a": "أَدَبِيٌّ",
+   "r": "литературный; художественный",
+   "r_uz": "adabiy; badiiy",
+   "r_en": "literary; artistic",
+   "t": "Урок 4"
+  },
+  {
+   "a": "أَدْنَى",
+   "r": "ближайший",
+   "r_uz": "eng yaqin",
+   "r_en": "nearest; closest",
+   "t": "Урок 4"
+  },
+  {
+   "a": "أَذًى",
+   "r": "боль; страдание",
+   "r_uz": "ogʻriq; aziyat",
+   "r_en": "pain; suffering",
+   "t": "Урок 4"
+  },
+  {
+   "a": "أُسْتَاذٌ – أَسَاتِذَة",
+   "r": "преподаватель; профессор",
+   "r_uz": "ustoz; professor",
+   "r_en": "teacher; professor",
+   "t": "Урок 4"
+  },
+  {
+   "a": "أَسًى",
+   "r": "печаль; скорбь",
+   "r_uz": "gʻam; qaygʻu",
+   "r_en": "grief; sorrow",
+   "t": "Урок 4"
+  },
+  {
+   "a": "أَغْلَى مِنْ",
+   "r": "дороже, чем…",
+   "r_uz": "…dan qimmatroq",
+   "r_en": "more expensive than…",
+   "t": "Урок 4"
+  },
+  {
+   "a": "إِلَى اللِّقَاءِ الْجَدِيدِ",
+   "r": "до новой встречи",
+   "r_uz": "yana koʻrishguncha",
+   "r_en": "until we meet again",
+   "t": "Урок 4"
+  },
+  {
+   "a": "آنىً",
+   "r": "время",
+   "r_uz": "vaqt",
+   "r_en": "time",
+   "t": "Урок 4"
+  },
+  {
+   "a": "أَوْ",
+   "r": "или",
+   "r_uz": "yoki",
+   "r_en": "or",
+   "t": "Урок 4"
+  },
+  {
+   "a": "بَازِلَّاء",
+   "r": "зелёный горошек",
+   "r_uz": "koʻk noʻxat",
+   "r_en": "green peas",
+   "t": "Урок 4"
+  },
+  {
+   "a": "بِجِوَارِ",
+   "r": "рядом с",
+   "r_uz": "yonida",
+   "r_en": "beside; next to",
+   "t": "Урок 4"
+  },
+  {
+   "a": "بَدْلَةٌ",
+   "r": "костюм",
+   "r_uz": "kostyum",
+   "r_en": "suit",
+   "t": "Урок 4"
+  },
+  {
+   "a": "بِدُونِ",
+   "r": "без…",
+   "r_uz": "…siz",
+   "r_en": "without…",
+   "t": "Урок 4"
+  },
+  {
+   "a": "بِدُونِ تَمْهِيدٍ",
+   "r": "без подготовки",
+   "r_uz": "tayyorgarliksiz",
+   "r_en": "unprepared; without preparation",
+   "t": "Урок 4"
+  },
+  {
+   "a": "بَرٌّ",
+   "r": "земля; суша",
+   "r_uz": "yer; quruqlik",
+   "r_en": "land; dry land",
+   "t": "Урок 4"
+  },
+  {
+   "a": "بِسُرْعَةٍ",
+   "r": "быстро; немедленно",
+   "r_uz": "tezda; zudlik bilan",
+   "r_en": "quickly; immediately",
+   "t": "Урок 4"
+  },
+  {
+   "a": "بِصَوْتٍ مُرْتَفِعٍ",
+   "r": "громко",
+   "r_uz": "baland ovoz bilan",
+   "r_en": "loudly",
+   "t": "Урок 4"
+  },
+  {
+   "a": "بِالطَّبْعِ",
+   "r": "конечно",
+   "r_uz": "albatta",
+   "r_en": "certainly; of course",
+   "t": "Урок 4"
+  },
+  {
+   "a": "بِطَرِيقَةٍ أَوْ أُخْرَى",
+   "r": "так или иначе; каким-либо способом",
+   "r_uz": "bir iloj qilib; u yoki bu yoʻl bilan",
+   "r_en": "somehow; one way or another",
+   "t": "Урок 4"
+  },
+  {
+   "a": "بَلْوَى",
+   "r": "несчастье; бедствие",
+   "r_uz": "baxtsizlik; falokat",
+   "r_en": "misfortune; disaster",
+   "t": "Урок 4"
+  },
+  {
+   "a": "بُولِيسِيٌّ",
+   "r": "полицейский",
+   "r_uz": "politsiyaga tegishli",
+   "r_en": "police; police-related",
+   "t": "Урок 4"
+  },
+  {
+   "a": "بَيْنَ الْفَيْنَةِ وَالْأُخْرَى",
+   "r": "время от времени",
+   "r_uz": "goh-goh; onda-sonda",
+   "r_en": "from time to time",
+   "t": "Урок 4"
+  },
+  {
+   "a": "تَحْضِيرٌ",
+   "r": "подготовка",
+   "r_uz": "hozirlik; tayyorlash",
+   "r_en": "preparation",
+   "t": "Урок 4"
+  },
+  {
+   "a": "تَذْكِرَةٌ – تَذَاكِر",
+   "r": "билет; билеты",
+   "r_uz": "chipta; pattalar",
+   "r_en": "ticket; tickets",
+   "t": "Урок 4"
+  },
+  {
+   "a": "تَرْجَمَةٌ – تَرَاجِم",
+   "r": "перевод",
+   "r_uz": "tarjima",
+   "r_en": "translation",
+   "t": "Урок 4"
+  },
+  {
+   "a": "تِمْثَالٌ – تَمَاثِيل",
+   "r": "статуя",
+   "r_uz": "haykal",
+   "r_en": "statue",
+   "t": "Урок 4"
+  },
+  {
+   "a": "تَمْهِيدٌ",
+   "r": "подготовка; вступление",
+   "r_uz": "tayyorgarlik; kirish qismi",
+   "r_en": "preparation; preface",
+   "t": "Урок 4"
+  },
+  {
+   "a": "ثَانِيَةٌ؛ مُذَكَّر: ثَانٍ",
+   "r": "второй",
+   "r_uz": "ikkinchi (tartib soni)",
+   "r_en": "second (ordinal)",
+   "t": "Урок 4"
+  },
+  {
+   "a": "ثَرًى",
+   "r": "богатство",
+   "r_uz": "boylik",
+   "r_en": "wealth",
+   "t": "Урок 4"
+  },
+  {
+   "a": "ثُرَيَّا",
+   "r": "люстра",
+   "r_uz": "qandil",
+   "r_en": "chandelier",
+   "t": "Урок 4"
+  },
+  {
+   "a": "ثَمِينٌ",
+   "r": "дорогой",
+   "r_uz": "qimmat",
+   "r_en": "expensive",
+   "t": "Урок 4"
+  },
+  {
+   "a": "جَنَاحٌ – أَجْنِحَةٌ",
+   "r": "крыло",
+   "r_uz": "qanot",
+   "r_en": "wing",
+   "t": "Урок 4"
+  },
+  {
+   "a": "حَادٌّ",
+   "r": "острый; сильный",
+   "r_uz": "oʻtkir; kuchli",
+   "r_en": "sharp; intense",
+   "t": "Урок 4"
+  },
+  {
+   "a": "حَشَا",
+   "r": "внутренности; потроха",
+   "r_uz": "ichak-chovogʻ",
+   "r_en": "entrails; guts",
+   "t": "Урок 4"
+  },
+  {
+   "a": "حُمَّى",
+   "r": "малярия",
+   "r_uz": "bezgak",
+   "r_en": "malaria",
+   "t": "Урок 4"
+  },
+  {
+   "a": "مَطَرٌ",
+   "r": "дождь",
+   "r_uz": "yomgʻir",
+   "r_en": "rain",
+   "t": "Урок 4"
+  },
+  {
+   "a": "خُبْزٌ",
+   "r": "хлеб",
+   "r_uz": "non",
+   "r_en": "bread",
+   "t": "Урок 4"
+  },
+  {
+   "a": "خِزَانَةٌ",
+   "r": "шкаф",
+   "r_uz": "shkaf; javon",
+   "r_en": "cupboard; cabinet",
+   "t": "Урок 4"
+  },
+  {
+   "a": "خَلِيَّةٌ – خَلَايَا",
+   "r": "клетка",
+   "r_uz": "hujayra",
+   "r_en": "cell",
+   "t": "Урок 4"
+  },
+  {
+   "a": "خُيُوطٌ مِنَ الشَّمْسِ",
+   "r": "солнечные лучи",
+   "r_uz": "quyosh nurlari",
+   "r_en": "sunbeams; rays of sunshine",
+   "t": "Урок 4"
+  },
+  {
+   "a": "دَقِيقَةٌ – دَقَائِق",
+   "r": "минута; минуты",
+   "r_uz": "minut",
+   "r_en": "minute; minutes",
+   "t": "Урок 4"
+  },
+  {
+   "a": "ذَرَّةٌ",
+   "r": "частица; крупинка",
+   "r_uz": "zarra",
+   "r_en": "particle; speck",
+   "t": "Урок 4"
+  },
+  {
+   "a": "ذَكَاءٌ",
+   "r": "бдительность",
+   "r_uz": "hushyorlik",
+   "r_en": "alertness; vigilance",
+   "t": "Урок 4"
+  },
+  {
+   "a": "رُجُوعٌ",
+   "r": "возвращение",
+   "r_uz": "qaytish",
+   "r_en": "return",
+   "t": "Урок 4"
+  },
+  {
+   "a": "رَخِيصٌ",
+   "r": "дешёвый",
+   "r_uz": "arzon",
+   "r_en": "cheap; inexpensive",
+   "t": "Урок 4"
+  },
+  {
+   "a": "رِضًا",
+   "r": "согласие; довольство",
+   "r_uz": "rozilik",
+   "r_en": "consent; satisfaction",
+   "t": "Урок 4"
+  },
+  {
+   "a": "رَغْبَةٌ",
+   "r": "желание; стремление",
+   "r_uz": "xohish; istak",
+   "r_en": "desire; wish",
+   "t": "Урок 4"
+  },
+  {
+   "a": "رَغِيفٌ – أَرْغِفَةٌ",
+   "r": "хлебцы; буханки",
+   "r_uz": "obinon; non boʻlaklari",
+   "r_en": "loaves of bread",
+   "t": "Урок 4"
+  },
+  {
+   "a": "رَمَادِيٌّ",
+   "r": "серый",
+   "r_uz": "kulrang",
+   "r_en": "grey; gray",
+   "t": "Урок 4"
+  },
+  {
+   "a": "رَهِيبٌ",
+   "r": "страшный; ужасный",
+   "r_uz": "qoʻrqinchli",
+   "r_en": "frightening; terrible",
+   "t": "Урок 4"
+  },
+  {
+   "a": "رُؤْيَا",
+   "r": "сон (во сне)",
+   "r_uz": "tush (uyqudagi)",
+   "r_en": "dream",
+   "t": "Урок 4"
+  },
+  {
+   "a": "رِيشَةٌ",
+   "r": "перо",
+   "r_uz": "pero; pat",
+   "r_en": "feather; quill",
+   "t": "Урок 4"
+  },
+  {
+   "a": "سِجْنٌ – سُجُونٌ",
+   "r": "тюрьма",
+   "r_uz": "qamoqxona",
+   "r_en": "prison",
+   "t": "Урок 4"
+  },
+  {
+   "a": "سُكَّرٌ",
+   "r": "сахар",
+   "r_uz": "qand",
+   "r_en": "sugar",
+   "t": "Урок 4"
+  },
+  {
+   "a": "سِينَمَا",
+   "r": "кинотеатр",
+   "r_uz": "kinoteatr",
+   "r_en": "cinema",
+   "t": "Урок 4"
+  },
+  {
+   "a": "شَاشَةٌ",
+   "r": "экран",
+   "r_uz": "ekran",
+   "r_en": "screen",
+   "t": "Урок 4"
+  },
+  {
+   "a": "شَاعِرٌ – شُعَرَاء",
+   "r": "поэт; поэты",
+   "r_uz": "shoir",
+   "r_en": "poet; poets",
+   "t": "Урок 4"
+  },
+  {
+   "a": "شِعْرٌ – أَشْعَارٌ",
+   "r": "стихотворение; стихи",
+   "r_uz": "sheʼr",
+   "r_en": "poem; poetry",
+   "t": "Урок 4"
+  },
+  {
+   "a": "شَهْرٌ – شُهُورٌ / أَشْهُرٌ",
+   "r": "месяц; месяцы",
+   "r_uz": "oy (kalendardagi)",
+   "r_en": "month; months",
+   "t": "Урок 4"
+  },
+  {
+   "a": "شَيْءٌ – أَشْيَاء",
+   "r": "вещь; предмет",
+   "r_uz": "narsa",
+   "r_en": "thing; object",
+   "t": "Урок 4"
+  },
+  {
+   "a": "صَفَاءٌ",
+   "r": "чистота; незапятнанность",
+   "r_uz": "begʻuborlik; musaffolik",
+   "r_en": "purity; clarity",
+   "t": "Урок 4"
+  },
+  {
+   "a": "صَبَاحٌ",
+   "r": "рассвет; утро",
+   "r_uz": "tong",
+   "r_en": "dawn; morning",
+   "t": "Урок 4"
+  },
+  {
+   "a": "صَمْتٌ",
+   "r": "тишина; молчание",
+   "r_uz": "sukunat",
+   "r_en": "silence",
+   "t": "Урок 4"
+  },
+  {
+   "a": "طَالِبٌ – طُلَّابٌ",
+   "r": "студент; студенты",
+   "r_uz": "talaba",
+   "r_en": "student; students",
+   "t": "Урок 4"
+  },
+  {
+   "a": "طَاوِلَةٌ",
+   "r": "стол",
+   "r_uz": "stol",
+   "r_en": "table",
+   "t": "Урок 4"
+  },
+  {
+   "a": "طُفُولَةٌ",
+   "r": "детство",
+   "r_uz": "bolalik",
+   "r_en": "childhood",
+   "t": "Урок 4"
+  },
+  {
+   "a": "طَيَّارٌ",
+   "r": "пилот; лётчик",
+   "r_uz": "uchuvchi",
+   "r_en": "pilot; aviator",
+   "t": "Урок 4"
+  },
+  {
+   "a": "ظَلَامٌ",
+   "r": "темнота",
+   "r_uz": "qorongʻulik",
+   "r_en": "darkness",
+   "t": "Урок 4"
+  },
+  {
+   "a": "عَالَمٌ",
+   "r": "мир; вселенная",
+   "r_uz": "olam",
+   "r_en": "world; universe",
+   "t": "Урок 4"
+  },
+  {
+   "a": "عَزِيزٌ – أَعِزَّاء",
+   "r": "дорогой; уважаемый",
+   "r_uz": "aziz",
+   "r_en": "dear; esteemed",
+   "t": "Урок 4"
+  },
+  {
+   "a": "عِلْمٌ – عُلُومٌ",
+   "r": "наука; знания",
+   "r_uz": "ilm; fan",
+   "r_en": "science; knowledge",
+   "t": "Урок 4"
+  },
+  {
+   "a": "عَلَى الْأَقَلِّ",
+   "r": "по крайней мере",
+   "r_uz": "hech boʻlmaganda",
+   "r_en": "at least",
+   "t": "Урок 4"
+  },
+  {
+   "a": "عَلَى الْخُصُوصِ",
+   "r": "в особенности; особенно",
+   "r_uz": "xususan",
+   "r_en": "especially; in particular",
+   "t": "Урок 4"
+  },
+  {
+   "a": "غَالٍ / غَالِيَةٌ",
+   "r": "дорогой; дорогая",
+   "r_uz": "qimmat",
+   "r_en": "expensive",
+   "t": "Урок 4"
+  },
+  {
+   "a": "فِكْرٌ – فِكَرٌ",
+   "r": "мысль; идея",
+   "r_uz": "fikr",
+   "r_en": "thought; idea",
+   "t": "Урок 4"
+  },
+  {
+   "a": "فِلْمٌ – أَفْلَامٌ",
+   "r": "фильм; фильмы",
+   "r_uz": "film",
+   "r_en": "film; films",
+   "t": "Урок 4"
+  },
+  {
+   "a": "فَهْمٌ – أَفْهَامٌ",
+   "r": "понимание; осмысление",
+   "r_uz": "fahmlash; fikr",
+   "r_en": "understanding; comprehension",
+   "t": "Урок 4"
+  },
+  {
+   "a": "فِي الْفَيْنَةِ بَعْدَ الْأُخْرَى",
+   "r": "время от времени",
+   "r_uz": "goh-goh; onda-sonda",
+   "r_en": "from time to time",
+   "t": "Урок 4"
+  },
+  {
+   "a": "فِي كَثِيرٍ مِنَ الظُّرُوفِ",
+   "r": "часто; во многих случаях",
+   "r_uz": "koʻpincha (soʻz. vaziyatlarning koʻpida)",
+   "r_en": "often; in many circumstances",
+   "t": "Урок 4"
+  },
+  {
+   "a": "فِي يَوْمٍ مِنَ الْأَيَّامِ",
+   "r": "однажды; в один из дней",
+   "r_uz": "kunlardan bir kun",
+   "r_en": "one day; someday",
+   "t": "Урок 4"
+  },
+  {
+   "a": "قَاطِعٌ",
+   "r": "резкий; решительный",
+   "r_uz": "keskin; qatʼiy",
+   "r_en": "sharp; decisive",
+   "t": "Урок 4"
+  },
+  {
+   "a": "قَرْيَةٌ – قُرًى",
+   "r": "деревня; село",
+   "r_uz": "qishloq",
+   "r_en": "village",
+   "t": "Урок 4"
+  },
+  {
+   "a": "قَضِيبٌ – قُضْبَانٌ",
+   "r": "прут; палка",
+   "r_uz": "tayoq",
+   "r_en": "rod; stick",
+   "t": "Урок 4"
+  },
+  {
+   "a": "قَضِيَّةٌ – قَضَايَا",
+   "r": "проблема; вопрос",
+   "r_uz": "muammo; masala",
+   "r_en": "issue; problem",
+   "t": "Урок 4"
+  },
+  {
+   "a": "قَلْبٌ – قُلُوبٌ",
+   "r": "сердце; сердца",
+   "r_uz": "yurak",
+   "r_en": "heart; hearts",
+   "t": "Урок 4"
+  },
+  {
+   "a": "قَلَمٌ – أَقْلَامٌ",
+   "r": "ручка; карандаш",
+   "r_uz": "qalam",
+   "r_en": "pen; pencil",
+   "t": "Урок 4"
+  },
+  {
+   "a": "قَهْوَةٌ؛ قَهْوَةٌ سَوْدَاءُ",
+   "r": "кофе; чёрный кофе",
+   "r_uz": "qahva; qora qahva",
+   "r_en": "coffee; black coffee",
+   "t": "Урок 4"
+  },
+  {
+   "a": "قَوْلٌ – أَقْوَالٌ",
+   "r": "слово; высказывание",
+   "r_uz": "soʻz; gap",
+   "r_en": "word; saying",
+   "t": "Урок 4"
+  },
+  {
+   "a": "كَاتِبٌ – كُتَّابٌ",
+   "r": "писатель",
+   "r_uz": "yozuvchi",
+   "r_en": "writer; author",
+   "t": "Урок 4"
+  },
+  {
+   "a": "كُبْرَى",
+   "r": "самый большой (ж. р.)",
+   "r_uz": "eng katta (muannas shakli)",
+   "r_en": "biggest; greatest (feminine)",
+   "t": "Урок 4"
+  },
+  {
+   "a": "كِتَابٌ – كُتُبٌ",
+   "r": "книга; книги",
+   "r_uz": "kitob",
+   "r_en": "book; books",
+   "t": "Урок 4"
+  },
+  {
+   "a": "كِيلُومِتْرٌ",
+   "r": "километр",
+   "r_uz": "kilometr",
+   "r_en": "kilometre; kilometer",
+   "t": "Урок 4"
+  },
+  {
+   "a": "لَوْنٌ – أَلْوَانٌ",
+   "r": "цвет; цвета",
+   "r_uz": "rang",
+   "r_en": "colour; colors",
+   "t": "Урок 4"
+  },
+  {
+   "a": "مَالٌ – أَمْوَالٌ",
+   "r": "имущество; богатство",
+   "r_uz": "mol; mol-mulk",
+   "r_en": "property; wealth",
+   "t": "Урок 4"
+  },
+  {
+   "a": "مَأْوًى",
+   "r": "убежище; приют",
+   "r_uz": "panoh; boshpana",
+   "r_en": "shelter; refuge",
+   "t": "Урок 4"
+  },
+  {
+   "a": "مُبَارَاةٌ",
+   "r": "соревнование; матч",
+   "r_uz": "musobaqa",
+   "r_en": "competition; match",
+   "t": "Урок 4"
+  },
+  {
+   "a": "مُتَقَطِّعٌ",
+   "r": "прерывистый; отрывистый",
+   "r_uz": "uzun-yuluq",
+   "r_en": "intermittent; broken",
+   "t": "Урок 4"
+  },
+  {
+   "a": "مَبْنًى – مَبَانٍ",
+   "r": "здание; здания",
+   "r_uz": "bino",
+   "r_en": "building; buildings",
+   "t": "Урок 4"
+  },
+  {
+   "a": "مَثْنَيٌّ",
+   "r": "маснави (поэтическая форма)",
+   "r_uz": "masnaviy",
+   "r_en": "mathnawi (poetic form)",
+   "t": "Урок 4"
+  },
+  {
+   "a": "مَجْرًى",
+   "r": "течение; русло",
+   "r_uz": "oqim; oʻzan",
+   "r_en": "current; channel",
+   "t": "Урок 4"
+  },
+  {
+   "a": "مَجْمُوعَةٌ",
+   "r": "собрание; коллекция",
+   "r_uz": "toʻplam",
+   "r_en": "collection; set",
+   "t": "Урок 4"
+  },
+  {
+   "a": "مُحَرِّكٌ",
+   "r": "мотор; двигатель",
+   "r_uz": "motor",
+   "r_en": "motor; engine",
+   "t": "Урок 4"
+  },
+  {
+   "a": "مُحِيطٌ",
+   "r": "океан",
+   "r_uz": "okean",
+   "r_en": "ocean",
+   "t": "Урок 4"
+  },
+  {
+   "a": "مُدَّعًى",
+   "r": "требуемое; необходимое",
+   "r_uz": "talab qilingan narsa",
+   "r_en": "required item; what is required",
+   "t": "Урок 4"
+  },
+  {
+   "a": "مَرِيضٌ – مَرْضَى",
+   "r": "больной; пациенты",
+   "r_uz": "kasal; bemor",
+   "r_en": "sick person; patients",
+   "t": "Урок 4"
+  },
+  {
+   "a": "مَرْئِيٌّ",
+   "r": "видимый; зрительный",
+   "r_uz": "koʻrinish",
+   "r_en": "visible; apparent",
+   "t": "Урок 4"
+  },
+  {
+   "a": "مُشْتَرِكٌ",
+   "r": "участник",
+   "r_uz": "ishtirokchi",
+   "r_en": "participant",
+   "t": "Урок 4"
+  },
+  {
+   "a": "مِصْر",
+   "r": "Египет",
+   "r_uz": "Misr",
+   "r_en": "Egypt",
+   "t": "Урок 4"
+  },
+  {
+   "a": "مَعَ السَّلَامَةِ",
+   "r": "до свидания",
+   "r_uz": "xayr; koʻrishguncha",
+   "r_en": "goodbye; see you",
+   "t": "Урок 4"
+  },
+  {
+   "a": "مُقَدِّمَةٌ",
+   "r": "введение; предисловие",
+   "r_uz": "muqaddima",
+   "r_en": "introduction; preface",
+   "t": "Урок 4"
+  },
+  {
+   "a": "مَكْتَبَةٌ",
+   "r": "библиотека",
+   "r_uz": "kutubxona",
+   "r_en": "library",
+   "t": "Урок 4"
+  },
+  {
+   "a": "مُلْتَقًى",
+   "r": "место встречи",
+   "r_uz": "uchrashuv joyi",
+   "r_en": "meeting place",
+   "t": "Урок 4"
+  },
+  {
+   "a": "مَلِيءٌ بِـ…",
+   "r": "полный чем-либо",
+   "r_uz": "…ga toʻla",
+   "r_en": "full of…",
+   "t": "Урок 4"
+  },
+  {
+   "a": "مِنْ جَدِيدٍ",
+   "r": "снова; заново",
+   "r_uz": "qayta; yana",
+   "r_en": "again; anew",
+   "t": "Урок 4"
+  },
+  {
+   "a": "مُنْتَشِرٌ",
+   "r": "распространённый; рассеянный",
+   "r_uz": "yoyilgan; tarqalgan",
+   "r_en": "widespread; dispersed",
+   "t": "Урок 4"
+  },
+  {
+   "a": "مُؤَدَّى",
+   "r": "сущность; значение",
+   "r_uz": "mohiyat",
+   "r_en": "essence; meaning",
+   "t": "Урок 4"
+  },
+  {
+   "a": "لِسَانٌ – أَلْسِنَةٌ",
+   "r": "язык; языки",
+   "r_uz": "til; tillar",
+   "r_en": "language; tongues",
+   "t": "Урок 4"
+  }
+ ]
+}
