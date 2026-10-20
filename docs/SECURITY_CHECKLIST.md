@@ -55,12 +55,18 @@
   - [x] **Secret Protection** (сканирование секретов) и **Push protection** — включены заказчиком 2026-10-17;
   - [x] **Dependabot alerts** — включены 2026-10-17;
   - [ ] **Dependabot security updates** — не подтверждено, включить.
-- [ ] **Settings → Rules → Rulesets → New branch ruleset** для `main`:
-  - «Require a pull request before merging»;
-  - «Require status checks to pass» → проверка `checks` (она появится в списке после первого запуска «Проверок»);
-  - «Block force pushes».
+- [x] **Settings → Rules → Rulesets** — ruleset `protect-main` включён заказчиком 2026-10-19. **Состав — со слов заказчика, 2026-10-19; Claude настройки на GitHub не видел и не проверял:**
+  - цель — ветка `main`;
+  - запрещены удаление ветки и force push;
+  - «Require a pull request before merging»: PR обязателен, требуемых одобрений — 0;
+  - «Require status checks to pass»: обязательные проверки — `checks` и «SQL-тесты (PostgreSQL 17)»;
+  - исключений (bypass) нет.
 
-  Это защитит `main` от случайной прямой отправки.
+  Это защищает `main` от случайной прямой отправки.
 
   **Что изменится для вас:** файлы, загруженные через сайт GitHub (Add file → Upload files), больше не попадут в `main` напрямую. GitHub сам предложит «Create a new branch for this commit and start a pull request»: соглашайтесь, дождитесь зелёной галочки и нажмите Merge.
+
+  > ⚠️ **Названия обязательных проверок привязаны к workflow.** `checks` — это id задания в `.github/workflows/checks.yml`, «SQL-тесты (PostgreSQL 17)» — поле `name` задания `sql` в том же файле. Если переименовать задание (id или `name`), ruleset будет ждать проверку с прежним названием, и **PR будет бесконечно ждать** — слить его не получится. Перед переименованием сначала поменяйте названия в ruleset.
+  >
+  > **Откат (если PR застрял):** GitHub → Settings → Rules → Rulesets → `protect-main` → *Enforcement status*: **Disabled** → исправить названия проверок (или workflow) → вернуть **Active**.
 - [ ] **Settings → Pages → Verified domains** (в настройках аккаунта): подтвердить `allimni.net`.
