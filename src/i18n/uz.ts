@@ -237,6 +237,7 @@ export const uz: Dict = {
     tabs: { list: 'Roʻyxat', cards: 'Kartochkalar', test: 'Test · 20 ta savol', hard: 'Qiyin soʻzlarim', board: 'Sinf reytingi' },
     listH: 'Toʻplamdagi barcha soʻzlar',
     goCards: 'Kartochkalar va viktorinalarga oʻtish',
+    print: { legend: 'Chop etish', ar: 'Faqat arabcha', tr: 'Arabcha + tarjima', all: 'Arabcha + 3 til', btn: 'Chop etish / PDF', hint: 'Chop etish oynasida «PDF sifatida saqlash»ni tanlang.' },
     close: 'Yopish',
     closeLabel: 'Testni yopib, soʻzlar roʻyxatiga qaytish',
     which: 'Qaysi soʻzlarni koʻrsatish',

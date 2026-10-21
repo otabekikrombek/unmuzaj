@@ -15,7 +15,10 @@ const ti = tf(d, 'title', locale), de = tf(d, 'description', locale);
 const items = d.items.map(w => { const r = tf(w, 'r', locale); return { a: w.a, r: r.text, t: w.t, ...(r.ru ? { f: 1 } : {}) }; });
 const topicsRu = locale !== 'ru';
 // список для ознакомления: рисуется при сборке, без клиентского JS; темы — в порядке данных
-const groups = themes.map(x => ({ t: x, rows: items.filter(w => w.t === x) }));
+// для печати: русский, узбекский и английский переводы (режим «арабский + 3 языка» — только у наборов с переводами)
+const hasAll = d.items.some(i => i.r_uz && i.r_en);
+const rows = d.items.map((w, i) => ({ ...items[i], ru: w.r, uz: w.r_uz, en: w.r_en }));
+const groups = themes.map(x => ({ t: x, rows: rows.filter(w => w.t === x) }));
 ---
 <Base title={ti.text} description={`${de.text} ${fmt(T.descTail, { words: plural(locale, t.common.words, d.items.length) })}`} group="tasks">
   <section class="trainer" data-deck={d.key}>
@@ -24,6 +27,7 @@ const groups = themes.map(x => ({ t: x, rows: items.filter(w => w.t === x) }));
         <div>
           <Breadcrumbs title={ti.text} titleRu={ti.ru} tone="study" />
           <h1><span lang={ti.ru ? 'ru' : undefined}>{ti.text}</span>{ti.ru && <small class="ru-mark">{t.meta.inRussian}</small>}</h1>
+          <p class="print-date" id="wlDate"></p>
         </div>
         <p class="who" id="who" aria-live="polite" data-pagefind-ignore></p>
       </div>
@@ -36,9 +40,17 @@ const groups = themes.map(x => ({ t: x, rows: items.filter(w => w.t === x) }));
         <button role="tab" data-tab="board" aria-selected="false">{T.tabs.board}</button>
       </div>
 
-      <div data-panel="list" class="sheet wl" data-pagefind-ignore>
+      <div data-panel="list" class="sheet wl" data-print="tr" data-pagefind-ignore>
         <h2>{T.listH}</h2>
         <p class="wl-count">{plural(locale, t.common.words, d.items.length)}</p>
+        <fieldset class="wl-print">
+          <legend>{T.print.legend}</legend>
+          <label><input type="radio" name="wlp" value="ar" /> {T.print.ar}</label>
+          <label><input type="radio" name="wlp" value="tr" checked /> {T.print.tr}</label>
+          {hasAll && <label><input type="radio" name="wlp" value="all" /> {T.print.all}</label>}
+          <button type="button" class="btn-go" id="wlPrint">{T.print.btn}</button>
+          <p class="note">{T.print.hint}</p>
+        </fieldset>
         <button type="button" class="btn-go" data-go="cards">{T.goCards}</button>
         {groups.map(g => (
           <section>
@@ -48,6 +60,11 @@ const groups = themes.map(x => ({ t: x, rows: items.filter(w => w.t === x) }));
                 <li>
                   <span class="ar" lang="ar" dir="rtl">{w.a}</span>
                   <span class="tr" lang={w.f ? 'ru' : undefined}>{w.r}{w.f && t.meta.inRussian && <small class="ru-mark">{t.meta.inRussian}</small>}</span>
+                  {hasAll && <>
+                    <span class="px" lang="uz">{w.uz || '—'}</span>
+                    <span class="px" lang="ru">{w.ru}</span>
+                    <span class="px" lang="en">{w.en || '—'}</span>
+                  </>}
                 </li>
               ))}
             </ol>
@@ -228,6 +245,11 @@ const groups = themes.map(x => ({ t: x, rows: items.filter(w => w.t === x) }));
     }
     document.querySelectorAll<HTMLElement>('[data-tab],[data-go]').forEach(b => b.addEventListener('click', () => { tab((b.dataset.tab ?? b.dataset.go)!); if (b.dataset.go) $('stats').scrollIntoView(); }));
 
+    // печать списка: режим колонок — в data-print, остальное делает @media print
+    const wl = document.querySelector<HTMLElement>('.wl')!, syncPrint = () => { wl.dataset.print = document.querySelector<HTMLInputElement>('input[name=wlp]:checked')!.value; };
+    document.querySelector('.wl-print')!.addEventListener('change', syncPrint); syncPrint();
+    $('wlPrint').addEventListener('click', () => window.print());
+    addEventListener('beforeprint', () => { $('wlDate').textContent = new Date().toLocaleDateString(document.documentElement.lang); });
     const closeTest = () => { tab('list'); document.querySelector<HTMLElement>('[data-tab=list]')!.focus(); };
     $('test').addEventListener('click', e => { if ((e.target as HTMLElement).closest('.wt-x')) closeTest(); });
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && shown === 'test') closeTest(); });
@@ -300,6 +322,36 @@ const groups = themes.map(x => ({ t: x, rows: items.filter(w => w.t === x) }));
   .btn-go { display: block; width: 100%; min-height: 44px; margin: 4px 0 8px; padding: 0 14px; border: 0; border-radius: 10px; background: var(--sun); color: var(--on-sun); font: 700 1rem var(--sans); cursor: pointer; }
   .wl > .btn-go:last-child { margin: 16px 0 0; }
   .below { margin-top: 16px; }
+  .print-date, .wl .px { display: none; }
+  .wl-print { margin: 0 0 12px; padding: 8px 12px 12px; border: 1px solid var(--line); border-radius: var(--r-m); }
+  .wl-print legend { padding-inline: 6px; font-weight: 700; }
+  .wl-print label { display: flex; align-items: center; gap: 10px; min-height: 44px; cursor: pointer; }
+  .wl-print input { flex: none; width: 22px; height: 22px; margin: 0; accent-color: var(--accent); }
+  .wl-print .note { margin: 6px 0 0; color: var(--ink-soft); font-size: .92rem; text-align: start; }
+
+  /* печать списка слов (D33): A4, только заголовок, дата и список; колонки — по data-print (ar | tr | all) */
+  @page { size: A4; margin: 15mm; }
+  @media print {
+    :global(html), :global(body) { background: #fff !important; overflow: visible !important; }
+    :global(.site-head), :global(.site-foot), :global(.skip) { display: none !important; }
+    .stats, .tabs, .below, .who, .top :global(.crumbs), [data-panel]:not(.wl), .wl-print, .wl > h2, .wl-count, .wl .btn-go { display: none !important; }
+    .trainer { background: none !important; color: #000 !important; padding: 0; }
+    .trainer .wrap { max-width: none; padding-inline: 0; }
+    .trainer .top { display: block; }
+    .trainer h1 { color: #000; font-size: 20pt; margin: 0 0 1mm; }
+    .print-date { display: block; margin: 0 0 6mm; font: 11pt var(--sans); color: #000; }
+    .wl { display: block !important; background: #fff; color: #000 !important; padding: 0; border-radius: 0; box-shadow: none; counter-reset: wl; }
+    .wl h3 { break-after: avoid; margin: 5mm 0 1mm; font: 700 13pt var(--sans); color: #000; }
+    .wl ol { list-style: none; margin: 0; padding: 0; }
+    .wl li { display: grid; grid-template-columns: 9mm minmax(0, 1fr); column-gap: 4mm; align-items: baseline; padding: 1.2mm 0; border-bottom: .3pt solid #999; break-inside: avoid; counter-increment: wl; }
+    .wl li::before { content: counter(wl); font: 10pt var(--sans); color: #000; }
+    .wl .ar { font-size: calc(18pt * var(--ar-scale)); line-height: 1.7; color: #000; text-align: start; }
+    .wl .tr, .wl .px { font: 11pt / 1.35 var(--sans); color: #000; overflow-wrap: anywhere; }
+    .wl[data-print='ar'] .tr, .wl[data-print='ar'] .px, .wl[data-print='tr'] .px, .wl[data-print='all'] .tr { display: none; }
+    .wl[data-print='tr'] li { grid-template-columns: 9mm minmax(0, 5fr) minmax(0, 6fr); }
+    .wl[data-print='all'] li { grid-template-columns: 9mm minmax(0, 9fr) repeat(3, minmax(0, 6fr)); }
+    .wl[data-print='all'] .px { display: block; }
+  }
 
   /* тест «на всё окно» (D32): класс на <html> ставит tab(); шрифты и цвета — как у тренажёра */
   :global(html.words-test-on .site-head), :global(html.words-test-on .site-foot), :global(html.words-test-on .skip) { display: none !important; }
