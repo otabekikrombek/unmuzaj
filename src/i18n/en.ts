@@ -234,6 +234,7 @@ export const en: Dict = {
     tabs: { list: 'List', cards: 'Flashcards', test: 'Test · 20 questions', hard: 'My difficult words', board: 'Class ranking' },
     listH: 'All words in this set',
     goCards: 'Go to flashcards and quizzes',
+    print: { legend: 'Print', ar: 'Arabic only', tr: 'Arabic + translation', all: 'Arabic + 3 languages', btn: 'Print / PDF', hint: 'In the print dialog, choose “Save as PDF”.' },
     close: 'Close',
     closeLabel: 'Close the test and return to the word list',
     which: 'Which words to show',
