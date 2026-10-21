@@ -178,7 +178,7 @@ const groups = themes.map(x => ({ t: x, rows: items.filter(w => w.t === x) }));
       }
       const q = Qs[qi];
       X.innerHTML = `<div class="wt-bar"><p class="hint">${f(T.qOf, { i: qi + 1, n: Qs.length, s: score })}</p><button class="wt-x" type="button" aria-label="${esc(T.closeLabel)}"><span aria-hidden="true">✕</span> ${T.close}</button></div>
-        <div class="q" tabindex="-1">${q.dq ? ruW(q.w) : `<span class="ar" lang="ar" dir="rtl">${esc(q.w.a)}</span>`}</div>
+        <div class="q${!q.dq && q.w.a.length > 14 ? ' long' : ''}" tabindex="-1">${q.dq ? ruW(q.w) : `<span class="ar" lang="ar" dir="rtl">${esc(q.w.a)}</span>`}</div>
         <div class="opts">${q.opts.map((o, k) => `<button class="opt ${q.dq ? 'ar' : ''}" ${q.dq ? 'lang="ar" dir="rtl"' : o.f ? 'lang="ru"' : ''} data-k="${k}">${esc(q.dq ? o.a : o.r)}</button>`).join('')}</div>` +
         (!q.dq && q.opts.some(o => o.f) && D.mark ? `<p class="hint">${esc(D.mark)}</p>` : '');
       focusQ();
@@ -307,27 +307,35 @@ const groups = themes.map(x => ({ t: x, rows: items.filter(w => w.t === x) }));
   :global(html.words-test-on) .top, :global(html.words-test-on) .stats, :global(html.words-test-on) .tabs, :global(html.words-test-on) .below { display: none; }
   :global(html.words-test-on) .wt { position: fixed; inset: 0; height: 100dvh; z-index: 100; overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; padding: 12px 16px;
     background: linear-gradient(160deg, var(--study-from) 0%, var(--study-mid) 55%, var(--study-to) 100%); color: var(--study-ink); }
-  :global(html.words-test-on) #test { width: 100%; max-width: 720px; margin: auto; }
+  :global(html.words-test-on) #test { width: 100%; max-width: 720px; margin-inline: auto; min-height: calc(100dvh - 24px); display: flex; flex-direction: column; }
   #test :global(.wt-bar) { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-block-end: 12px; }
-  #test :global(.hint) { color: var(--study-muted); font-size: 1rem; text-align: center; margin: 10px 0 0; }
+  #test :global(.hint) { color: var(--study-muted); font-size: 1.05rem; text-align: center; margin: 10px 0 0; }
   #test :global(.wt-bar .hint) { margin: 0; text-align: start; }
-  #test :global(.wt-x) { flex: none; min-width: 44px; min-height: 44px; padding: 0 14px; border: 0; border-radius: 8px; background: var(--study-chip); color: var(--study-ink); font: 600 .95rem var(--sans); cursor: pointer; }
-  #test :global(.q) { background: var(--sheet); color: var(--ink); border-radius: 14px; padding: 18px 14px; margin: 0 0 14px; text-align: center; overflow-wrap: anywhere; }
+  #test :global(.wt-x) { flex: none; min-width: 44px; min-height: 44px; padding: 0 14px; border: 0; border-radius: 8px; background: var(--study-chip); color: var(--study-ink); font: 600 1.05rem var(--sans); cursor: pointer; }
+  #test :global(.q) { flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--sheet); color: var(--ink); border-radius: 14px; padding: 18px 14px; margin: 0 0 12px; text-align: center; overflow-wrap: anywhere; }
   #test :global(.q:focus), #test :global(.result:focus) { outline: none; }
-  #test :global(.q .ar) { font-family: var(--ar); font-size: calc(clamp(2.4rem, 8vw, 4rem) * var(--ar-scale)); line-height: 1.8; }
-  #test :global(.q .ru) { font-family: var(--serif); font-weight: 700; font-size: clamp(1.6rem, 5vw, 2.4rem); line-height: 1.4; color: var(--ink); }
-  #test :global(.opts) { display: flex; flex-direction: column; gap: 10px; }
-  #test :global(.opt) { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 60px; padding: 8px 16px; border: 2px solid var(--line-strong); border-radius: var(--r-m);
-    background: var(--sheet); color: var(--ink); font: clamp(1.2rem, 3.6vw, 1.7rem) / 1.5 var(--sans); text-align: center; overflow-wrap: anywhere; cursor: pointer; }
-  #test :global(.opt.ar) { font-family: var(--ar); font-size: calc(clamp(1.6rem, 5vw, 2.4rem) * var(--ar-scale)); line-height: 1.8; }
+  #test :global(.q .ar) { font-family: var(--ar); font-size: calc(clamp(3.2rem, 12vw, 5.5rem) * var(--ar-scale)); line-height: 1.8; }
+  #test :global(.q.long .ar) { font-size: calc(clamp(2.2rem, 7.5vw, 3rem) * var(--ar-scale)); line-height: 1.9; }
+  #test :global(.q .ru) { font-family: var(--serif); font-weight: 700; font-size: clamp(2rem, 7vw, 2.6rem); line-height: 1.4; color: var(--ink); }
+  #test :global(.opts) { flex: none; display: flex; flex-direction: column; gap: 12px; }
+  #test :global(.opt) { display: flex; align-items: center; justify-content: center; width: 100%; min-height: clamp(72px, 11dvh, 112px); padding: 8px 16px; border: 2px solid var(--line-strong); border-radius: var(--r-m);
+    background: var(--sheet); color: var(--ink); font: clamp(1.45rem, 5vw, 1.8rem) / 1.4 var(--sans); text-align: center; overflow-wrap: anywhere; cursor: pointer; }
+  #test :global(.opt.ar) { font-family: var(--ar); font-size: calc(clamp(2.2rem, 7vw, 2.8rem) * var(--ar-scale)); line-height: 1.8; }
   @media (hover: hover) { #test :global(.opt:not(:disabled):hover) { background: var(--hover); } }
   #test :global(.opt.ok) { background: var(--ok-bg); border-color: var(--ok); box-shadow: inset 0 0 0 2px var(--ok); }
   #test :global(.opt.bad) { background: var(--bad-bg); border-color: var(--bad); box-shadow: inset 0 0 0 2px var(--bad); }
   #test :global(.opt:disabled) { cursor: default; opacity: 1; color: var(--ink); }
-  #test :global(.result) { padding: 24px 16px; }
+  #test :global(.result) { padding: 24px 16px; margin-block: auto; }
   #test :global(.result .big) { font-size: clamp(3rem, 12vw, 5rem); }
   #test :global(.result p) { font-size: clamp(1.1rem, 3.6vw, 1.5rem); }
   #test :global(.result .btn) { display: block; width: 100%; max-width: 360px; min-height: 52px; margin: 12px auto 0; }
+  @media (min-width: 700px) {
+    #test :global(.q .ar) { font-size: calc(clamp(2.4rem, 8vw, 4rem) * var(--ar-scale)); }
+    #test :global(.q.long .ar) { font-size: calc(clamp(2.2rem, 7.5vw, 3rem) * var(--ar-scale)); }
+    #test :global(.q .ru) { font-size: clamp(1.6rem, 5vw, 2.4rem); }
+    #test :global(.opt) { font-size: clamp(1.2rem, 3.6vw, 1.7rem); }
+    #test :global(.opt.ar) { font-size: calc(clamp(1.6rem, 5vw, 2.4rem) * var(--ar-scale)); }
+  }
   #test :global(.result .wt-x) { background: var(--study-chip); border-color: transparent; color: var(--study-ink); font-weight: 600; }
   @media (max-width: 640px) { .controls { grid-template-columns: 1fr; } .seg button { flex: 1; padding: 0 6px; font-size: .88rem; } }
 </style>
