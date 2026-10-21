@@ -28,11 +28,11 @@ with sync_playwright() as p:
     t.once('dialog', lambda d: d.accept()); t.click('#pclose')
     # 2. ученик 01: сначала гость, потом вход — прогресс гостя переносится
     sc = b.new_context(viewport={'width':375,'height':800}); s = page(sc)
-    s.goto(B+'words/w100/'); s.wait_for_timeout(500); cards(s, 5, 0)
+    s.goto(B+'words/w100/'); s.wait_for_selector('#stats .bar'); s.click('[data-tab=cards]'); s.wait_for_timeout(500); cards(s, 5, 0)
     print('guest who:', s.inner_text('#who')[:40])
     s.goto(B+'login/'); s.fill('#join', join.lower()); s.fill('#code','1'); s.fill('#pin','0000'); s.click('#fClass button'); s.wait_for_timeout(500)
     print('wrong pin:', s.inner_text('#mClass'))
-    s.fill('#pin', pins['01']); s.click('#fClass button'); s.wait_for_url('**/words/'); s.goto(B+'words/w100/'); s.wait_for_timeout(1200)
+    s.fill('#pin', pins['01']); s.click('#fClass button'); s.wait_for_url('**/words/'); s.goto(B+'words/w100/'); s.wait_for_selector('#stats .bar'); s.click('[data-tab=cards]'); s.wait_for_timeout(1200)
     print('after login:', s.inner_text('#who'), '| stats:', s.inner_text('#stats').replace('\n',' '))
     print('db states after merge:', SQL('select count(*) from card_state'))
     cards(s, 30); s.click('[data-tab=test]')
@@ -47,7 +47,7 @@ with sync_playwright() as p:
     # 4. второе устройство
     sc2 = b.new_context(viewport={'width':375,'height':800}); s2 = page(sc2)
     s2.goto(B+'login/'); s2.fill('#join', join); s2.fill('#code','01'); s2.fill('#pin', pins['01']); s2.click('#fClass button'); s2.wait_for_url('**/words/')
-    s2.goto(B+'words/w100/'); s2.wait_for_timeout(1200)
+    s2.goto(B+'words/w100/'); s2.wait_for_selector('#stats .bar'); s2.click('[data-tab=cards]'); s2.wait_for_timeout(1200)
     st2 = s2.inner_text('#stats'); print('2nd device same progress:', st2.split('пройдено')[1] if 'пройдено' in st2 else st2, '| first:', s.inner_text('#stats').split('пройдено')[1])
     # 5. блокировка
     lc = b.new_context(); l = page(lc); l.goto(B+'login/')
@@ -56,7 +56,7 @@ with sync_playwright() as p:
     # 6. ученик 02 + рейтинг
     c2 = b.new_context(viewport={'width':375,'height':800}); q = page(c2)
     q.goto(B+'login/'); q.fill('#join', join); q.fill('#code','2'); q.fill('#pin', pins['02']); q.click('#fClass button'); q.wait_for_url('**/words/')
-    q.goto(B+'words/w100/'); q.wait_for_timeout(800); cards(q, 25, .2)
+    q.goto(B+'words/w100/'); q.wait_for_selector('#stats .bar'); q.click('[data-tab=cards]'); q.wait_for_timeout(800); cards(q, 25, .2)
     q.evaluate("window.dispatchEvent(new Event('pagehide'))"); q.wait_for_timeout(800)
     SQL("update visits set active_sec = active_sec + 600")
     q.click('[data-tab=board]'); q.wait_for_timeout(1500); print('board:', q.inner_text('#board')[:160].replace('\n',' | '))

@@ -231,7 +231,9 @@ export const en: Dict = {
   },
   deck: {
     descTail: '{words} with flashcards and a test.',
-    tabs: { cards: 'Flashcards', test: 'Test · 20 questions', hard: 'My difficult words', board: 'Class ranking' },
+    tabs: { list: 'List', cards: 'Flashcards', test: 'Test · 20 questions', hard: 'My difficult words', board: 'Class ranking' },
+    listH: 'All words in this set',
+    goCards: 'Go to flashcards and quizzes',
     which: 'Which words to show',
     all: 'All words',
     onlyHard: 'Difficult only',

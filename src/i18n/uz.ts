@@ -234,7 +234,9 @@ export const uz: Dict = {
   },
   deck: {
     descTail: '{words}: kartochkalar va test.',
-    tabs: { cards: 'Kartochkalar', test: 'Test · 20 ta savol', hard: 'Qiyin soʻzlarim', board: 'Sinf reytingi' },
+    tabs: { list: 'Roʻyxat', cards: 'Kartochkalar', test: 'Test · 20 ta savol', hard: 'Qiyin soʻzlarim', board: 'Sinf reytingi' },
+    listH: 'Toʻplamdagi barcha soʻzlar',
+    goCards: 'Kartochkalar va viktorinalarga oʻtish',
     which: 'Qaysi soʻzlarni koʻrsatish',
     all: 'Barcha soʻzlar',
     onlyHard: 'Faqat qiyinlari',

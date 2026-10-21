@@ -14,6 +14,8 @@ const ti = tf(d, 'title', locale), de = tf(d, 'description', locale);
 // перевод слова — на языке страницы (r_uz…), иначе русский с пометкой (f: 1). a и t не переводятся: по ним хранится прогресс.
 const items = d.items.map(w => { const r = tf(w, 'r', locale); return { a: w.a, r: r.text, t: w.t, ...(r.ru ? { f: 1 } : {}) }; });
 const topicsRu = locale !== 'ru';
+// список для ознакомления: рисуется при сборке, без клиентского JS; темы — в порядке данных
+const groups = themes.map(x => ({ t: x, rows: items.filter(w => w.t === x) }));
 ---
 <Base title={ti.text} description={`${de.text} ${fmt(T.descTail, { words: plural(locale, t.common.words, d.items.length) })}`} group="tasks">
   <section class="trainer" data-deck={d.key}>
@@ -27,13 +29,34 @@ const topicsRu = locale !== 'ru';
       </div>
       <div class="stats" id="stats" data-pagefind-ignore></div>
       <div class="tabs" role="tablist" data-pagefind-ignore>
-        <button role="tab" data-tab="cards" aria-selected="true">{T.tabs.cards}</button>
+        <button role="tab" data-tab="list" aria-selected="true">{T.tabs.list}</button>
+        <button role="tab" data-tab="cards" aria-selected="false">{T.tabs.cards}</button>
         <button role="tab" data-tab="test" aria-selected="false">{T.tabs.test}</button>
         <button role="tab" data-tab="hard" aria-selected="false">{T.tabs.hard}</button>
         <button role="tab" data-tab="board" aria-selected="false">{T.tabs.board}</button>
       </div>
 
-      <div data-panel="cards" data-pagefind-ignore>
+      <div data-panel="list" class="sheet wl" data-pagefind-ignore>
+        <h2>{T.listH}</h2>
+        <p class="wl-count">{plural(locale, t.common.words, d.items.length)}</p>
+        <button type="button" class="btn-go" data-go="cards">{T.goCards}</button>
+        {groups.map(g => (
+          <section>
+            {themes.length > 1 && <h3 lang={topicsRu ? 'ru' : undefined}>{g.t}{topicsRu && t.meta.inRussian && <small class="ru-mark">{t.meta.inRussian}</small>}</h3>}
+            <ol role="list">
+              {g.rows.map(w => (
+                <li>
+                  <span class="ar" lang="ar" dir="rtl">{w.a}</span>
+                  <span class="tr" lang={w.f ? 'ru' : undefined}>{w.r}{w.f && t.meta.inRussian && <small class="ru-mark">{t.meta.inRussian}</small>}</span>
+                </li>
+              ))}
+            </ol>
+          </section>
+        ))}
+        <button type="button" class="btn-go" data-go="cards">{T.goCards}</button>
+      </div>
+
+      <div data-panel="cards" hidden data-pagefind-ignore>
         <div class="controls">
           <select id="theme" aria-label={T.which}>
             <option value="*">{T.all}</option>
@@ -193,9 +216,9 @@ const topicsRu = locale !== 'ru';
     function tab(name: string) {
       document.querySelectorAll<HTMLElement>('[data-tab]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
       document.querySelectorAll<HTMLElement>('[data-panel]').forEach(p => (p.hidden = p.dataset.panel !== name));
-      if (name === 'test') startTest(); if (name === 'hard') hard(); if (name === 'board') board(); if (name === 'cards') next();
+      if (name === 'test') startTest(); if (name === 'hard') hard(); if (name === 'board') board(); if (name === 'cards') next(); if (name === 'list') stats();
     }
-    document.querySelectorAll<HTMLElement>('[data-tab]').forEach(b => b.addEventListener('click', () => tab(b.dataset.tab!)));
+    document.querySelectorAll<HTMLElement>('[data-tab],[data-go]').forEach(b => b.addEventListener('click', () => { tab((b.dataset.tab ?? b.dataset.go)!); if (b.dataset.go) $('stats').scrollIntoView(); }));
 
     setInterval(() => store.tick(), 5000);
     setInterval(() => store.sync(), 60_000);
@@ -204,7 +227,7 @@ const topicsRu = locale !== 'ru';
 
     store.onNet(store.net);
     await store.load();
-    tab(location.hash === '#test' ? 'test' : 'cards');
+    tab(location.hash === '#test' ? 'test' : location.hash === '#cards' ? 'cards' : 'list');
   </script>
 </Base>
 
@@ -255,6 +278,14 @@ const topicsRu = locale !== 'ru';
   .sheet :global(td.n) { text-align: center; color: var(--bad-ink); white-space: nowrap; }
   .sheet :global(li.me) { font-weight: 700; color: var(--lapis); }
   .sheet :global(.hint) { color: var(--ink-soft); text-align: left; }
+  .wl :global(h3) { margin: 18px 0 4px; }
+  .wl-count { margin: 0 0 12px; color: var(--ink-soft); }
+  .wl ol { list-style: none; margin: 0; padding: 0; }
+  .wl li { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 4px 14px; align-items: baseline; padding: 6px 0; border-bottom: 1px solid var(--line); overflow-wrap: anywhere; }
+  .wl .ar { font-family: var(--ar); font-size: calc(1.35rem * var(--ar-scale)); line-height: 1.6; text-align: start; }
+  .wl .tr { text-align: start; }
+  .btn-go { display: block; width: 100%; min-height: 44px; margin: 4px 0 8px; padding: 0 14px; border: 0; border-radius: 10px; background: var(--sun); color: var(--on-sun); font: 700 1rem var(--sans); cursor: pointer; }
+  .wl > .btn-go:last-child { margin: 16px 0 0; }
   .below { margin-top: 16px; }
   @media (max-width: 640px) { .controls { grid-template-columns: 1fr; } .seg button { flex: 1; padding: 0 6px; font-size: .88rem; } }
 </style>
