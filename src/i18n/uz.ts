@@ -237,6 +237,8 @@ export const uz: Dict = {
     tabs: { list: 'Roʻyxat', cards: 'Kartochkalar', test: 'Test · 20 ta savol', hard: 'Qiyin soʻzlarim', board: 'Sinf reytingi' },
     listH: 'Toʻplamdagi barcha soʻzlar',
     goCards: 'Kartochkalar va viktorinalarga oʻtish',
+    close: 'Yopish',
+    closeLabel: 'Testni yopib, soʻzlar roʻyxatiga qaytish',
     which: 'Qaysi soʻzlarni koʻrsatish',
     all: 'Barcha soʻzlar',
     onlyHard: 'Faqat qiyinlari',

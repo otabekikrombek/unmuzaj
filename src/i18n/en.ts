@@ -234,6 +234,8 @@ export const en: Dict = {
     tabs: { list: 'List', cards: 'Flashcards', test: 'Test · 20 questions', hard: 'My difficult words', board: 'Class ranking' },
     listH: 'All words in this set',
     goCards: 'Go to flashcards and quizzes',
+    close: 'Close',
+    closeLabel: 'Close the test and return to the word list',
     which: 'Which words to show',
     all: 'All words',
     onlyHard: 'Difficult only',
