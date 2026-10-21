@@ -23,12 +23,24 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
+      - name: ВРЕМЕННО (диагностика) — версии на образе
+        shell: bash {0}
+        run: |
+          cat /etc/os-release | head -3
+          echo "Node образа: $(node -v 2>&1)"; npm -v 2>&1
+          psql --version 2>&1
+          google-chrome --version 2>&1
+          docker --version 2>&1
       - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
       - run: npm ci
 
+      - name: ВРЕМЕННО (диагностика) — Node после setup-node
+        shell: bash {0}
+        run: |
+          echo "Node: $(node -v)  npm: $(npm -v)"
       - name: Уязвимости зависимостей (npm audit)
         # то, что попадает на сайт: high и critical — ошибка; инструменты сборки и тестов: только critical
         run: |
@@ -55,6 +67,17 @@ jobs:
 
       - name: Lighthouse (телефон, 6 страниц)
         run: npx --yes @lhci/cli@0.15.1 autorun --config=lighthouserc.cjs
+
+      - name: ВРЕМЕННО (диагностика) — медианные значения Lighthouse
+        if: always()
+        shell: bash {0}
+        run: |
+          node -e '
+          const fs=require("fs");const d=".lighthouseci/reports/";
+          const m=JSON.parse(fs.readFileSync(d+"manifest.json","utf8")).filter(x=>x.isRepresentativeRun);
+          for(const x of m){const r=JSON.parse(fs.readFileSync(d+x.jsonPath.split("/").pop(),"utf8"));const a=r.audits;
+          console.log("LH",x.url.replace(/^http:\/\/localhost:\d+/,""),"perf",r.categories.performance.score,"a11y",r.categories.accessibility.score,"bp",r.categories["best-practices"].score,"seo",r.categories.seo.score,"LCP",Math.round(a["largest-contentful-paint"].numericValue),"CLS",a["cumulative-layout-shift"].numericValue.toFixed(3),"TBT",Math.round(a["total-blocking-time"].numericValue),"UA",r.environment.hostUserAgent);}
+          ' || true
 
       - name: Отчёты Lighthouse
         if: always()
@@ -87,6 +110,12 @@ jobs:
       PGPASSWORD: postgres
     steps:
       - uses: actions/checkout@v7
+
+      - name: ВРЕМЕННО (диагностика) — версии на образе
+        shell: bash {0}
+        run: |
+          psql --version 2>&1
+          pg_isready --version 2>&1
 
       - name: База t1, имитация Supabase и два пользователя (tests/README.md)
         run: |
