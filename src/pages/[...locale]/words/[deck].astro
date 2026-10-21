@@ -52,6 +52,7 @@ const groups = themes.map(x => ({ t: x, rows: rows.filter(w => w.t === x) }));
           <p class="note">{T.print.hint}</p>
         </fieldset>
         <button type="button" class="btn-go" data-go="cards">{T.goCards}</button>
+        {hasAll && <div class="wl-head" aria-hidden="true"><span></span><span lang="ar" dir="rtl">العربية</span><span lang="uz">Oʻzbekcha</span><span lang="ru">Русский</span><span lang="en">English</span></div>}
         {groups.map(g => (
           <section>
             {themes.length > 1 && <h3 lang={topicsRu ? 'ru' : undefined}>{g.t}{topicsRu && t.meta.inRussian && <small class="ru-mark">{t.meta.inRussian}</small>}</h3>}
@@ -322,7 +323,7 @@ const groups = themes.map(x => ({ t: x, rows: rows.filter(w => w.t === x) }));
   .btn-go { display: block; width: 100%; min-height: 44px; margin: 4px 0 8px; padding: 0 14px; border: 0; border-radius: 10px; background: var(--sun); color: var(--on-sun); font: 700 1rem var(--sans); cursor: pointer; }
   .wl > .btn-go:last-child { margin: 16px 0 0; }
   .below { margin-top: 16px; }
-  .print-date, .wl .px { display: none; }
+  .print-date, .wl .px, .wl-head { display: none; }
   .wl-print { margin: 0 0 12px; padding: 8px 12px 12px; border: 1px solid var(--line); border-radius: var(--r-m); }
   .wl-print legend { padding-inline: 6px; font-weight: 700; }
   .wl-print label { display: flex; align-items: center; gap: 10px; min-height: 44px; cursor: pointer; }
@@ -349,8 +350,14 @@ const groups = themes.map(x => ({ t: x, rows: rows.filter(w => w.t === x) }));
     .wl .tr, .wl .px { font: 11pt / 1.35 var(--sans); color: #000; overflow-wrap: anywhere; }
     .wl[data-print='ar'] .tr, .wl[data-print='ar'] .px, .wl[data-print='tr'] .px, .wl[data-print='all'] .tr { display: none; }
     .wl[data-print='tr'] li { grid-template-columns: 9mm minmax(0, 5fr) minmax(0, 6fr); }
-    .wl[data-print='all'] li { grid-template-columns: 9mm minmax(0, 9fr) repeat(3, minmax(0, 6fr)); }
-    .wl[data-print='all'] .px { display: block; }
+    /* режим А: слова тремя колонками листа, нумерация сверху вниз по колонкам */
+    .wl[data-print='ar'] ol { column-count: 3; column-gap: 8mm; }
+    .wl[data-print='ar'] li { grid-template-columns: 7mm minmax(0, 1fr); column-gap: 2mm; }
+    /* режим В: одни и те же колонки у строк и у строки заголовков; русская колонка шире, чтобы слова не ломались */
+    .wl[data-print='all'] { --wl-cols: 9mm minmax(0, 42fr) minmax(0, 32fr) minmax(0, 44fr) minmax(0, 41fr); }
+    .wl[data-print='all'] li { grid-template-columns: var(--wl-cols); column-gap: 3mm; }
+    .wl[data-print='all'] .px { display: block; font-size: 10pt; overflow-wrap: break-word; }
+    .wl[data-print='all'] .wl-head { display: grid; grid-template-columns: var(--wl-cols); column-gap: 3mm; margin-block-end: 1mm; padding-block-end: 1mm; border-bottom: .5pt solid #000; break-after: avoid; font: 700 9pt var(--sans); color: #000; }
   }
 
   /* тест «на всё окно» (D32): класс на <html> ставит tab(); шрифты и цвета — как у тренажёра */
