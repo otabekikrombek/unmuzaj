@@ -2,7 +2,7 @@
 
 ## База данных (`supabase/tests/`)
 
-Нужен локальный PostgreSQL 15+ (проверено на 17). Эти же шаги на каждом PR выполняет задание `sql` в `.github/workflows/checks.yml` (миграции берутся перебором `supabase/migrations/*.sql`). Оно проверяет, что миграции применяются и SQL выполняется без ошибок. Тесты 20, 30 и 40 сами сравнивают результаты и падают при расхождении (задание дополнительно требует их маркер «passed»). `10_test.sql` не самопроверяющийся: он печатает значения (вход по ПИН, блокировка после 5 ошибок, синхронизация), а сравнивает только две проверки доступа, поэтому CI по этим пунктам правильность логики не гарантирует.
+Нужен локальный PostgreSQL 15+ (проверено на 17). Эти же шаги на каждом PR выполняет задание `sql` в `.github/workflows/checks.yml` (миграции берутся перебором `supabase/migrations/*.sql`). Оно проверяет, что миграции применяются и SQL выполняется без ошибок. Все четыре теста (10, 20, 30, 40) сами сравнивают результаты с ожидаемыми и падают при расхождении, а в конце печатают свой маркер «passed»; задание требует маркер у каждого. `10_test.sql` (вход по ПИН, блокировка после 5 ошибок, синхронизация, отчёт учителя) в конце печатает «core tests passed»; ПИН-коды и токены он не печатает.
 
 ```bash
 createdb t1
@@ -12,7 +12,7 @@ psql -d t1 -v ON_ERROR_STOP=1 -f supabase/migrations/0001_init.sql
 psql -d t1 -v ON_ERROR_STOP=1 -f supabase/migrations/0002_quizzes.sql
 psql -d t1 -v ON_ERROR_STOP=1 -f supabase/migrations/0003_mock_exits.sql
 psql -d t1 -v ON_ERROR_STOP=1 -f supabase/migrations/0004_hardening.sql
-psql -d t1 -f supabase/tests/10_test.sql
+psql -d t1 -f supabase/tests/10_test.sql       # вход, блокировка, синхронизация, отчёт учителя; в конце — «core tests passed»
 psql -d t1 -f supabase/tests/20_quiz_test.sql   # викторины; в конце печатает «quiz tests passed»
 psql -d t1 -f supabase/tests/30_mock_test.sql   # пробные экзамены (выходы из окна); в конце — «mock tests passed»
 psql -d t1 -f supabase/tests/40_hardening_test.sql   # права на функции (0004); в конце — «hardening tests passed»
