@@ -38,7 +38,7 @@ with sync_playwright() as p:
     cards(s, 30); s.click('[data-tab=test]')
     for i in range(20): s.click('.opt >> nth=0'); s.wait_for_timeout(1750)
     s.wait_for_timeout(800); print('test:', s.inner_text('#test')[:12].replace('\n',' '))
-    s.click('[data-tab=cards]'); s.evaluate('1'); s.wait_for_timeout(500)
+    s.click('#test .wt-x'); s.click('[data-tab=cards]'); s.evaluate('1'); s.wait_for_timeout(500)
     stats1 = s.inner_text('#stats'); print('who:', s.inner_text('#who'))
     # 3. офлайн
     ctl('down=1'); cards(s, 14, .5); s.wait_for_timeout(1500); print('offline:', s.inner_text('#who'))
