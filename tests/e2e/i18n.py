@@ -113,7 +113,7 @@ with sync_playwright() as p:
 
     # 4. карточки и викторина на uz: материал по-русски с пометкой
     ctx = b.new_context(viewport={'width': 360, 'height': 740}, reduced_motion='reduce'); pg = page(ctx)
-    nav(pg, B + 'uz/words/w100/')
+    nav(pg, B + 'uz/words/w100/'); pg.wait_for_selector('#stats .bar'); pg.click('[data-tab=cards]')
     check('карточки: кнопки по-узбекски', pg.locator('#yes').inner_text() == 'Bilaman' and pg.locator('#no').inner_text() == 'Bilmayman')
     pg.click('[data-dir="2"]')  # перевод → арабский: перевод на лицевой стороне
     check('карточка: перевод с пометкой (rus tilida)', MARK['uz'] in pg.locator('#card').inner_text() and pg.locator('#card .ru[lang=ru]').count() == 1, pg.locator('#card').inner_text())
@@ -153,7 +153,7 @@ with sync_playwright() as p:
             ctx = b.new_context(viewport={'width': 360, 'height': 800}, reduced_motion='reduce')
             ctx.add_init_script(f"try{{localStorage.setItem('unmuzaj:look', JSON.stringify({{mode:'{mode}', palette:'{pal}'}}))}}catch(e){{}}")
             pg = page(ctx)
-            for path, act in [('uz/words/w100/', "document.querySelector('[data-dir=\"2\"]').click()"), ('uz/', "document.querySelector('.lang-btn').click()"), ('en/quizzes/izafa/', None)]:
+            for path, act in [('uz/words/w100/', "document.querySelector('[data-tab=cards]').click(); document.querySelector('[data-dir=\"2\"]').click()"), ('uz/', "document.querySelector('.lang-btn').click()"), ('en/quizzes/izafa/', None)]:
                 nav(pg, B + path)
                 if act: pg.evaluate(act); pg.wait_for_timeout(100)
                 pg.add_script_tag(path=AXE)
