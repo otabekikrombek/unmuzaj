@@ -63,6 +63,7 @@ jobs:
           name: lighthouse
           path: .lighthouseci/
           if-no-files-found: ignore
+          include-hidden-files: true
 
   sql:
     name: SQL-тесты (PostgreSQL 17)
