@@ -18,8 +18,8 @@ concurrency:
 
 jobs:
   checks:
-    # закреплено: ubuntu-latest с 2026-10-19 переходит на Ubuntu 26; переход на 26 — отдельным решением (D25) после проверки Lighthouse, psql, Node
-    runs-on: ubuntu-24.04
+    # закреплено: ubuntu-26.04 (D36); не ubuntu-latest, чтобы образ менялся только нашим решением
+    runs-on: ubuntu-26.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
@@ -66,8 +66,8 @@ jobs:
 
   sql:
     name: SQL-тесты (PostgreSQL 17)
-    # закреплено: ubuntu-latest с 2026-10-19 переходит на Ubuntu 26; переход на 26 — отдельным решением (D25) после проверки Lighthouse, psql, Node
-    runs-on: ubuntu-24.04
+    # закреплено: ubuntu-26.04 (D36); не ubuntu-latest, чтобы образ менялся только нашим решением
+    runs-on: ubuntu-26.04
     timeout-minutes: 10
     services:
       postgres:
