@@ -1,0 +1,535 @@
+{
+ "key": "bmt-tashkilotlari",
+ "title": "Термины: организации ООН (Введение в филологию)",
+ "title_uz": "Terminlar: BMT tashkilotlari (Filologiyaga kirish)",
+ "title_en": "Terms: UN organizations (Introduction to Philology)",
+ "description": "Названия органов и организаций системы ООН на арабском: 74 термина в 12 группах.",
+ "description_uz": "BMT tizimi organlari va tashkilotlarining arabcha nomlari: 12 guruhda 74 ta termin.",
+ "description_en": "Arabic names of UN bodies and organizations: 74 terms in 12 groups.",
+ "level": "",
+ "topics": [
+  "термины"
+ ],
+ "added": "2026-10-28",
+ "courses": [],
+ "items": [
+  {
+   "a": "الْجَمْعِيَّةُ الْعَامَّةُ لِمُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ",
+   "r": "Генеральная Ассамблея ООН",
+   "r_uz": "BMT Bosh Assambleyasi",
+   "r_en": "UN General Assembly",
+   "t": "Главные органы ООН"
+  },
+  {
+   "a": "مَجْلِسُ الْأَمْنِ بِمُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ",
+   "r": "Совет Безопасности ООН",
+   "r_uz": "BMT Xavfsizlik Kengashi",
+   "r_en": "UN Security Council",
+   "t": "Главные органы ООН"
+  },
+  {
+   "a": "الْمَجْلِسُ الِاقْتِصَادِيُّ وَالِاجْتِمَاعِيُّ بِمُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ",
+   "r": "Экономический и Социальный Совет ООН",
+   "r_uz": "BMT Iqtisodiy va Ijtimoiy Kengashi",
+   "r_en": "UN Economic and Social Council",
+   "t": "Главные органы ООН"
+  },
+  {
+   "a": "مَجْلِسُ الْوِصَايَةِ التَّابِعُ لِمُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ",
+   "r": "Совет по опеке ООН (работа приостановлена в 1994 г.)",
+   "r_uz": "BMT Vasiylik kengashi (1994-yildan faoliyati toʻxtatilgan)",
+   "r_en": "UN Trusteeship Council (operations suspended in 1994)",
+   "t": "Главные органы ООН"
+  },
+  {
+   "a": "مَحْكَمَةُ الْعَدْلِ الدَّوْلِيَّةُ",
+   "r": "Международный Суд ООН",
+   "r_uz": "BMT Xalqaro sudi",
+   "r_en": "International Court of Justice",
+   "t": "Главные органы ООН"
+  },
+  {
+   "a": "الْأَمَانَةُ الْعَامَّةُ لِمُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ",
+   "r": "Секретариат ООН",
+   "r_uz": "BMT Kotibiyati",
+   "r_en": "UN Secretariat",
+   "t": "Главные органы ООН"
+  },
+  {
+   "a": "الْمُنَظَّمَةُ الدَّوْلِيَّةُ لِلطَّيَرَانِ الْمَدَنِيِّ",
+   "r": "Международная организация гражданской авиации (ИКАО)",
+   "r_uz": "Xalqaro fuqaro aviatsiyasi tashkiloti (ICAO)",
+   "r_en": "International Civil Aviation Organization (ICAO)",
+   "t": "Специализированные учреждения ООН"
+  },
+  {
+   "a": "مُنَظَّمَةُ الْأَغْذِيَةِ وَالزِّرَاعَةِ",
+   "r": "Продовольственная и сельскохозяйственная организация ООН (ФАО)",
+   "r_uz": "BMTning Oziq-ovqat va qishloq xoʻjaligi tashkiloti (FAO)",
+   "r_en": "Food and Agriculture Organization (FAO)",
+   "t": "Специализированные учреждения ООН"
+  },
+  {
+   "a": "مُنَظَّمَةُ الْأُمَمِ الْمُتَّحِدَةِ لِلتَّنْمِيَةِ الصِّنَاعِيَّةِ",
+   "r": "Организация ООН по промышленному развитию (ЮНИДО)",
+   "r_uz": "BMTning Sanoat taraqqiyoti tashkiloti (UNIDO)",
+   "r_en": "UN Industrial Development Organization (UNIDO)",
+   "t": "Специализированные учреждения ООН"
+  },
+  {
+   "a": "الْيُونِسْكُو",
+   "r": "ЮНЕСКО — Организация ООН по вопросам образования, науки и культуры",
+   "r_uz": "YUNESKO — BMTning Taʼlim, fan va madaniyat masalalari boʻyicha tashkiloti",
+   "r_en": "UNESCO — UN Educational, Scientific and Cultural Organization",
+   "t": "Специализированные учреждения ООН"
+  },
+  {
+   "a": "مُنَظَّمَةُ الْعَمَلِ الدَّوْلِيَّةُ",
+   "r": "Международная организация труда (МОТ)",
+   "r_uz": "Xalqaro mehnat tashkiloti (XMT)",
+   "r_en": "International Labour Organization (ILO)",
+   "t": "Специализированные учреждения ООН"
+  },
+  {
+   "a": "الْمُنَظَّمَةُ الْبَحْرِيَّةُ الدَّوْلِيَّةُ",
+   "r": "Международная морская организация (ИМО)",
+   "r_uz": "Xalqaro dengiz tashkiloti (IMO)",
+   "r_en": "International Maritime Organization (IMO)",
+   "t": "Специализированные учреждения ООН"
+  },
+  {
+   "a": "الْمُنَظَّمَةُ الْعَالَمِيَّةُ لِلْأَرْصَادِ الْجَوِّيَّةِ",
+   "r": "Всемирная метеорологическая организация (ВМО)",
+   "r_uz": "Butunjahon meteorologiya tashkiloti (WMO)",
+   "r_en": "World Meteorological Organization (WMO)",
+   "t": "Специализированные учреждения ООН"
+  },
+  {
+   "a": "الْمُنَظَّمَةُ الْعَالَمِيَّةُ لِلْمِلْكِيَّةِ الْفِكْرِيَّةِ",
+   "r": "Всемирная организация интеллектуальной собственности (ВОИС)",
+   "r_uz": "Butunjahon intellektual mulk tashkiloti (WIPO)",
+   "r_en": "World Intellectual Property Organization (WIPO)",
+   "t": "Специализированные учреждения ООН"
+  },
+  {
+   "a": "مُنَظَّمَةُ الصِّحَّةِ الْعَالَمِيَّةُ",
+   "r": "Всемирная организация здравоохранения (ВОЗ)",
+   "r_uz": "Jahon sogʻliqni saqlash tashkiloti (JSST)",
+   "r_en": "World Health Organization (WHO)",
+   "t": "Специализированные учреждения ООН"
+  },
+  {
+   "a": "مُنَظَّمَةُ السِّيَاحَةِ الْعَالَمِيَّةُ",
+   "r": "Всемирная туристская организация ООН (ЮНВТО; с 2024 г. — «ООН-Туризм»)",
+   "r_uz": "Butunjahon turizm tashkiloti (UNWTO; 2024-yildan — «UN Tourism»)",
+   "r_en": "World Tourism Organization (UNWTO; since 2024 — UN Tourism)",
+   "t": "Специализированные учреждения ООН"
+  },
+  {
+   "a": "الصُّنْدُوقُ الدَّوْلِيُّ لِلتَّنْمِيَةِ الزِّرَاعِيَّةِ",
+   "r": "Международный фонд сельскохозяйственного развития (МФСР)",
+   "r_uz": "Qishloq xoʻjaligini rivojlantirish xalqaro jamgʻarmasi (IFAD)",
+   "r_en": "International Fund for Agricultural Development (IFAD)",
+   "t": "Специализированные учреждения ООН"
+  },
+  {
+   "a": "صُنْدُوقُ النَّقْدِ الدَّوْلِيُّ",
+   "r": "Международный валютный фонд (МВФ)",
+   "r_uz": "Xalqaro valyuta jamgʻarmasi (XVJ)",
+   "r_en": "International Monetary Fund (IMF)",
+   "t": "Специализированные учреждения ООН"
+  },
+  {
+   "a": "الِاتِّحَادُ الدَّوْلِيُّ لِلِاتِّصَالَاتِ",
+   "r": "Международный союз электросвязи (МСЭ)",
+   "r_uz": "Xalqaro elektraloqa ittifoqi (ITU)",
+   "r_en": "International Telecommunication Union (ITU)",
+   "t": "Специализированные учреждения ООН"
+  },
+  {
+   "a": "اِتِّحَادُ الْبَرِيدِ الدَّوْلِيُّ",
+   "r": "Всемирный почтовый союз (ВПС)",
+   "r_uz": "Butunjahon pochta ittifoqi (UPU)",
+   "r_en": "Universal Postal Union (UPU)",
+   "t": "Специализированные учреждения ООН"
+  },
+  {
+   "a": "مُؤَسَّسَةُ التَّنْمِيَةِ الدَّوْلِيَّةُ",
+   "r": "Международная ассоциация развития (МАР)",
+   "r_uz": "Xalqaro taraqqiyot assotsiatsiyasi (IDA)",
+   "r_en": "International Development Association (IDA)",
+   "t": "Группа Всемирного банка"
+  },
+  {
+   "a": "الْبَنْكُ الدَّوْلِيُّ لِلْإِنْشَاءِ وَالتَّعْمِيرِ",
+   "r": "Международный банк реконструкции и развития (МБРР)",
+   "r_uz": "Xalqaro tiklanish va taraqqiyot banki (XTTB)",
+   "r_en": "International Bank for Reconstruction and Development (IBRD)",
+   "t": "Группа Всемирного банка"
+  },
+  {
+   "a": "مُؤَسَّسَةُ التَّمْوِيلِ الدَّوْلِيَّةُ",
+   "r": "Международная финансовая корпорация (МФК)",
+   "r_uz": "Xalqaro moliya korporatsiyasi (XMK)",
+   "r_en": "International Finance Corporation (IFC)",
+   "t": "Группа Всемирного банка"
+  },
+  {
+   "a": "بَرْنَامَجُ الْأَغْذِيَةِ الْعَالَمِيُّ",
+   "r": "Всемирная продовольственная программа (ВПП)",
+   "r_uz": "Butunjahon oziq-ovqat dasturi (WFP)",
+   "r_en": "World Food Programme (WFP)",
+   "t": "Программы и фонды ООН"
+  },
+  {
+   "a": "بَرْنَامَجُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ الْإِنْمَائِيُّ",
+   "r": "Программа развития ООН (ПРООН)",
+   "r_uz": "BMT Taraqqiyot dasturi (BMTTD)",
+   "r_en": "UN Development Programme (UNDP)",
+   "t": "Программы и фонды ООН"
+  },
+  {
+   "a": "صُنْدُوقُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ الْإِنْمَائِيُّ لِلْمَرْأَةِ",
+   "r": "Фонд ООН для развития в интересах женщин (ЮНИФЕМ; с 2010 г. в составе «ООН-женщины»)",
+   "r_uz": "BMTning Ayollar uchun taraqqiyot jamgʻarmasi (UNIFEM; 2010-yildan «BMT Xotin-qizlar» tarkibida)",
+   "r_en": "UN Development Fund for Women (UNIFEM; merged into UN Women in 2010)",
+   "t": "Программы и фонды ООН"
+  },
+  {
+   "a": "مُتَطَوِّعُو مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ",
+   "r": "Добровольцы ООН (ДООН)",
+   "r_uz": "BMT Koʻngillilari (UNV)",
+   "r_en": "United Nations Volunteers (UNV)",
+   "t": "Программы и фонды ООН"
+  },
+  {
+   "a": "بَرْنَامَجُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ لِلْبِيئَةِ",
+   "r": "Программа ООН по окружающей среде (ЮНЕП)",
+   "r_uz": "BMT Atrof-muhit dasturi (UNEP)",
+   "r_en": "UN Environment Programme (UNEP)",
+   "t": "Программы и фонды ООН"
+  },
+  {
+   "a": "بَرْنَامَجُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ لِلْمُسْتَوْطَنَاتِ الْبَشَرِيَّةِ",
+   "r": "Программа ООН по населённым пунктам (ООН-Хабитат)",
+   "r_uz": "BMT Aholi punktlari dasturi (BMT-Xabitat)",
+   "r_en": "UN Human Settlements Programme (UN-Habitat)",
+   "t": "Программы и фонды ООН"
+  },
+  {
+   "a": "الْمُفَوَّضِيَّةُ الْعُلْيَا لِمُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ لِشُؤُونِ اللَّاجِئِينَ",
+   "r": "Управление Верховного комиссара ООН по делам беженцев (УВКБ ООН)",
+   "r_uz": "BMT Qochqinlar ishi boʻyicha Oliy komissarligi (UNHCR)",
+   "r_en": "Office of the UN High Commissioner for Refugees (UNHCR)",
+   "t": "Программы и фонды ООН"
+  },
+  {
+   "a": "كِيَانُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ لِلْمُسَاوَاةِ بَيْنَ الْجِنْسَيْنِ وَتَمْكِينِ الْمَرْأَةِ",
+   "r": "Структура ООН по вопросам гендерного равенства и расширения прав и возможностей женщин (ООН-женщины)",
+   "r_uz": "BMTning Gender tengligi va xotin-qizlar huquq va imkoniyatlarini kengaytirish tuzilmasi (BMT Xotin-qizlar)",
+   "r_en": "UN Entity for Gender Equality and the Empowerment of Women (UN Women)",
+   "t": "Программы и фонды ООН"
+  },
+  {
+   "a": "الْيُونِيسِفُ",
+   "r": "ЮНИСЕФ — Детский фонд ООН",
+   "r_uz": "YUNISEF — BMT Bolalar jamgʻarmasi",
+   "r_en": "UNICEF — UN Children's Fund",
+   "t": "Программы и фонды ООН"
+  },
+  {
+   "a": "مُؤْتَمَرُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ لِلتِّجَارَةِ وَالتَّنْمِيَةِ",
+   "r": "Конференция ООН по торговле и развитию (ЮНКТАД)",
+   "r_uz": "BMT Savdo va taraqqiyot konferensiyasi (UNCTAD)",
+   "r_en": "UN Conference on Trade and Development (UNCTAD)",
+   "t": "Программы и фонды ООН"
+  },
+  {
+   "a": "صُنْدُوقُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ لِلسُّكَّانِ",
+   "r": "Фонд ООН в области народонаселения (ЮНФПА)",
+   "r_uz": "BMT Aholishunoslik jamgʻarmasi (UNFPA)",
+   "r_en": "UN Population Fund (UNFPA)",
+   "t": "Программы и фонды ООН"
+  },
+  {
+   "a": "صُنْدُوقُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ لِلشَّرَاكَةِ الدَّوْلِيَّةِ",
+   "r": "Фонд международного партнёрства ООН (ФМПООН)",
+   "r_uz": "BMT Xalqaro hamkorlik jamgʻarmasi (UNFIP)",
+   "r_en": "UN Fund for International Partnerships (UNFIP)",
+   "t": "Программы и фонды ООН"
+  },
+  {
+   "a": "وَكَالَةُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ لِإِغَاثَةِ وَتَشْغِيلِ اللَّاجِئِينَ الْفِلَسْطِينِيِّينَ فِي الشَّرْقِ الْأَدْنَى",
+   "r": "Ближневосточное агентство ООН для помощи палестинским беженцам и организации работ (БАПОР)",
+   "r_uz": "BMTning Yaqin Sharqdagi falastinlik qochqinlarga yordam berish va ish bilan taʼminlash agentligi (UNRWA)",
+   "r_en": "UN Relief and Works Agency for Palestine Refugees in the Near East (UNRWA)",
+   "t": "Программы и фонды ООН"
+  },
+  {
+   "a": "مَكْتَبُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ لِمُكَافَحَةِ الْمُخَدِّرَاتِ وَالْجَرَائِمِ",
+   "r": "Управление ООН по наркотикам и преступности (ЮНОДК)",
+   "r_uz": "BMTning Giyohvand moddalar va jinoyatchilik boʻyicha boshqarmasi (UNODC)",
+   "r_en": "UN Office on Drugs and Crime (UNODC)",
+   "t": "Программы и фонды ООН"
+  },
+  {
+   "a": "مَعْهَدُ بُحُوثِ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ لِلتَّنْمِيَةِ الِاجْتِمَاعِيَّةِ",
+   "r": "Научно-исследовательский институт социального развития ООН (ЮНРИСД)",
+   "r_uz": "BMT Ijtimoiy rivojlanish ilmiy-tadqiqot instituti (UNRISD)",
+   "r_en": "UN Research Institute for Social Development (UNRISD)",
+   "t": "Научно-исследовательские и учебные институты"
+  },
+  {
+   "a": "مَعْهَدُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ لِبُحُوثِ نَزْعِ السِّلَاحِ",
+   "r": "Институт ООН по исследованию проблем разоружения (ЮНИДИР)",
+   "r_uz": "BMT Qurolsizlanish muammolarini tadqiq etish instituti (UNIDIR)",
+   "r_en": "UN Institute for Disarmament Research (UNIDIR)",
+   "t": "Научно-исследовательские и учебные институты"
+  },
+  {
+   "a": "مَعْهَدُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ لِلتَّدْرِيبِ وَالْبَحْثِ",
+   "r": "Учебный и научно-исследовательский институт ООН (ЮНИТАР)",
+   "r_uz": "BMT Taʼlim va ilmiy-tadqiqot instituti (UNITAR)",
+   "r_en": "UN Institute for Training and Research (UNITAR)",
+   "t": "Научно-исследовательские и учебные институты"
+  },
+  {
+   "a": "مَعْهَدُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ الدَّوْلِيُّ لِلْبَحْثِ وَالتَّدْرِيبِ لِلنُّهُوضِ بِالْمَرْأَةِ",
+   "r": "Международный научно-исследовательский и учебный институт по улучшению положения женщин (ООН-МУНИУЖ; с 2010 г. в составе «ООН-женщины»)",
+   "r_uz": "Xotin-qizlar mavqeini yaxshilash boʻyicha xalqaro ilmiy-tadqiqot va oʻquv instituti (UN-INSTRAW; 2010-yildan «BMT Xotin-qizlar» tarkibida)",
+   "r_en": "International Research and Training Institute for the Advancement of Women (UN-INSTRAW; merged into UN Women in 2010)",
+   "t": "Научно-исследовательские и учебные институты"
+  },
+  {
+   "a": "جَامِعَةُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ",
+   "r": "Университет ООН (УООН)",
+   "r_uz": "BMT Universiteti (UNU)",
+   "r_en": "United Nations University (UNU)",
+   "t": "Научно-исследовательские и учебные институты"
+  },
+  {
+   "a": "الْمَحْكَمَةُ الْجِنَائِيَّةُ الدَّوْلِيَّةُ لِرُوَانْدَا",
+   "r": "Международный уголовный трибунал по Руанде (МУТР; закрыт в 2015 г.)",
+   "r_uz": "Ruanda boʻyicha xalqaro jinoyat tribunali (ICTR; 2015-yilda yopilgan)",
+   "r_en": "International Criminal Tribunal for Rwanda (ICTR; closed in 2015)",
+   "t": "Вспомогательные органы Совета Безопасности"
+  },
+  {
+   "a": "الْمَحْكَمَةُ الْجِنَائِيَّةُ الدَّوْلِيَّةُ لِيُوغُوسْلَافِيَا السَّابِقَةِ",
+   "r": "Международный трибунал по бывшей Югославии (МТБЮ; закрыт в 2017 г.)",
+   "r_uz": "Sobiq Yugoslaviya boʻyicha xalqaro jinoyat tribunali (ICTY; 2017-yilda yopilgan)",
+   "r_en": "International Criminal Tribunal for the former Yugoslavia (ICTY; closed in 2017)",
+   "t": "Вспомогательные органы Совета Безопасности"
+  },
+  {
+   "a": "مَجْلِسُ حُقُوقِ الْإِنْسَانِ",
+   "r": "Совет по правам человека (СПЧ)",
+   "r_uz": "Inson huquqlari boʻyicha kengash (UNHRC)",
+   "r_en": "Human Rights Council (UNHRC)",
+   "t": "Вспомогательные органы Генеральной Ассамблеи"
+  },
+  {
+   "a": "لَجْنَةُ الْقَانُونِ الدَّوْلِيِّ",
+   "r": "Комиссия международного права",
+   "r_uz": "Xalqaro huquq komissiyasi",
+   "r_en": "International Law Commission",
+   "t": "Вспомогательные органы Генеральной Ассамблеи"
+  },
+  {
+   "a": "الْهَيْئَةُ الدَّوْلِيَّةُ لِمُرَاقَبَةِ الْمُخَدِّرَاتِ",
+   "r": "Международный комитет по контролю над наркотиками (МККН)",
+   "r_uz": "Giyohvand moddalarni nazorat qilish xalqaro qoʻmitasi (INCB)",
+   "r_en": "International Narcotics Control Board (INCB)",
+   "t": "Технические комиссии"
+  },
+  {
+   "a": "لَجْنَةُ الْمُخَدِّرَاتِ بِمُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ",
+   "r": "Комиссия ООН по наркотическим средствам",
+   "r_uz": "BMT Giyohvand moddalar boʻyicha komissiyasi",
+   "r_en": "UN Commission on Narcotic Drugs",
+   "t": "Технические комиссии"
+  },
+  {
+   "a": "لَجْنَةُ التَّنْمِيَةِ الْمُسْتَدَامَةِ",
+   "r": "Комиссия по устойчивому развитию (КУР; в 2013 г. заменена Политическим форумом высокого уровня)",
+   "r_uz": "Barqaror rivojlanish komissiyasi (CSD; 2013-yilda Yuqori darajadagi siyosiy forum bilan almashtirilgan)",
+   "r_en": "Commission on Sustainable Development (CSD; replaced in 2013 by the High-level Political Forum)",
+   "t": "Технические комиссии"
+  },
+  {
+   "a": "لَجْنَةُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ الِاقْتِصَادِيَّةُ وَالِاجْتِمَاعِيَّةُ لِغَرْبِ آسِيَا",
+   "r": "Экономическая и социальная комиссия ООН для Западной Азии (ЭСКЗА)",
+   "r_uz": "BMT Gʻarbiy Osiyo iqtisodiy va ijtimoiy komissiyasi (ESCWA)",
+   "r_en": "UN Economic and Social Commission for Western Asia (ESCWA)",
+   "t": "Региональные комиссии ЭКОСОС"
+  },
+  {
+   "a": "لَجْنَةُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ الِاقْتِصَادِيَّةُ وَالِاجْتِمَاعِيَّةُ لِآسِيَا وَالْمُحِيطِ الْهَادِئِ",
+   "r": "Экономическая и социальная комиссия ООН для Азии и Тихого океана (ЭСКАТО)",
+   "r_uz": "BMT Osiyo va Tinch okeani iqtisodiy va ijtimoiy komissiyasi (ESCAP)",
+   "r_en": "UN Economic and Social Commission for Asia and the Pacific (ESCAP)",
+   "t": "Региональные комиссии ЭКОСОС"
+  },
+  {
+   "a": "لَجْنَةُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ الِاقْتِصَادِيَّةُ لِأَفْرِيقِيَا",
+   "r": "Экономическая комиссия ООН для Африки (ЭКА)",
+   "r_uz": "BMT Afrika iqtisodiy komissiyasi (ECA)",
+   "r_en": "UN Economic Commission for Africa (ECA)",
+   "t": "Региональные комиссии ЭКОСОС"
+  },
+  {
+   "a": "لَجْنَةُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ الِاقْتِصَادِيَّةُ لِأَمْرِيكَا اللَّاتِينِيَّةِ وَمِنْطَقَةِ الْبَحْرِ الْكَارِيبِيِّ",
+   "r": "Экономическая комиссия ООН для Латинской Америки и Карибского бассейна (ЭКЛАК)",
+   "r_uz": "BMT Lotin Amerikasi va Karib havzasi iqtisodiy komissiyasi (ECLAC)",
+   "r_en": "UN Economic Commission for Latin America and the Caribbean (ECLAC)",
+   "t": "Региональные комиссии ЭКОСОС"
+  },
+  {
+   "a": "لَجْنَةُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ الِاقْتِصَادِيَّةُ لِأُورُوبَّا",
+   "r": "Европейская экономическая комиссия ООН (ЕЭК ООН)",
+   "r_uz": "BMT Yevropa iqtisodiy komissiyasi (UNECE)",
+   "r_en": "UN Economic Commission for Europe (UNECE)",
+   "t": "Региональные комиссии ЭКОСОС"
+  },
+  {
+   "a": "الْوَكَالَةُ الدَّوْلِيَّةُ لِلطَّاقَةِ الذَّرِّيَّةِ",
+   "r": "Международное агентство по атомной энергии (МАГАТЭ)",
+   "r_uz": "Atom energiyasi boʻyicha xalqaro agentlik (MAGATE)",
+   "r_en": "International Atomic Energy Agency (IAEA)",
+   "t": "Связанные организации"
+  },
+  {
+   "a": "مُنَظَّمَةُ التِّجَارَةِ الْعَالَمِيَّةُ",
+   "r": "Всемирная торговая организация (ВТО)",
+   "r_uz": "Jahon savdo tashkiloti (JST)",
+   "r_en": "World Trade Organization (WTO)",
+   "t": "Связанные организации"
+  },
+  {
+   "a": "مُنَظَّمَةُ حَظْرِ الْأَسْلِحَةِ الْكِيمِيَائِيَّةِ",
+   "r": "Организация по запрещению химического оружия (ОЗХО)",
+   "r_uz": "Kimyoviy qurolni taqiqlash tashkiloti (OPCW)",
+   "r_en": "Organisation for the Prohibition of Chemical Weapons (OPCW)",
+   "t": "Связанные организации"
+  },
+  {
+   "a": "مَكْتَبُ الْأَمِينِ الْعَامِّ لِمُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ",
+   "r": "Канцелярия Генерального секретаря ООН (EOSG)",
+   "r_uz": "BMT Bosh kotibi devoni (EOSG)",
+   "r_en": "Executive Office of the Secretary-General (EOSG)",
+   "t": "Департаменты и управления"
+  },
+  {
+   "a": "مَكْتَبُ الشُّؤُونِ الْقَانُونِيَّةِ لِمُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ",
+   "r": "Управление по правовым вопросам ООН (OLA)",
+   "r_uz": "BMT Huquqiy masalalar boshqarmasi (OLA)",
+   "r_en": "UN Office of Legal Affairs (OLA)",
+   "t": "Департаменты и управления"
+  },
+  {
+   "a": "مَكْتَبُ تَنْسِيقِ الشُّؤُونِ الْإِنْسَانِيَّةِ لِمُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ",
+   "r": "Управление ООН по координации гуманитарных вопросов (УКГВ)",
+   "r_uz": "BMT Insonparvarlik masalalarini muvofiqlashtirish boshqarmasi (OCHA)",
+   "r_en": "UN Office for the Coordination of Humanitarian Affairs (OCHA)",
+   "t": "Департаменты и управления"
+  },
+  {
+   "a": "مَكْتَبُ الْأُمَمِ الْمُتَّحِدَةِ لِخِدْمَاتِ الرَّقَابَةِ الدَّاخِلِيَّةِ",
+   "r": "Управление служб внутреннего надзора ООН (УСВН)",
+   "r_uz": "BMT Ichki nazorat xizmatlari boshqarmasi (OIOS)",
+   "r_en": "UN Office of Internal Oversight Services (OIOS)",
+   "t": "Департаменты и управления"
+  },
+  {
+   "a": "إِدَارَةُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ لِلشُّؤُونِ السِّيَاسِيَّةِ",
+   "r": "Департамент ООН по политическим вопросам (DPA; с 2019 г. — Департамент по политическим вопросам и миростроительству, DPPA)",
+   "r_uz": "BMT Siyosiy masalalar departamenti (DPA; 2019-yildan — Siyosiy masalalar va tinchlik oʻrnatish departamenti, DPPA)",
+   "r_en": "UN Department of Political Affairs (DPA; since 2019 — Department of Political and Peacebuilding Affairs, DPPA)",
+   "t": "Департаменты и управления"
+  },
+  {
+   "a": "إِدَارَةُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ لِلشُّؤُونِ الِاقْتِصَادِيَّةِ وَالِاجْتِمَاعِيَّةِ",
+   "r": "Департамент ООН по экономическим и социальным вопросам (ДЭСВ ООН)",
+   "r_uz": "BMT Iqtisodiy va ijtimoiy masalalar departamenti (UN DESA)",
+   "r_en": "UN Department of Economic and Social Affairs (UN DESA)",
+   "t": "Департаменты и управления"
+  },
+  {
+   "a": "إِدَارَةُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ لِشُؤُونِ الْجَمْعِيَّةِ الْعَامَّةِ وَالْمُؤْتَمَرَاتِ",
+   "r": "Департамент ООН по делам Генеральной Ассамблеи и конференционному управлению (DGACM)",
+   "r_uz": "BMT Bosh Assambleya ishlari va konferensiyalarni boshqarish departamenti (DGACM)",
+   "r_en": "UN Department for General Assembly and Conference Management (DGACM)",
+   "t": "Департаменты и управления"
+  },
+  {
+   "a": "إِدَارَةُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ لِعَمَلِيَّاتِ حِفْظِ السَّلَامِ",
+   "r": "Департамент операций ООН по поддержанию мира (ДОПМ; с 2019 г. — Департамент операций по поддержанию мира, DPO)",
+   "r_uz": "BMT Tinchlikni saqlash operatsiyalari departamenti (DPKO; 2019-yildan — Tinchlik operatsiyalari departamenti, DPO)",
+   "r_en": "UN Department of Peacekeeping Operations (DPKO; since 2019 — Department of Peace Operations, DPO)",
+   "t": "Департаменты и управления"
+  },
+  {
+   "a": "إِدَارَةُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ لِشُؤُونِ السَّلَامَةِ وَالْأَمْنِ",
+   "r": "Департамент ООН по вопросам охраны и безопасности (DSS)",
+   "r_uz": "BMT Xavfsizlik va muhofaza departamenti (DSS)",
+   "r_en": "UN Department of Safety and Security (DSS)",
+   "t": "Департаменты и управления"
+  },
+  {
+   "a": "الْمُفَوَّضِيَّةُ السَّامِيَةُ لِمُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ لِحُقُوقِ الْإِنْسَانِ",
+   "r": "Управление Верховного комиссара ООН по правам человека (УВКПЧ)",
+   "r_uz": "BMT Inson huquqlari boʻyicha Oliy komissarligi (OHCHR)",
+   "r_en": "Office of the UN High Commissioner for Human Rights (OHCHR)",
+   "t": "Департаменты и управления"
+  },
+  {
+   "a": "مَكْتَبُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ فِي جِنِيفَ",
+   "r": "Отделение ООН в Женеве (ЮНОГ)",
+   "r_uz": "BMTning Jenevadagi boʻlimi (UNOG)",
+   "r_en": "UN Office at Geneva (UNOG)",
+   "t": "Департаменты и управления"
+  },
+  {
+   "a": "مَكْتَبُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ فِي نَيْرُوبِي",
+   "r": "Отделение ООН в Найроби (ЮНОН)",
+   "r_uz": "BMTning Nayrobidagi boʻlimi (UNON)",
+   "r_en": "UN Office at Nairobi (UNON)",
+   "t": "Департаменты и управления"
+  },
+  {
+   "a": "مَكْتَبُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ فِي فِيِينَّا",
+   "r": "Отделение ООН в Вене (ЮНОВ)",
+   "r_uz": "BMTning Venadagi boʻlimi (UNOV)",
+   "r_en": "UN Office at Vienna (UNOV)",
+   "t": "Департаменты и управления"
+  },
+  {
+   "a": "مَكْتَبُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ لِشُؤُونِ نَزْعِ السِّلَاحِ",
+   "r": "Управление ООН по вопросам разоружения (ЮНОДА)",
+   "r_uz": "BMT Qurolsizlanish masalalari boʻyicha boshqarmasi (UNODA)",
+   "r_en": "UN Office for Disarmament Affairs (UNODA)",
+   "t": "Департаменты и управления"
+  },
+  {
+   "a": "بَرْنَامَجُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ الْمُشْتَرَكُ لِلْإِيدْزِ",
+   "r": "Объединённая программа ООН по ВИЧ/СПИДу (ЮНЭЙДС, ОНУСИДА)",
+   "r_uz": "BMTning OIV/OITS boʻyicha qoʻshma dasturi (UNAIDS)",
+   "r_en": "Joint UN Programme on HIV/AIDS (UNAIDS)",
+   "t": "Другие агентства ООН"
+  },
+  {
+   "a": "مَكْتَبُ مُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ لِخِدْمَاتِ دَعْمِ الْمَشَارِيعِ",
+   "r": "Управление ООН по обслуживанию проектов (ЮНОПС)",
+   "r_uz": "BMT Loyihalarga xizmat koʻrsatish boshqarmasi (UNOPS)",
+   "r_en": "UN Office for Project Services (UNOPS)",
+   "t": "Другие агентства ООН"
+  },
+  {
+   "a": "الِاسْتِرَاتِيجِيَّةُ الدَّوْلِيَّةُ لِمُنَظَّمَةِ الْأُمَمِ الْمُتَّحِدَةِ لِلْحَدِّ مِنَ الْكَوَارِثِ",
+   "r": "Международная стратегия ООН по уменьшению опасности бедствий (МСУОБ; с 2019 г. — Управление ООН по снижению риска бедствий, UNDRR)",
+   "r_uz": "BMTning Ofatlar xavfini kamaytirish xalqaro strategiyasi (UNISDR; 2019-yildan — BMTning Ofatlar xavfini kamaytirish boshqarmasi, UNDRR)",
+   "r_en": "UN International Strategy for Disaster Reduction (UNISDR; since 2019 — UN Office for Disaster Risk Reduction, UNDRR)",
+   "t": "Другие агентства ООН"
+  }
+ ]
+}
